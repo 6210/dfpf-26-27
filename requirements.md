@@ -94,7 +94,5 @@ Cloudflare can deploy a push before the checks finish.
 ## Decisions still to make
 
 - Site purpose, audience, primary action, content, and visual direction.
-- Confirm Cloudflare Pages settings and the deployed site after connecting the
-  repository.
 - Whether physics or other motion is needed, and how it should behave.
 - Applicable legal notices and any approved external services.
