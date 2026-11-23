@@ -86,10 +86,10 @@ issue and discussing alternatives with the user before the change goes live.
    complete this review before pushing.
 5. Update this file when an agreed change affects the requirements.
 
-The Lighthouse workflow provides automated checks, but blocking deployment
-requires GitHub branch protection to require its status check and restrict direct
-pushes to `main`. Until that is configured, Cloudflare can deploy a push before
-the checks finish.
+The GitHub Actions workflow deploys `main` only after the Lighthouse checks pass.
+This gate is effective only after Cloudflare's automatic production deployments
+are disabled and the GitHub deployment secrets are configured. Until then,
+Cloudflare can deploy a push before the checks finish.
 
 ## Decisions still to make
 

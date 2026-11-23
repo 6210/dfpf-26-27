@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: website-quality-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lighthouse:
     name: Lighthouse quality
@@ -21,3 +25,11 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run quality
+      - name: Deploy to Cloudflare Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.136.3"
+          command: pages deploy dist --project-name=dfpf-26-27 --branch=main

@@ -98,16 +98,24 @@ Run `npm run build` to generate the static site in `dist/`, and
 
 ### Deploy to Cloudflare Pages
 
-1. Commit and push the intended project files to the GitHub repository.
-2. In the Cloudflare dashboard, select **Workers & Pages**, then
-   **Create application** > **Pages** > **Import an existing Git repository**.
-3. Connect the repository and configure:
-   - Production branch: `main`
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-   - Environment variable: `NODE_VERSION=22.23.4`
-4. Select **Save and Deploy**. Open the resulting `pages.dev` URL to verify the
-   deployed page.
+The existing Cloudflare Pages project is connected to this repository. The
+intended deployment flow is a push to `main`: GitHub Actions builds the site,
+runs the quality checks, and deploys to Cloudflare only if they pass.
+
+One-time setup:
+
+1. In Cloudflare Pages project settings, disable automatic production and preview
+   branch deployments. Otherwise Cloudflare can deploy independently of the
+   quality checks.
+2. Create a Cloudflare API token with account-level **Cloudflare Pages: Edit**
+   permission, scoped to the project's account.
+3. In GitHub repository settings, add the Actions secrets
+   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Never commit these values.
+4. Push to `main`, check the **Website quality** run in GitHub Actions, and
+   verify the resulting `pages.dev` site.
+
+Until these settings are in place and the workflow has successfully deployed,
+the automatic quality gate is not active.
 
 The site is static, so no Cloudflare adapter or Matter.js dependency is needed
 for this initial page. Connecting a repository and deploying require access to a
@@ -127,20 +135,9 @@ below 90, the viewport check fails, or the initial script transfer exceeds
 the script transfer budget. Keyboard, reduced-motion, and responsive-layout
 checks still require manual testing.
 
-The GitHub Actions workflow runs the same check on pull requests and pushes to
-`main`. To prevent a failing change from reaching Cloudflare Pages, configure
-GitHub branch protection for `main`:
-
-1. After the workflow has run at least once, open the repository's **Settings**
-   > **Branches** and add a protection rule for `main`.
-2. Require a pull request before merging and require the **Lighthouse quality**
-   status check to pass. Disable bypasses, including administrator bypass.
-3. Make changes on a separate branch and merge only after the check passes and
-   the manual checks are complete.
-
-Branch protection availability depends on the repository's GitHub plan and
-permissions. Until it is enabled, Cloudflare deploys direct pushes to `main`
-without waiting for this workflow.
+GitHub Actions runs the same check for pull requests and pushes to `main`.
+Once the deployment setup above is complete, a failed check prevents that
+workflow from deploying. Manual checks are still required before pushing.
 
 ### Direct dependencies
 
@@ -152,3 +149,9 @@ without waiting for this workflow.
 See [dependency-licenses.md](dependency-licenses.md) for the locked dependency
 inventory and licensing review notes. Update the inventory and review the built
 output when dependencies or assets change.
+
+The workflow also uses [checkout](https://github.com/actions/checkout) and
+[setup-node](https://github.com/actions/setup-node) (MIT), plus
+[wrangler-action](https://github.com/cloudflare/wrangler-action) and
+[Wrangler](https://github.com/cloudflare/workers-sdk) (MIT OR Apache-2.0) for
+deployment. These tools run in GitHub Actions and are not shipped to visitors.
