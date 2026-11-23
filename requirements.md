@@ -24,8 +24,25 @@ issue and discussing alternatives with the user before the change goes live.
 
 ## Design and content
 
+- Create an interactive, single-page experience for recruiters and other
+  potential hirers to understand the work, capabilities, and relevant experience
+  presented on the site.
+- Make the site's purpose, evidence of work, and next action easy to find. Use
+  approved content and examples; do not invent experience or publish sensitive
+  project information.
+- Use the existing repository Markdown as a starting reference for professional
+  experience, not as automatically published content. Keep the website's content
+  source flexible so another format or source can be adopted later.
 - Establish the site's purpose, intended audience, primary action, and real
   content before settling on a design.
+- Follow the browser or operating system's light or dark preference by default.
+  Both themes must remain readable and accessible, including when the preference
+  changes.
+- Use a small set of self-hosted fonts with suitable fallback fonts. Check
+  licenses and avoid third-party font requests.
+- Keep the initial content and navigation usable without JavaScript; add
+  interactive behavior progressively. Assess whether client-side routing is
+  needed before adding a routing or UI framework.
 - Use references to develop an original visual direction rather than copying
   another site.
 - Keep interactions purposeful. Limit each page to one resource-intensive visual
@@ -93,6 +110,7 @@ Cloudflare can deploy a push before the checks finish.
 
 ## Decisions still to make
 
-- Site purpose, audience, primary action, content, and visual direction.
+- Exact primary action, approved content, and visual direction.
+- Whether a manual theme override or client-side routing is needed.
 - Whether physics or other motion is needed, and how it should behave.
 - Applicable legal notices and any approved external services.

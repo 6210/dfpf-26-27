@@ -86,6 +86,87 @@ The website is a minimal, static Astro starter. Its content and design are
 placeholders; see [requirements.md](requirements.md) for the agreed baseline and
 open decisions.
 
+### Next: product and UI
+
+Build a lightweight, interactive single-page experience for recruiters and
+other potential hirers. Start with approved content and a clear primary action,
+then develop the UI, browser-preferred light and dark themes, and self-hosted
+typography. See [TODO.md](TODO.md) for the product tasks and acceptance checks.
+
+### Repository structure
+
+The existing Markdown files describe experience and provide project context.
+They are reference material, not automatically published website content. The
+current website is still the placeholder in `src/pages/index.astro`.
+
+```text
+.
+├── README.MD                 Project context and setup
+├── responsibilities.md       Experience reference
+├── requirements.md           Product and quality requirements
+├── TODO.md                   Product and UI tasks
+├── inspiration.md, stack.md  Design and technology references
+├── src/pages/index.astro     Current website page
+├── .github/workflows/        Quality checks and deployment
+├── package.json              Scripts and dependencies
+└── documents/                Local reference files; ignored by Git
+```
+
+```mermaid
+flowchart TD
+    Repo["Repository"]
+    Repo --> References["Experience and project Markdown"]
+    Repo --> Planning["Requirements and TODO"]
+    Repo --> Source["src/"]
+    Source --> Pages["pages/index.astro"]
+    Repo --> Workflow[".github/workflows/"]
+    Repo --> Config["Package and quality configuration"]
+    Repo --> Local["documents/ (local only; Git-ignored)"]
+```
+
+As the site grows, use the following structure. These folders are **proposed**;
+create them only when their contents are needed:
+
+```text
+src/
+├── pages/        Site entry points
+├── components/   Reusable UI and interactive components
+├── layouts/      Shared page structure
+├── content/      Approved website content
+├── styles/       Shared styles and theme tokens
+└── assets/       Images and other assets processed by Astro
+public/           Assets served as-is, such as self-hosted fonts
+```
+
+Start by reviewing the existing Markdown and selecting what is suitable for the
+site. Keep approved content separate from UI where practical. The content format
+or source can change later; do not assume every repository Markdown file should
+be published or introduce a content service until it is needed.
+
+### How the site is built and deployed
+
+```mermaid
+flowchart LR
+    Docs["Existing Markdown<br/>experience references"]
+    Review["Review and approve<br/>content (planned)"]
+    Content["Website content<br/>(planned)"]
+    Page["Astro page<br/>current placeholder"]
+    Build["Astro static build"]
+    Checks["Lighthouse quality checks"]
+    Deploy["Cloudflare Pages"]
+    Site["Recruiters and<br/>potential hirers"]
+
+    Docs -.-> Review
+    Review -.-> Content
+    Content -.-> Page
+    Page --> Build --> Checks --> Deploy --> Site
+```
+
+Dotted lines are future work, not an existing content pipeline. For a push to
+`main`, GitHub Actions runs the build and checks before deploying. The diagram
+renders on GitHub and in Markdown viewers with Mermaid support; it does not add
+a library or runtime request to the website.
+
 Use Node.js 22.23.4 or newer on a supported even-numbered release, then run:
 
 ```sh
