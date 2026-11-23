@@ -117,6 +117,13 @@ One-time setup:
 Until these settings are in place and the workflow has successfully deployed,
 the automatic quality gate is not active.
 
+Setup progress (2026-11-23): Cloudflare automatic production and preview
+deployments have been disabled, and the Pages Edit token has been prepared.
+Both GitHub secrets have been added; their values and deployment permissions
+remain to be verified by the first deployment. The deployment workflow is on
+the setup branch. Merging it into `main` and verifying its first deployment are
+still pending. Do not record secret values in this file.
+
 The site is static, so no Cloudflare adapter or Matter.js dependency is needed
 for this initial page. Connecting a repository and deploying require access to a
 Cloudflare account.
