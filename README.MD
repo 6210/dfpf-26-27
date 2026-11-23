@@ -79,3 +79,50 @@ These repositories illustrate the breadth of the role; they are examples, not a 
 ## Scope Notes
 
 The folder also contains legacy campaign builds, brief or placeholder READMEs, Joomla distributions, third-party assets, and experiments. Their presence is useful technical context but does not, by itself, establish that each is an actively maintained business responsibility. The core role above is based on recurring ownership patterns and the operational guidance documented across the project READMEs.
+
+## Website project setup
+
+The website is a minimal, static Astro starter. Its content and design are
+placeholders; see [requirements.md](requirements.md) for the agreed baseline and
+open decisions.
+
+Use Node.js 22.23.4 or newer on a supported even-numbered release, then run:
+
+```sh
+npm ci
+npm run dev
+```
+
+Run `npm run build` to generate the static site in `dist/`, and
+`npm run preview` to preview the build locally.
+
+### Deploy to Cloudflare Pages
+
+1. Commit and push the intended project files to the GitHub repository.
+2. In the Cloudflare dashboard, select **Workers & Pages**, then
+   **Create application** > **Pages** > **Import an existing Git repository**.
+3. Connect the repository and configure:
+   - Production branch: `main`
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+   - Environment variable: `NODE_VERSION=22.23.4`
+4. Select **Save and Deploy**. Open the resulting `pages.dev` URL to verify the
+   deployed page.
+
+The site is static, so no Cloudflare adapter or Matter.js dependency is needed
+for this initial page. Connecting a repository and deploying require access to a
+Cloudflare account.
+
+The initial `Hello World` page scored 100 for mobile performance in Lighthouse
+13.6.0 against a local production preview on 2026-11-23 (Headless Chrome 157 on
+macOS). Repeat the audit against the deployed site before launch.
+
+### Direct dependencies
+
+| Dependency | Purpose | License | Source |
+| --- | --- | --- | --- |
+| Astro | Static website framework | MIT | https://github.com/withastro/astro |
+
+See [dependency-licenses.md](dependency-licenses.md) for the locked dependency
+inventory and licensing review notes. Update the inventory and review the built
+output when dependencies or assets change.
