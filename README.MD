@@ -117,11 +117,37 @@ The initial `Hello World` page scored 100 for mobile performance in Lighthouse
 13.6.0 against a local production preview on 2026-11-23 (Headless Chrome 157 on
 macOS). Repeat the audit against the deployed site before launch.
 
+### Website quality checks
+
+With Chrome or Chromium installed, run `npm run build` followed by
+`npm run quality`. Lighthouse checks every discovered static page using its
+mobile settings. The check fails if performance or accessibility scores are
+below 90, the viewport check fails, or the initial script transfer exceeds
+100 KiB. Inline scripts are part of the HTML response and are not included in
+the script transfer budget. Keyboard, reduced-motion, and responsive-layout
+checks still require manual testing.
+
+The GitHub Actions workflow runs the same check on pull requests and pushes to
+`main`. To prevent a failing change from reaching Cloudflare Pages, configure
+GitHub branch protection for `main`:
+
+1. After the workflow has run at least once, open the repository's **Settings**
+   > **Branches** and add a protection rule for `main`.
+2. Require a pull request before merging and require the **Lighthouse quality**
+   status check to pass. Disable bypasses, including administrator bypass.
+3. Make changes on a separate branch and merge only after the check passes and
+   the manual checks are complete.
+
+Branch protection availability depends on the repository's GitHub plan and
+permissions. Until it is enabled, Cloudflare deploys direct pushes to `main`
+without waiting for this workflow.
+
 ### Direct dependencies
 
 | Dependency | Purpose | License | Source |
 | --- | --- | --- | --- |
 | Astro | Static website framework | MIT | https://github.com/withastro/astro |
+| Lighthouse CI | Build quality checks | Apache-2.0 | https://github.com/GoogleChrome/lighthouse-ci |
 
 See [dependency-licenses.md](dependency-licenses.md) for the locked dependency
 inventory and licensing review notes. Update the inventory and review the built
