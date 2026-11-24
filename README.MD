@@ -269,7 +269,8 @@ colour is a CSS custom property in
 its `--color-accent`; the Experience page uses this for the coloured marker
 beside each responsibility. Colour meanings vary by culture and context, so
 each highlight should also have a heading, icon, or label; colour must not be
-the only cue.
+the only cue. "Privacy, Security, and Reliability" is intentionally not shown
+on the site.
 
 | Section | Accent name | Colour | Light theme | Dark theme | Why |
 |---|---|---|---|---|---|
@@ -278,11 +279,10 @@ the only cue.
 | Marketing Automation and Data Capture | `automation` | Teal | `#0f766e` | `#5eead4` | Flow, clarity, technology |
 | Analytics and Advertising Measurement | `analytics` | Purple | `#7e22ce` | `#d8b4fe` | Insight, analysis, imagination |
 | Regional Content, SEO, and Brand Transition | `seo` | Green | `#15803d` | `#86efac` | Growth, reach, organic search |
-| Privacy, Security, and Reliability | `security` | Slate | `#475569` | `#cbd5e1` | Seriousness, neutrality, protection |
 | Documentation and Operational Ownership | `documentation` | Amber | `#a16207` | `#fde047` | Clarity, attention, guidance |
 
 Every colour meets WCAG AA contrast for normal text (at least 4.5:1): light
-values range from 4.92:1 to 7.58:1 on `#ffffff`, and dark values from 10.39:1
+values range from 4.92:1 to 6.98:1 on `#ffffff`, and dark values from 10.39:1
 to 14.21:1 on `#121212`. Website and Platform Operations is close to the link
 colour, so it should be used for highlights such as borders and icons rather
 than for text that could be mistaken for a link.
@@ -293,7 +293,7 @@ and [Interaction Design Foundation, colour in UX](https://ixdf.org/literature/to
 
 Local checks (2026-11-24, not yet deployed): build, page tests, and Lighthouse
 passed on every page (performance 100, accessibility 100, no layout shift). In
-Chrome at 360 px, all seven markers showed the expected colour in both themes,
+Chrome at 360 px, all six markers showed the expected colour in both themes,
 with no horizontal scrolling.
 
 ### Physics placeholders (Matter.js)

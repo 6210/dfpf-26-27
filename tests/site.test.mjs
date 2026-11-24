@@ -65,7 +65,7 @@ test('every responsibility accent on the experience page has a colour defined', 
   const cssFiles = (await readdir('dist/_astro')).filter((file) => file.endsWith('.css'));
   const css = [html, ...(await Promise.all(cssFiles.map((file) => readFile(`dist/_astro/${file}`, 'utf8'))))].join('\n');
 
-  assert.equal(accents.length, 7);
+  assert.equal(accents.length, 6);
   for (const accent of accents) {
     assert.match(css, new RegExp(`\\[data-accent=["']?${accent}["']?\\]\\s*\\{\\s*--color-accent:\\s*var\\(--color-accent-${accent}\\)`), accent);
     assert.match(css, new RegExp(`--color-accent-${accent}:\\s*light-dark\\(`), accent);
