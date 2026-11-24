@@ -111,6 +111,7 @@ pages.
 ├── astro.config.mjs          Production URL and URL format
 ├── src/pages/                Home, experience, skills, and not-found pages
 ├── src/layouts/              Shared page structure and client navigation
+├── src/components/           Shared navigation and footer
 ├── tests/                    Generated-page checks
 ├── .github/workflows/        Quality checks and deployment
 ├── package.json              Scripts and dependencies
@@ -125,13 +126,15 @@ flowchart TD
     Repo --> Source["src/"]
     Source --> Pages["pages/ (shareable pages)"]
     Source --> Layout["layouts/ (shared page structure)"]
+    Source --> Components["components/ (navigation and footer)"]
     Repo --> Workflow[".github/workflows/"]
     Repo --> Config["Package and quality configuration"]
     Repo --> Local["documents/ (local only; Git-ignored)"]
 ```
 
-As the site grows, use the following structure. `pages/` and `layouts/` exist;
-the other folders are **proposed** and should be created only when needed:
+As the site grows, use the following structure. `pages/`, `layouts/`, and
+`components/` exist; the other folders are **proposed** and should be created
+only when needed:
 
 ```text
 src/
@@ -190,9 +193,15 @@ Its built-in client router provides SPA-style navigation when JavaScript is
 available; ordinary links still work without it. The generated `404.html`
 supplies a not-found page.
 
-The navigation is defined once in `src/layouts/SiteLayout.astro`. The current
+The navigation links are defined once in `src/components/SiteNav.astro` and
+used by both the header and the footer. The current
 page's item is shown as plain, emphasized text with `aria-current="page"`
 rather than a link, so it cannot be clicked again and is skipped when tabbing.
+
+`src/components/SiteFooter.astro` appears on every page through the shared
+layout. It repeats the navigation and shows the year, Gqeberha, South Africa,
+and South Africa Standard Time (SAST, UTC+2). The year is set when the site is
+built, so it updates on the first deployment of a new year.
 
 Each placeholder page has its own title, description, and canonical URL, but is
 temporarily marked `noindex`: it is not ready to appear in search results.
@@ -226,13 +235,18 @@ navigation, and reload, and a 360 px width. Live following of a system
 preference change could not be confirmed in the test browser; check it on a
 real device.
 
-Skills page and navigation update (2026-11-24, not yet deployed): build, page
+Skills page and navigation update (2026-11-24, deployed in
+[this workflow run](https://github.com/6210/dfpf-26-27/actions/runs/45350501851)): build, page
 tests, and Lighthouse passed for all four pages. Browser checks confirmed the
 current nav item is not a link on each page, the theme button label switches
 between **Dark mode** and **Light mode**, and the layout fits at 360 px. Page
 transition errors appeared only in a hidden test tab, where browsers cancel
 view transitions; a visible Chrome session showed none. A missing favicon
 returns 404 (pre-existing; see TODO).
+
+Footer update (2026-11-24, not yet deployed): build, page tests, and Lighthouse
+passed for all pages. Browser checks covered footer navigation and current-page
+state after client navigation, dark mode, and a 360 px width.
 
 ### Deploy to Cloudflare Pages
 

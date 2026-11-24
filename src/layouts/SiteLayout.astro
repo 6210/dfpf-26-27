@@ -1,5 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteNav from '../components/SiteNav.astro';
 
 interface Props {
   title: string;
@@ -14,12 +16,6 @@ if (!Astro.site) {
 }
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
-
-const navItems = [
-  { href: '/', label: 'Home' },
-  { href: '/experience/', label: 'Experience' },
-  { href: '/skills/', label: 'Skills' },
-];
 ---
 
 <!doctype html>
@@ -76,20 +72,13 @@ const navItems = [
   </head>
   <body>
     <header>
-      <nav aria-label="Main navigation">
-        {navItems.map(({ href, label }) =>
-          Astro.url.pathname === href ? (
-            <a aria-current="page">{label}</a>
-          ) : (
-            <a href={href}>{label}</a>
-          ),
-        )}
-      </nav>
+      <SiteNav label="Main navigation" />
       <button type="button" data-theme-toggle hidden>Dark mode</button>
     </header>
     <main>
       <slot />
     </main>
+    <SiteFooter />
   </body>
 </html>
 

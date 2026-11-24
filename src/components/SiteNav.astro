@@ -1,0 +1,23 @@
+---
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/experience/', label: 'Experience' },
+  { href: '/skills/', label: 'Skills' },
+];
+---
+
+<nav aria-label={label}>
+  {navItems.map((item) =>
+    Astro.url.pathname === item.href ? (
+      <a aria-current="page">{item.label}</a>
+    ) : (
+      <a href={item.href}>{item.label}</a>
+    ),
+  )}
+</nav>

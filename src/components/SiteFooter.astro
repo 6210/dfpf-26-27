@@ -1,0 +1,26 @@
+---
+import SiteNav from './SiteNav.astro';
+
+// Set at build time; the year updates on the next deployment.
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <SiteNav label="Footer navigation" />
+  <p>
+    &copy; <time datetime={String(year)}>{year}</time> · Gqeberha, South Africa ·
+    South Africa Standard Time (SAST, UTC+2)
+  </p>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid currentColor;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+</style>
