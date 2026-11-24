@@ -13,6 +13,11 @@ issue and discussing alternatives with the user before the change goes live.
 
 ## Stack
 
+The stack in [stack.md](stack.md) is a starting point, not a fixed choice. A
+framework, library, or host can be replaced when an alternative better serves
+the highest priorities above; explain the trade-offs and agree on the change
+before switching.
+
 - Use Astro as the website framework and prefer static output by default.
 - Target deployment to Cloudflare Pages. Confirm deployment settings and any
   runtime requirements when the project is set up.

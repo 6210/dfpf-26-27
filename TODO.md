@@ -60,6 +60,15 @@ The current site is a placeholder; none of these tasks are complete yet.
 - [ ] Restyle the toggle as part of the visual design, and decide whether
   visitors need a way to return to the system preference.
 
+## Colour and icon design
+
+- [x] Add draft accent colours for the Core Responsibilities sections, readable
+  in both themes (see README "Highlight colours (draft)").
+- [ ] Decide the final palette; update the accent properties and recheck
+  contrast.
+- [ ] Review small design examples and SVG icons (24 × 24, single colour,
+  strokes outlined) to choose the icon style and interaction effects.
+
 ## Typography
 
 - [ ] Choose fonts that suit the approved visual direction and are licensed for

@@ -259,6 +259,43 @@ client navigation, dark mode, and a 360 px width. The footer and About page
 were deployed in
 [this workflow run](https://github.com/6210/dfpf-26-27/actions/runs/45363526471).
 
+### Highlight colours (draft)
+
+Draft accent colours for the Core Responsibilities sections, chosen from common
+colour associations. They may change once the final palette is decided. Each
+colour is a CSS custom property in
+[src/layouts/SiteLayout.astro](src/layouts/SiteLayout.astro) (for example
+`--color-accent-campaigns`). Add `data-accent="campaigns"` to an element to set
+its `--color-accent`; the Experience page uses this for the coloured marker
+beside each responsibility. Colour meanings vary by culture and context, so
+each highlight should also have a heading, icon, or label; colour must not be
+the only cue.
+
+| Section | Accent name | Colour | Light theme | Dark theme | Why |
+|---|---|---|---|---|---|
+| Website and Platform Operations | `operations` | Blue | `#1d4ed8` | `#93c5fd` | Trust, stability, reliability |
+| Campaign Experiences and Lead Generation | `campaigns` | Orange | `#c2410c` | `#fdba74` | Energy, enthusiasm, calls to action |
+| Marketing Automation and Data Capture | `automation` | Teal | `#0f766e` | `#5eead4` | Flow, clarity, technology |
+| Analytics and Advertising Measurement | `analytics` | Purple | `#7e22ce` | `#d8b4fe` | Insight, analysis, imagination |
+| Regional Content, SEO, and Brand Transition | `seo` | Green | `#15803d` | `#86efac` | Growth, reach, organic search |
+| Privacy, Security, and Reliability | `security` | Slate | `#475569` | `#cbd5e1` | Seriousness, neutrality, protection |
+| Documentation and Operational Ownership | `documentation` | Amber | `#a16207` | `#fde047` | Clarity, attention, guidance |
+
+Every colour meets WCAG AA contrast for normal text (at least 4.5:1): light
+values range from 4.92:1 to 7.58:1 on `#ffffff`, and dark values from 10.39:1
+to 14.21:1 on `#121212`. Website and Platform Operations is close to the link
+colour, so it should be used for highlights such as borders and icons rather
+than for text that could be mistaken for a link.
+
+Sources:
+[Verywell Mind, colour psychology](https://www.verywellmind.com/color-psychology-2795824)
+and [Interaction Design Foundation, colour in UX](https://ixdf.org/literature/topics/color).
+
+Local checks (2026-11-24, not yet deployed): build, page tests, and Lighthouse
+passed on every page (performance 100, accessibility 100, no layout shift). In
+Chrome at 360 px, all seven markers showed the expected colour in both themes,
+with no horizontal scrolling.
+
 ### Physics placeholders (Matter.js)
 
 Each content page (home, about, experience, skills) shows a placeholder built

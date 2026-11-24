@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 test('shareable pages contain distinct metadata and crawlable navigation in HTML', async () => {
@@ -57,4 +57,17 @@ test('the generated not-found page is not presented as canonical content', async
   assert.match(html, /<h1>Page not found<\/h1>/);
   assert.match(html, /<meta name="robots" content="noindex">/);
   assert.doesNotMatch(html, /rel="canonical"/);
+});
+
+test('every responsibility accent on the experience page has a colour defined', async () => {
+  const html = await readFile('dist/experience/index.html', 'utf8');
+  const accents = [...html.matchAll(/<li data-accent="([a-z]+)"/g)].map((match) => match[1]);
+  const cssFiles = (await readdir('dist/_astro')).filter((file) => file.endsWith('.css'));
+  const css = [html, ...(await Promise.all(cssFiles.map((file) => readFile(`dist/_astro/${file}`, 'utf8'))))].join('\n');
+
+  assert.equal(accents.length, 7);
+  for (const accent of accents) {
+    assert.match(css, new RegExp(`\\[data-accent=["']?${accent}["']?\\]\\s*\\{\\s*--color-accent:\\s*var\\(--color-accent-${accent}\\)`), accent);
+    assert.match(css, new RegExp(`--color-accent-${accent}:\\s*light-dark\\(`), accent);
+  }
 });

@@ -86,7 +86,24 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     --color-background: light-dark(#ffffff, #121212);
     --color-text: light-dark(#1a1a1a, #ececec);
     --color-link: light-dark(#0b57d0, #8ab4f8);
+    /* Draft accents for the Core Responsibilities sections; see README. */
+    --color-accent-operations: light-dark(#1d4ed8, #93c5fd);
+    --color-accent-campaigns: light-dark(#c2410c, #fdba74);
+    --color-accent-automation: light-dark(#0f766e, #5eead4);
+    --color-accent-analytics: light-dark(#7e22ce, #d8b4fe);
+    --color-accent-seo: light-dark(#15803d, #86efac);
+    --color-accent-security: light-dark(#475569, #cbd5e1);
+    --color-accent-documentation: light-dark(#a16207, #fde047);
+    --color-accent: currentColor;
   }
+
+  [data-accent='operations'] { --color-accent: var(--color-accent-operations); }
+  [data-accent='campaigns'] { --color-accent: var(--color-accent-campaigns); }
+  [data-accent='automation'] { --color-accent: var(--color-accent-automation); }
+  [data-accent='analytics'] { --color-accent: var(--color-accent-analytics); }
+  [data-accent='seo'] { --color-accent: var(--color-accent-seo); }
+  [data-accent='security'] { --color-accent: var(--color-accent-security); }
+  [data-accent='documentation'] { --color-accent: var(--color-accent-documentation); }
 
   :root[data-theme='light'] {
     color-scheme: light;
