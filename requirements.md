@@ -61,7 +61,9 @@ before switching.
 - Fade between themes rather than switching colors instantly, except for
   visitors who prefer reduced motion.
 - Use a small set of self-hosted fonts with suitable fallback fonts. Check
-  licenses and avoid third-party font requests.
+  licenses and avoid third-party font requests. Do not use a CDN for fonts or
+  other assets, at build time or in the visitor's browser; install fonts as
+  pinned packages and serve them from this site.
 - Keep the initial content and navigation usable without JavaScript; add
   interactive behavior progressively. Use Astro's client router for SPA-style
   navigation without introducing a separate routing or UI framework.

@@ -7,7 +7,8 @@ was generated from installed package metadata or the npm registry on
 2026-11-23. It is not a legal compliance determination; review individual
 notices and bundled third-party components before distributing dependencies.
 
-The static build ships Astro's client router and Matter.js to visitors. The
+The static build ships Astro's client router, Matter.js, and the Lexend Deca
+font to visitors. The
 build removes their license comments, so their notices are published in
 [public/third-party-licenses.txt](public/third-party-licenses.txt). Recheck the
 output and licensing obligations when client-side libraries, assets, or server
@@ -17,6 +18,10 @@ components with additional conditions when applicable.
 
 `matter-js` 0.20.0 and `@types/matter-js` 0.20.2 were added on 2026-11-24
 (both MIT, with no further dependencies).
+
+`@fontsource/lexend-deca` 5.3.0 was added on 2026-11-24 (OFL-1.1, no further
+dependencies). Only the Latin bold WOFF2 file is shipped to visitors; its
+license is published in `public/third-party-licenses.txt`.
 
 | Package | Version | Declared license | Source |
 | --- | --- | --- | --- |
@@ -172,6 +177,7 @@ components with additional conditions when applicable.
 | `@sentry/server-utils` | `11.16.0` | `MIT` | [npm package](https://registry.npmjs.org/@sentry/server-utils/-/server-utils-11.16.0.tgz) |
 | `@shikijs/core` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/core/-/core-4.6.0.tgz) |
 | `@shikijs/engine-javascript` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/engine-javascript/-/engine-javascript-4.6.0.tgz) |
+| `@fontsource/lexend-deca` | `5.3.0` | `OFL-1.1` | [npm package](https://registry.npmjs.org/@fontsource/lexend-deca/-/lexend-deca-5.3.0.tgz) |
 | `@shikijs/engine-oniguruma` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/engine-oniguruma/-/engine-oniguruma-4.6.0.tgz) |
 | `@shikijs/langs` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/langs/-/langs-4.6.0.tgz) |
 | `@shikijs/primitive` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/primitive/-/primitive-4.6.0.tgz) |

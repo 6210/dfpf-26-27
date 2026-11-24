@@ -84,8 +84,9 @@ The site is still in progress; checked items are done.
 ## Typography
 
 - [ ] Choose fonts that suit the approved visual direction and are licensed for
-  self-hosting. Record their sources and licenses.
-- [ ] Self-host only the necessary font files and weights, with readable system
+  self-hosting. Record their sources and licenses. Headings use Lexend Deca
+  (first choice; OFL-1.1); the body font is still to be chosen.
+- [x] Self-host only the necessary font files and weights, with readable system
   fallbacks; avoid external font requests.
 
 ## Before going live

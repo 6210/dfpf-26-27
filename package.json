@@ -10,6 +10,7 @@
     "quality": "lhci collect && lhci assert --includePassedAssertions"
   },
   "dependencies": {
+    "@fontsource/lexend-deca": "5.3.0",
     "astro": "^7.4.13",
     "matter-js": "0.20.0"
   },

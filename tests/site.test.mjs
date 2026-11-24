@@ -81,3 +81,13 @@ test('experience and skills pages are built from the role content, including pla
   assert.match(skills, /Salesforce Marketing Cloud Account Engagement \(Pardot\) Campaign Experiences and Lead Generation; Marketing Automation and CRM Data Capture/);
   assert.doesNotMatch(experience + skills, /Privacy, Security, and Reliability/);
 });
+
+test('the heading font is preloaded from this site, not a CDN', async () => {
+  const html = await readFile('dist/index.html', 'utf8');
+  const preload = html.match(/<link rel="preload" href="(\/_astro\/fonts\/[^"]+\.woff2)" as="font"/)?.[1];
+
+  assert.ok(preload, 'font preload link');
+  assert.ok((await readdir('dist/_astro/fonts')).some((file) => preload.endsWith(file)));
+  assert.match(html, /@font-face\{font-family:"Lexend Deca[^"]*";src:url\("\/_astro\/fonts\//);
+  assert.doesNotMatch(html, /fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net|fonts\.bunny\.net/);
+});

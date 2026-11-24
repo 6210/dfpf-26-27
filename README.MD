@@ -440,6 +440,7 @@ workflow from deploying. Manual checks are still required before pushing.
 | --- | --- | --- | --- |
 | Astro | Static website framework | MIT | https://github.com/withastro/astro |
 | Matter.js | Physics placeholders (shipped to visitors) | MIT | https://github.com/liabru/matter-js |
+| Lexend Deca (`@fontsource/lexend-deca`) | Heading font (shipped to visitors) | OFL-1.1 | https://github.com/googlefonts/lexend |
 | Lighthouse CI | Build quality checks | Apache-2.0 | https://github.com/GoogleChrome/lighthouse-ci |
 | @types/matter-js | Editor type definitions (not shipped) | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 
@@ -448,9 +449,26 @@ inventory and licensing review notes. Update the inventory and review the built
 output when dependencies or assets change.
 
 The build removes license comments from shipped code, so
-`public/third-party-licenses.txt` publishes the Matter.js and Astro license
-notices at `/third-party-licenses.txt`. Update it when either version changes or
-when other code is shipped to visitors.
+`public/third-party-licenses.txt` publishes the Matter.js, Astro, and Lexend
+Deca license notices at `/third-party-licenses.txt`. Update it when any of
+their versions change or when other code or fonts are shipped to visitors.
+
+### Fonts
+
+Fonts are served from this site only; no font CDN is used at build time or by
+visitors. Each font is installed as a pinned `@fontsource/*` npm package and
+registered in [astro.config.mjs](astro.config.mjs) with Astro's local font
+provider, which copies the file to `/_astro/fonts/`, preloads it, and generates
+a size-matched fallback so text does not shift when the font loads.
+
+| Use | Font | Files shipped | CSS variable |
+|---|---|---|---|
+| Headings (`h1`–`h3`) | Lexend Deca | Latin, bold (700) WOFF2, about 15 KB | `--font-heading` |
+| Body text | System font (choice pending) | None | — |
+
+To add a weight or font, install its `@fontsource/*` package with an exact
+version, add a variant pointing at the needed Latin WOFF2 file, and add its
+license to `public/third-party-licenses.txt`.
 
 The workflow also uses [checkout](https://github.com/actions/checkout) and
 [setup-node](https://github.com/actions/setup-node) (MIT), plus
