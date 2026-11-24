@@ -470,6 +470,12 @@ To add a weight or font, install its `@fontsource/*` package with an exact
 version, add a variant pointing at the needed Latin WOFF2 file, and add its
 license to `public/third-party-licenses.txt`.
 
+Main headings (`h1`) use the design values 70px size, 72px line height, and
+-2px letter spacing from 1024px wide. On narrower screens the size scales
+down (about 60px at 768px and 45px at 360px) with the same proportions, so long
+words fit without horizontal scrolling. Sizes use `rem`, so they also respect
+the visitor's browser text-size setting.
+
 The workflow also uses [checkout](https://github.com/actions/checkout) and
 [setup-node](https://github.com/actions/setup-node) (MIT), plus
 [wrangler-action](https://github.com/cloudflare/wrangler-action) and

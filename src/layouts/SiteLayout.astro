@@ -133,6 +133,18 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     font-weight: 700;
   }
 
+  /*
+   * Design values: 70px size, 72px line height, -2px letter spacing. The size
+   * scales from about 45px at 360px wide to 70px (4.375rem) at 1024px and
+   * wider; line height and spacing keep the same proportions at every size.
+   */
+  h1 {
+    font-size: clamp(2.5rem, 1.946rem + 3.795vw, 4.375rem);
+    letter-spacing: calc(-2em / 70);
+    line-height: calc(72 / 70);
+    overflow-wrap: break-word;
+  }
+
   header {
     align-items: center;
     display: flex;
