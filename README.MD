@@ -284,7 +284,7 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   without `sections`, such as 404, leave it out. Below 48rem (768 px) it moves
   to a second row and scrolls sideways if needed, keeping the current link in
   view.
-- **Theme toggle** (from 48rem / 768 px wide), then a **menu button** (hamburger, placeholder styling)
+- **Theme toggle** (from 64rem / 1024 px wide, i.e. larger than an iPad), then a **menu button** (hamburger, placeholder styling)
   that opens the page navigation full screen. A light veil and a soft 6 px blur
   keep the page behind recognisable in both themes (the light theme gets a
   thinner veil, because a white wash hides more). The veil is solid when the
@@ -295,8 +295,8 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   one after another; on closing they fade away together. None of this animates for
   visitors who prefer reduced motion. Because the menu covers the hamburger, it
   has its own close button: a borderless X about 5px from the top-right corner
-  (28px tap target). Below 48rem (768 px) the header has no room for the theme
-  toggle, so it moves into the menu, below the links, and rises in last; wider
+  (28px tap target). Below 64rem (1024 px; phones and iPads) the theme
+  toggle is not in the header; it moves into the menu, below the links, and rises in last; wider
   screens keep it in the header and leave it out of the menu.
   The menu uses the HTML Popover API, so it opens and closes with the buttons
   or Escape and returns focus to the menu button without JavaScript. With
@@ -409,7 +409,7 @@ Deployed 2026-11-24 via the
 ### Light and dark theme
 
 The site starts in the visitor's system light or dark preference. The theme
-button (in the header on wider screens, at the bottom of the menu on small ones) names the mode it switches to: **Dark mode** while the
+button (in the header from 1024px wide, at the bottom of the menu on phones and tablets) names the mode it switches to: **Dark mode** while the
 site is light and **Light mode** while it is dark. The choice is saved in the
 browser's `localStorage` and applies across pages and later visits. A small
 inline script in the page head sets the theme before content appears, so there
@@ -417,7 +417,7 @@ is no flash of the wrong theme. Without JavaScript, the site follows the system
 preference and the button is hidden. Colors use CSS `light-dark()` with
 placeholder values until the visual design is chosen.
 
-Switching themes fades colors over 0.5 seconds instead of changing them
+Switching themes fades colors over 1 second instead of changing them
 instantly. The fade is turned off for visitors who prefer reduced motion. The
 button label is chosen with CSS from the theme set in the page head, so the
 button does not appear late or shift the page when it loads.
