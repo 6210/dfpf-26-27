@@ -37,7 +37,8 @@ const isHome = Astro.url.pathname === '/';
   }
 
   <div class="actions">
-    <button type="button" data-theme-toggle>
+    <!-- Desktop: next to the menu button. Small screens use the copy inside the menu instead. -->
+    <button type="button" class="header-theme" data-theme-toggle>
       <span data-theme-label="light">Dark mode</span>
       <span data-theme-label="dark">Light mode</span>
     </button>
@@ -55,7 +56,7 @@ const isHome = Astro.url.pathname === '/';
       <span class="visually-hidden">Close menu</span>
     </button>
     <SiteNav label="Main navigation" />
-    <!-- Small screens only: the theme toggle within easy reach of an open menu. -->
+    <!-- Small screens only: the header has no room for the theme toggle, so it sits below the links. -->
     <button type="button" class="menu-theme" data-theme-toggle>
       <span data-theme-label="light">Dark mode</span>
       <span data-theme-label="dark">Light mode</span>
@@ -243,13 +244,16 @@ const isHome = Astro.url.pathname === '/';
     gap: 2.5rem;
   }
 
-  .menu-theme {
-    display: none;
+  /* One theme toggle at a time: in the header on wider screens, in the menu on small ones. */
+  @media (width < 48rem) {
+    .header-theme {
+      display: none;
+    }
   }
 
-  @media (max-width: 48rem) {
+  @media (width >= 48rem) {
     .menu-theme {
-      display: revert;
+      display: none;
     }
   }
 
