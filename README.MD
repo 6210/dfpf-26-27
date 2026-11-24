@@ -540,9 +540,9 @@ down (about 60px at 768px and 45px at 360px) with the same proportions, so long
 words fit without horizontal scrolling. Sizes use `rem`, so they also respect
 the visitor's browser text-size setting.
 
-Introductory paragraphs under a heading use the global `.lead` class
+The paragraph directly after a page's `h1` uses the global `.lead` class
 (`<p class="lead">`): 22px size, 34px line height, and weight 100 in the body
-font. Weight 100 depends on the system font: macOS and iOS show a hairline
+font. Add it to that paragraph on any new page. Weight 100 depends on the system font: macOS and iOS show a hairline
 weight, while systems without one use their lightest available weight.
 
 The workflow also uses [checkout](https://github.com/actions/checkout) and
