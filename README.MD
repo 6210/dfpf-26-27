@@ -591,10 +591,11 @@ To add a weight or font, install its `@fontsource/*` package with an exact
 version, add a variant pointing at the needed Latin WOFF2 file, and add its
 license to `public/third-party-licenses.txt`.
 
-Main headings (`h1`) use the design values 44px size and 48px line height from
-1024px wide. On narrower screens the size scales down to 32px at 360px with
-the same proportions, so long words fit without horizontal scrolling. Sizes
-use `rem`, so they also respect the visitor's browser text-size setting.
+Main headings (`h1`) use the design values 70px size, 72px line height, and
+-2px letter spacing from 1024px wide. On narrower screens the size scales
+down (about 55px at 768px and 32px at 360px) with the same proportions, so long
+words fit without horizontal scrolling. Sizes use `rem`, so they also respect
+the visitor's browser text-size setting.
 
 The paragraph directly after a page's `h1` uses the global `.lead` class
 (`<p class="lead">`): 22px size, 34px line height, and weight 100 in the body

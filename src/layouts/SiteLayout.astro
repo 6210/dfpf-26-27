@@ -172,14 +172,14 @@ const pageFade: TransitionDirectionalAnimations = {
   }
 
   /*
-   * Design values: 44px size, 48px line height. The size scales from 32px at
-   * 360px wide to 44px (2.75rem) at 1024px and wider; line height and spacing
+   * Design values: 70px size, 72px line height, -2px letter spacing from 1024px
+   * wide. The size scales down to 32px at 360px wide; line height and spacing
    * keep the same proportions at every size.
    */
   h1 {
-    font-size: clamp(2rem, 1.593rem + 1.807vw, 2.75rem);
+    font-size: clamp(2rem, 0.7125rem + 5.723vw, 4.375rem);
     letter-spacing: calc(-2em / 70);
-    line-height: calc(48 / 44);
+    line-height: calc(72 / 70);
     overflow-wrap: break-word;
   }
 
