@@ -88,16 +88,17 @@ open decisions.
 
 ### Next: product and UI
 
-Build a lightweight, interactive single-page experience for recruiters and
-other potential hirers. Start with approved content and a clear primary action,
-then develop the UI, browser-preferred light and dark themes, and self-hosted
-typography. See [TODO.md](TODO.md) for the product tasks and acceptance checks.
+Build a lightweight, interactive experience for recruiters and other potential
+hirers, with shareable URLs and SPA-style navigation. Start with approved
+content and a clear primary action, then develop the UI, browser-preferred light
+and dark themes, and self-hosted typography. See [TODO.md](TODO.md) for the
+product tasks and acceptance checks.
 
 ### Repository structure
 
 The existing Markdown files describe experience and provide project context.
 They are reference material, not automatically published website content. The
-current website is still the placeholder in `src/pages/index.astro`.
+current website contains placeholder home, experience, and not-found pages.
 
 ```text
 .
@@ -106,7 +107,10 @@ current website is still the placeholder in `src/pages/index.astro`.
 ├── requirements.md           Product and quality requirements
 ├── TODO.md                   Product and UI tasks
 ├── inspiration.md, stack.md  Design and technology references
-├── src/pages/index.astro     Current website page
+├── astro.config.mjs          Production URL and URL format
+├── src/pages/                Home, experience, and not-found pages
+├── src/layouts/              Shared page structure and client navigation
+├── tests/                    Generated-page checks
 ├── .github/workflows/        Quality checks and deployment
 ├── package.json              Scripts and dependencies
 └── documents/                Local reference files; ignored by Git
@@ -118,14 +122,15 @@ flowchart TD
     Repo --> References["Experience and project Markdown"]
     Repo --> Planning["Requirements and TODO"]
     Repo --> Source["src/"]
-    Source --> Pages["pages/index.astro"]
+    Source --> Pages["pages/ (shareable pages)"]
+    Source --> Layout["layouts/ (shared page structure)"]
     Repo --> Workflow[".github/workflows/"]
     Repo --> Config["Package and quality configuration"]
     Repo --> Local["documents/ (local only; Git-ignored)"]
 ```
 
-As the site grows, use the following structure. These folders are **proposed**;
-create them only when their contents are needed:
+As the site grows, use the following structure. `pages/` and `layouts/` exist;
+the other folders are **proposed** and should be created only when needed:
 
 ```text
 src/
@@ -150,9 +155,9 @@ flowchart LR
     Docs["Existing Markdown<br/>experience references"]
     Review["Review and approve<br/>content (planned)"]
     Content["Website content<br/>(planned)"]
-    Page["Astro page<br/>current placeholder"]
+    Page["Astro pages<br/>current placeholders"]
     Build["Astro static build"]
-    Checks["Lighthouse quality checks"]
+    Checks["Page tests and<br/>Lighthouse quality checks"]
     Deploy["Cloudflare Pages"]
     Site["Recruiters and<br/>potential hirers"]
 
@@ -176,6 +181,24 @@ npm run dev
 
 Run `npm run build` to generate the static site in `dist/`, and
 `npm run preview` to preview the build locally.
+
+### Navigation and search
+
+Astro generates separate HTML pages for `/` and `/experience/`. Its built-in
+client router provides SPA-style navigation when JavaScript is available;
+ordinary links still work without it. The generated `404.html` supplies a
+not-found page. Verify missing URLs on Cloudflare after deployment.
+
+Each placeholder page has its own title, description, and canonical URL, but is
+temporarily marked `noindex`: it is not ready to appear in search results.
+Approve real content before removing that instruction and creating a sitemap.
+The canonical origin is currently `https://dfpf-26-27.pages.dev`; update
+`astro.config.mjs` if the production domain changes.
+
+Local implementation checks: the build, generated-page tests, and Lighthouse
+checks passed. Browser checks covered client navigation and history, direct
+loading, navigation without JavaScript, and widths of 360 px and 1280 px.
+These changes have not yet been deployed; repeat release checks before pushing.
 
 ### Deploy to Cloudflare Pages
 
@@ -214,7 +237,7 @@ macOS). Repeat the audit against the deployed site before launch.
 
 ### Website quality checks
 
-With Chrome or Chromium installed, run `npm run build` followed by
+With Chrome or Chromium installed, run `npm run build`, `npm test`, and
 `npm run quality`. Lighthouse checks every discovered static page using its
 mobile settings. The check fails if performance or accessibility scores are
 below 90, the viewport check fails, or the initial script transfer exceeds

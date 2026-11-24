@@ -11,19 +11,28 @@ The current site is a placeholder; none of these tasks are complete yet.
   projects, skills, and contact options are appropriate to publish.
 - [ ] Review the existing Markdown experience references and select approved
   material for the site, keeping the content source replaceable in the future.
-- [ ] Establish an original visual direction and a simple hierarchy for the
-  single-page experience.
+- [ ] Establish an original visual direction and a simple hierarchy across the
+  shareable pages.
 
 ## Core UI
 
-- [ ] Build a responsive page with semantic landmarks, clear headings, and
-  accessible navigation. Keep the core content and navigation usable without
+- [ ] Build the final responsive pages with semantic landmarks, clear headings,
+  and accessible navigation. Keep core content and navigation usable without
   JavaScript.
 - [ ] Add purposeful interactions that support the content, work with a
   keyboard, and respect reduced-motion preferences.
-- [ ] Use Astro's static output and small, focused client-side code by default.
-  Decide whether client-side routing is actually needed before adding it or a
-  UI framework; assess any impact on accessibility and the JavaScript budget.
+- [ ] Build on Astro's static pages and client router; check navigation
+  accessibility and the JavaScript budget as interactions are added.
+
+## Search and shareable pages
+
+- [ ] Replace placeholders with approved, useful content and page-specific
+  titles, descriptions, and headings.
+- [ ] Confirm the production domain and update `astro.config.mjs` if it changes.
+- [ ] Once content is approved, remove the temporary `noindex`, create a sitemap
+  containing only approved indexable pages, and review robots guidance.
+- [ ] Verify deployed direct URLs, canonical links, and missing-page HTTP
+  behavior; review search appearance and social sharing metadata before launch.
 
 ## Browser-preferred theme
 

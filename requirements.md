@@ -24,9 +24,9 @@ issue and discussing alternatives with the user before the change goes live.
 
 ## Design and content
 
-- Create an interactive, single-page experience for recruiters and other
-  potential hirers to understand the work, capabilities, and relevant experience
-  presented on the site.
+- Create an interactive experience for recruiters and other potential hirers,
+  with distinct, shareable URLs for relevant work and experience and SPA-style
+  navigation between pages.
 - Make the site's purpose, evidence of work, and next action easy to find. Use
   approved content and examples; do not invent experience or publish sensitive
   project information.
@@ -41,14 +41,25 @@ issue and discussing alternatives with the user before the change goes live.
 - Use a small set of self-hosted fonts with suitable fallback fonts. Check
   licenses and avoid third-party font requests.
 - Keep the initial content and navigation usable without JavaScript; add
-  interactive behavior progressively. Assess whether client-side routing is
-  needed before adding a routing or UI framework.
+  interactive behavior progressively. Use Astro's client router for SPA-style
+  navigation without introducing a separate routing or UI framework.
 - Use references to develop an original visual direction rather than copying
   another site.
 - Keep interactions purposeful. Limit each page to one resource-intensive visual
   effect, such as a physics scene, 3D effect, shader, or particle system.
 - Keep component and motion dependencies minimal; avoid introducing competing
   libraries for the same purpose without a documented reason.
+
+## Search and discoverability
+
+- Serve meaningful content and ordinary links in each page's initial HTML.
+  Give indexable pages descriptive, distinct titles, descriptions, headings, and
+  canonical URLs using the agreed production domain.
+- Keep placeholder pages marked `noindex` until their content is approved and
+  ready for search. Before launch, review indexing, a sitemap of approved pages,
+  robots guidance, and the behavior of missing URLs on the deployed host.
+- Treat page speed as one part of SEO, alongside useful content, accessibility,
+  crawlability, appropriate metadata, and stable shareable URLs.
 
 ## Accessibility and responsiveness
 
@@ -111,6 +122,7 @@ Cloudflare can deploy a push before the checks finish.
 ## Decisions still to make
 
 - Exact primary action, approved content, and visual direction.
-- Whether a manual theme override or client-side routing is needed.
+- Whether a manual theme override is needed.
+- The final production domain, approved search snippets, and sitemap contents.
 - Whether physics or other motion is needed, and how it should behave.
 - Applicable legal notices and any approved external services.
