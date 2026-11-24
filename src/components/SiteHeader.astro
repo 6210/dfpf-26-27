@@ -55,6 +55,11 @@ const isHome = Astro.url.pathname === '/';
       <span class="visually-hidden">Close menu</span>
     </button>
     <SiteNav label="Main navigation" />
+    <!-- Small screens only: the theme toggle within easy reach of an open menu. -->
+    <button type="button" class="menu-theme" data-theme-toggle>
+      <span data-theme-label="light">Dark mode</span>
+      <span data-theme-label="dark">Light mode</span>
+    </button>
   </div>
 
   <span class="progress" aria-hidden="true" data-progress></span>
@@ -221,9 +226,31 @@ const isHome = Astro.url.pathname === '/';
     overflow: hidden;
   }
 
+  /* Just the X, tucked about 5px from the top-right corner; the padding keeps a comfortable tap target. */
   .menu-close {
-    inset: 0.75rem 1.5rem auto auto;
+    border: 0;
+    inset: 1px 1px auto auto;
+    padding: 4px;
     position: absolute;
+  }
+
+  .menu-close:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .site-menu:popover-open {
+    align-content: center;
+    gap: 2.5rem;
+  }
+
+  .menu-theme {
+    display: none;
+  }
+
+  @media (max-width: 48rem) {
+    .menu-theme {
+      display: revert;
+    }
   }
 
   .menu-close .menu-icon {
@@ -372,6 +399,32 @@ const isHome = Astro.url.pathname === '/';
 
     .site-menu :global(nav a:nth-child(n + 6)) {
       --i: 5;
+    }
+
+    /* The small-screen theme toggle arrives last, below the links. */
+    .menu-theme {
+      filter: blur(4px);
+      opacity: 0;
+      transition:
+        background-color 0.5s ease,
+        border-color 0.5s ease,
+        color 0.5s ease,
+        filter 0.6s ease 0.5s,
+        opacity 0.6s ease 0.5s,
+        translate 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s;
+      translate: 0 2.5rem;
+    }
+
+    .site-menu:popover-open .menu-theme {
+      filter: none;
+      opacity: 1;
+      translate: 0 0;
+
+      @starting-style {
+        filter: blur(4px);
+        opacity: 0;
+        translate: 0 2.5rem;
+      }
     }
 
     /* Glides between sections; the first placement happens before data-ready, so it does not slide in from the left. */

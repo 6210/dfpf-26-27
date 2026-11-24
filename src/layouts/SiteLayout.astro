@@ -173,17 +173,17 @@ const pageFade: TransitionDirectionalAnimations = {
 
   /*
    * Design values: 70px size, 72px line height, -2px letter spacing from 1024px
-   * wide. The size scales down to 32px at 360px wide; line height and spacing
+   * wide. The size scales down to 28px at 360px wide; line height and spacing
    * keep the same proportions at every size.
    */
   h1 {
-    font-size: clamp(2rem, 0.7125rem + 5.723vw, 4.375rem);
+    font-size: clamp(1.75rem, 0.327rem + 6.325vw, 4.375rem);
     letter-spacing: calc(-2em / 70);
     line-height: calc(72 / 70);
     overflow-wrap: break-word;
   }
 
-  /* Introductory paragraph under a heading. Design values: 22px size, 34px line height, weight 100. */
+  /* Introductory paragraph under a heading. Design values: 22px size, 34px line height, weight 100; 18px on small screens. */
   .lead {
     font-size: 1.375rem;
     font-weight: 100;
@@ -192,6 +192,9 @@ const pageFade: TransitionDirectionalAnimations = {
 
   /* Hairline text washes out on small light screens, so it is a little heavier there. */
   @media (max-width: 48rem) {
+    .lead {
+      font-size: 1.125rem;
+    }
     :root[data-theme='light'] .lead {
       font-weight: 300;
     }

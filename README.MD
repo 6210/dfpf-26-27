@@ -293,7 +293,10 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   they brighten and the gradient underline grows from the centre. On opening,
   the veil fades in as the blur deepens and the links rise into place, unblurring,
   one after another; on closing they fade away together. None of this animates for
-  visitors who prefer reduced motion. Because the menu covers the hamburger, it has its own close button.
+  visitors who prefer reduced motion. Because the menu covers the hamburger, it
+  has its own close button: a borderless X about 5px from the top-right corner
+  (28px tap target). Below 48rem (768 px) the menu also offers the theme toggle,
+  below the links; it rises in last. Desktop keeps the toggle in the header only.
   The menu uses the HTML Popover API, so it opens and closes with the buttons
   or Escape and returns focus to the menu button without JavaScript. With
   JavaScript, focus moves to the close button and stays in the menu, because
@@ -595,12 +598,12 @@ license to `public/third-party-licenses.txt`.
 
 Main headings (`h1`) use the design values 70px size, 72px line height, and
 -2px letter spacing from 1024px wide. On narrower screens the size scales
-down (about 55px at 768px and 32px at 360px) with the same proportions, so long
+down (about 54px at 768px and 28px at 360px) with the same proportions, so long
 words fit without horizontal scrolling. Sizes use `rem`, so they also respect
 the visitor's browser text-size setting.
 
 The paragraph directly after a page's `h1` uses the global `.lead` class
-(`<p class="lead">`): 22px size, 34px line height, and weight 100 in the body
+(`<p class="lead">`): 22px size (18px below 768px), 34px line height (kept in proportion), and weight 100 in the body
 font. Add it to that paragraph on any new page. Weight 100 depends on the system font: macOS and iOS show a hairline
 weight, while systems without one use their lightest available weight. Hairline
 text washes out on small light screens, so in the light theme below 768px the
