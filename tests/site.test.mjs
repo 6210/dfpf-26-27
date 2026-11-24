@@ -5,6 +5,7 @@ import test from 'node:test';
 test('shareable pages contain distinct metadata and crawlable navigation in HTML', async () => {
   const pages = [
     { file: 'dist/index.html', path: '/', label: 'Home' },
+    { file: 'dist/about/index.html', path: '/about/', label: 'About' },
     { file: 'dist/experience/index.html', path: '/experience/', label: 'Experience' },
     { file: 'dist/skills/index.html', path: '/skills/', label: 'Skills' },
   ];

@@ -98,8 +98,8 @@ product tasks and acceptance checks.
 
 The existing Markdown files describe experience and provide project context.
 They are reference material, not automatically published website content. The
-current website contains placeholder home, experience, skills, and not-found
-pages.
+current website contains placeholder home, about, experience, skills, and
+not-found pages.
 
 ```text
 .
@@ -109,7 +109,7 @@ pages.
 ├── TODO.md                   Product and UI tasks
 ├── inspiration.md, stack.md  Design and technology references
 ├── astro.config.mjs          Production URL and URL format
-├── src/pages/                Home, experience, skills, and not-found pages
+├── src/pages/                Home, about, experience, skills, and 404 pages
 ├── src/layouts/              Shared page structure and client navigation
 ├── src/components/           Shared navigation and footer
 ├── tests/                    Generated-page checks
@@ -188,7 +188,9 @@ Run `npm run build` to generate the static site in `dist/`, and
 
 ### Navigation and search
 
-Astro generates separate HTML pages for `/`, `/experience/`, and `/skills/`.
+Astro generates separate HTML pages for `/`, `/about/`, `/experience/`, and
+`/skills/`. To add a page, create it in `src/pages/` using `SiteLayout` and add
+it to the list in `src/components/SiteNav.astro`.
 Its built-in client router provides SPA-style navigation when JavaScript is
 available; ordinary links still work without it. The generated `404.html`
 supplies a not-found page.
