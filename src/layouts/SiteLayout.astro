@@ -153,6 +153,13 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     overflow-wrap: break-word;
   }
 
+  /* Introductory paragraph under a heading. Design values: 22px size, 34px line height, weight 100. */
+  .lead {
+    font-size: 1.375rem;
+    font-weight: 100;
+    line-height: calc(34 / 22);
+  }
+
   nav {
     display: flex;
     flex-wrap: wrap;
