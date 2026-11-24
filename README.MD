@@ -289,8 +289,8 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   browser cannot blur or the visitor prefers reduced transparency. Links are
   centred in the heading font; on hover, keyboard focus, and the current page
   they brighten and the gradient underline grows from the centre. On opening,
-  the veil fades in as the blur deepens and the links rise into place one after
-  another; on closing they fade away together. None of this animates for
+  the veil fades in as the blur deepens and the links rise into place, unblurring,
+  one after another; on closing they fade away together. None of this animates for
   visitors who prefer reduced motion. Because the menu covers the hamburger, it has its own close button.
   The menu uses the HTML Popover API, so it opens and closes with the buttons
   or Escape and returns focus to the menu button without JavaScript. With
@@ -319,8 +319,9 @@ Visitors who prefer reduced motion jump straight there. Without JavaScript, CSS
 allowed.
 
 **Page transitions.** Moving to another page keeps the header in place while
-the content and footer fade: going forward, the old page drifts up and away
-and the new one rises in from below; going Back, both move downward instead.
+the content and footer fade, blur, and shrink slightly: going forward, the old
+page drifts up and away and the new one rises in from below; going Back, both
+move downward instead.
 `pageFade` in `SiteLayout.astro` defines this with Astro's view transitions,
 and the `page-fade-*` keyframes sit in its global styles. Links to sections on
 the same page do not fade; they smooth-scroll as above. Visitors who prefer

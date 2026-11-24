@@ -32,12 +32,12 @@ const fade = (name: string, duration: string, delay = '0s') => ({
 });
 const pageFade: TransitionDirectionalAnimations = {
   forwards: {
-    old: fade('page-fade-out-up', '0.3s'),
-    new: fade('page-fade-in-up', '0.5s', '0.1s'),
+    old: fade('page-fade-out-up', '0.45s'),
+    new: fade('page-fade-in-up', '0.8s', '0.15s'),
   },
   backwards: {
-    old: fade('page-fade-out-down', '0.3s'),
-    new: fade('page-fade-in-down', '0.5s', '0.1s'),
+    old: fade('page-fade-out-down', '0.45s'),
+    new: fade('page-fade-in-down', '0.8s', '0.15s'),
   },
 };
 ---
@@ -237,32 +237,40 @@ const pageFade: TransitionDirectionalAnimations = {
     }
   }
 
-  /* Page-to-page fades; see pageFade above. */
+  /* Page-to-page fades; see pageFade above. The faded state also softens and shrinks slightly. */
   @keyframes page-fade-out-up {
     to {
+      filter: blur(6px);
       opacity: 0;
-      translate: 0 -1.5rem;
+      scale: 0.98;
+      translate: 0 -3rem;
     }
   }
 
   @keyframes page-fade-in-up {
     from {
+      filter: blur(6px);
       opacity: 0;
-      translate: 0 1.5rem;
+      scale: 0.98;
+      translate: 0 3rem;
     }
   }
 
   @keyframes page-fade-out-down {
     to {
+      filter: blur(6px);
       opacity: 0;
-      translate: 0 1.5rem;
+      scale: 0.98;
+      translate: 0 3rem;
     }
   }
 
   @keyframes page-fade-in-down {
     from {
+      filter: blur(6px);
       opacity: 0;
-      translate: 0 -1.5rem;
+      scale: 0.98;
+      translate: 0 -3rem;
     }
   }
 
