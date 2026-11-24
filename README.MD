@@ -283,13 +283,15 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   to a second row and scrolls sideways if needed, keeping the current link in
   view.
 - **Theme toggle**, then a **menu button** (hamburger, placeholder styling)
-  that opens the page navigation full screen. The page behind shows through a
-  blurred, slightly see-through background (solid when the browser cannot blur
-  or the visitor prefers reduced transparency). Links are centred in the
-  heading font; on hover, keyboard focus, and the current page they brighten
-  and the gradient underline grows from the centre. The menu fades in, and
-  neither the fade nor the underline animates for visitors who prefer reduced
-  motion. Because the menu covers the hamburger, it has its own close button.
+  that opens the page navigation full screen. A light veil and a soft 6 px blur
+  keep the page behind recognisable in both themes (the light theme gets a
+  thinner veil, because a white wash hides more). The veil is solid when the
+  browser cannot blur or the visitor prefers reduced transparency. Links are
+  centred in the heading font; on hover, keyboard focus, and the current page
+  they brighten and the gradient underline grows from the centre. On opening,
+  the veil fades in as the blur deepens and the links rise into place one after
+  another; on closing they fade away together. None of this animates for
+  visitors who prefer reduced motion. Because the menu covers the hamburger, it has its own close button.
   The menu uses the HTML Popover API, so it opens and closes with the buttons
   or Escape and returns focus to the menu button without JavaScript. With
   JavaScript, focus moves to the close button and stays in the menu, because
@@ -316,6 +318,14 @@ Visitors who prefer reduced motion jump straight there. Without JavaScript, CSS
 `scroll-behavior: smooth` gives a plain smooth scroll, also only when motion is
 allowed.
 
+**Page transitions.** Moving to another page keeps the header in place while
+the content and footer fade: going forward, the old page drifts up and away
+and the new one rises in from below; going Back, both move downward instead.
+`pageFade` in `SiteLayout.astro` defines this with Astro's view transitions,
+and the `page-fade-*` keyframes sit in its global styles. Links to sections on
+the same page do not fade; they smooth-scroll as above. Visitors who prefer
+reduced motion get an instant swap.
+
 `--gradient-accents` in `SiteLayout.astro` blends all six highlight colours
 (see below) into one gradient. It is the site's signature colour, used for the
 name and the current-section underline on every page; it follows the theme
@@ -323,8 +333,9 @@ because each accent does. In forced-colours mode the name falls back to the
 system text colour.
 
 Header checks (2026-11-24, local, not yet deployed): build, page tests, and
-Lighthouse passed on every page (performance 93 to 100, accessibility 100,
-under 40 KB of script). Browser checks covered the scroll spy while scrolling and after
+Lighthouse passed on every page (performance 100, accessibility 100,
+under 40 KB of script). Browser checks covered the forward (fade up) and Back
+(fade down) page transitions, the scroll spy while scrolling and after
 clicking section links; hiding the header on scroll down and showing it on
 scroll up; opening the full-screen menu by mouse and keyboard, focus moving to
 the close button and staying in the menu, the page keeping its scroll position,

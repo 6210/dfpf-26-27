@@ -4,6 +4,7 @@ import { ClientRouter } from 'astro:transitions';
 import GetInTouch from '../components/GetInTouch.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader, { type Section } from '../components/SiteHeader.astro';
+import type { TransitionDirectionalAnimations } from 'astro';
 
 interface Props {
   title: string;
@@ -20,6 +21,25 @@ if (!Astro.site) {
 }
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+
+// Content drifts up and away while the next page rises in; Back reverses the direction.
+const fade = (name: string, duration: string, delay = '0s') => ({
+  name,
+  duration,
+  delay,
+  easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+  fillMode: 'both',
+});
+const pageFade: TransitionDirectionalAnimations = {
+  forwards: {
+    old: fade('page-fade-out-up', '0.3s'),
+    new: fade('page-fade-in-up', '0.5s', '0.1s'),
+  },
+  backwards: {
+    old: fade('page-fade-out-down', '0.3s'),
+    new: fade('page-fade-in-down', '0.5s', '0.1s'),
+  },
+};
 ---
 
 <!doctype html>
@@ -71,11 +91,13 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body>
     <SiteHeader sections={sections.length > 0 ? [...sections, { id: 'contact', label: 'Contact' }] : sections} />
-    <main>
-      <slot />
-      <GetInTouch />
-    </main>
-    <SiteFooter />
+    <div transition:name="page" transition:animate={pageFade}>
+      <main>
+        <slot />
+        <GetInTouch />
+      </main>
+      <SiteFooter />
+    </div>
   </body>
 </html>
 
@@ -212,6 +234,44 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
         background-color 0.5s ease,
         border-color 0.5s ease,
         color 0.5s ease;
+    }
+  }
+
+  /* Page-to-page fades; see pageFade above. */
+  @keyframes page-fade-out-up {
+    to {
+      opacity: 0;
+      translate: 0 -1.5rem;
+    }
+  }
+
+  @keyframes page-fade-in-up {
+    from {
+      opacity: 0;
+      translate: 0 1.5rem;
+    }
+  }
+
+  @keyframes page-fade-out-down {
+    to {
+      opacity: 0;
+      translate: 0 1.5rem;
+    }
+  }
+
+  @keyframes page-fade-in-down {
+    from {
+      opacity: 0;
+      translate: 0 -1.5rem;
+    }
+  }
+
+  /* Pages swap instantly for visitors who prefer reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation: none !important;
     }
   }
 </style>
