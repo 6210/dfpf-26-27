@@ -31,6 +31,7 @@ const isHome = Astro.url.pathname === '/';
         {sections.map(({ id, label }) => (
           <a href={`#${id}`}>{label}</a>
         ))}
+        <span class="spy-indicator" aria-hidden="true" data-spy-indicator />
       </nav>
     )
   }
@@ -50,6 +51,8 @@ const isHome = Astro.url.pathname === '/';
   <div id="site-menu" class="site-menu" popover>
     <SiteNav label="Main navigation" />
   </div>
+
+  <span class="progress" aria-hidden="true" data-progress></span>
 </header>
 
 <style>
@@ -106,28 +109,42 @@ const isHome = Astro.url.pathname === '/';
   }
 
   .spy a {
-    color: inherit;
+    /* Muted, not hidden: about 6.4:1 contrast in light mode and 8.6:1 in dark. */
+    color: color-mix(in srgb, var(--color-text) 70%, var(--color-background));
     padding-block: 0.25rem;
-    position: relative;
     text-decoration: none;
     white-space: nowrap;
   }
 
-  .spy a::after {
+  /* Colour rather than weight marks the current link, so neighbouring links never shift. */
+  .spy a:hover,
+  .spy [aria-current='location'] {
+    color: var(--color-text);
+  }
+
+  .spy-indicator {
     background: var(--gradient-accents);
     block-size: 2px;
-    content: '';
-    inset: auto 0 0;
+    inline-size: var(--indicator-width, 0);
+    inset: auto auto 0 0;
+    opacity: 0;
+    pointer-events: none;
     position: absolute;
-    transform: scaleX(0);
+    transform: translateX(var(--indicator-x, 0));
   }
 
-  .spy [aria-current='location'] {
-    font-weight: 700;
+  .spy-indicator[data-ready] {
+    opacity: 1;
   }
 
-  .spy [aria-current='location']::after {
-    transform: scaleX(1);
+  .progress {
+    background: var(--gradient-accents);
+    block-size: 2px;
+    inset: auto 0 0;
+    pointer-events: none;
+    position: absolute;
+    transform: scaleX(var(--progress, 0));
+    transform-origin: left;
   }
 
   .actions {
@@ -192,19 +209,46 @@ const isHome = Astro.url.pathname === '/';
         transform 0.3s ease;
     }
 
-    .spy a::after {
-      transition: transform 0.3s ease;
+    .spy a {
+      transition: color 0.3s ease;
+    }
+
+    /* Glides between sections; the first placement happens before data-ready, so it does not slide in from the left. */
+    .spy-indicator[data-ready] {
+      transition:
+        inline-size 0.45s cubic-bezier(0.65, 0, 0.35, 1),
+        opacity 0.3s ease,
+        transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .spy-indicator,
+    .progress {
+      background: Highlight;
     }
   }
 </style>
 
 <script>
+  import { navigate } from 'astro:transitions/client';
+
+  // Fired around eased in-page scrolls so the header and scroll spy can follow along.
+  const scrollStart = 'site:smooth-scroll-start';
+  const scrollEnd = 'site:smooth-scroll-end';
+  // Any of these means the visitor has taken over scrolling.
+  const userScrollEvents = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const cleanups: Array<() => void> = [];
+  let cancelSmoothScroll: (() => void) | undefined;
+
+  // Capture phase, so this runs before the client router handles the click.
+  document.addEventListener('click', onAnchorClick, true);
 
   document.addEventListener('astro:page-load', () => {
     const header = document.querySelector<HTMLElement>('[data-site-header]');
     if (header) {
-      cleanups.push(autoHide(header));
+      cleanups.push(autoHide(header), readingProgress(header));
     }
     const spy = document.querySelector<HTMLElement>('[data-spy]');
     if (spy) {
@@ -213,6 +257,7 @@ const isHome = Astro.url.pathname === '/';
   });
 
   document.addEventListener('astro:before-swap', () => {
+    cancelSmoothScroll?.();
     for (const cleanup of cleanups.splice(0)) {
       cleanup();
     }
@@ -238,17 +283,103 @@ const isHome = Astro.url.pathname === '/';
     };
   }
 
+  function scrollOffset(): number {
+    return parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+  }
+
+  /** Turns same-page #links anywhere on the site into a gentle eased scroll. */
+  function onAnchorClick(event: MouseEvent) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    const link = (event.target as Element).closest('a[href]');
+    if (!(link instanceof HTMLAnchorElement) || (link.target && link.target !== '_self') || link.hasAttribute('download')) {
+      return;
+    }
+    const url = new URL(link.href);
+    const samePage = url.origin === location.origin && url.pathname === location.pathname && url.search === location.search;
+    const target = samePage && url.hash ? document.getElementById(decodeURIComponent(url.hash.slice(1))) : null;
+    // Without a target, or with reduced motion, the client router jumps there as usual.
+    if (!target || reducedMotion.matches) {
+      return;
+    }
+    event.preventDefault();
+    smoothScrollTo(target, url.href, link);
+  }
+
+  function smoothScrollTo(target: HTMLElement, href: string, link: HTMLAnchorElement) {
+    cancelSmoothScroll?.();
+    document.dispatchEvent(new CustomEvent(scrollStart, { detail: { id: target.id } }));
+
+    // Let the client router record history and move focus exactly as for a normal click. It jumps to the
+    // target synchronously, which gives the browser's own end position; return to the start before anything
+    // is painted and glide there instead.
+    const root = document.documentElement;
+    const from = scrollY;
+    root.style.scrollBehavior = 'auto';
+    void navigate(href, { sourceElement: link });
+    const to = scrollY;
+    scrollTo({ top: from, behavior: 'instant' });
+    root.style.scrollBehavior = '';
+
+    const distance = to - from;
+    // Longer trips take a little longer, but never so long that it feels sluggish.
+    const duration = Math.min(1100, Math.max(450, 300 + Math.abs(distance) * 0.25));
+    const ease = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
+    let startTime: number | undefined;
+    let frame = 0;
+
+    const finish = (arrived: boolean) => {
+      cancelAnimationFrame(frame);
+      for (const type of userScrollEvents) {
+        removeEventListener(type, interrupt);
+      }
+      cancelSmoothScroll = undefined;
+      document.dispatchEvent(new CustomEvent(scrollEnd, { detail: { id: target.id, arrived } }));
+    };
+    const interrupt = () => finish(false);
+
+    const step = (now: number) => {
+      startTime ??= now;
+      const progress = Math.min(1, (now - startTime) / duration);
+      scrollTo({ top: from + distance * ease(progress), behavior: 'instant' });
+      if (progress < 1) {
+        frame = requestAnimationFrame(step);
+      } else {
+        finish(true);
+      }
+    };
+
+    for (const type of userScrollEvents) {
+      addEventListener(type, interrupt, { passive: true });
+    }
+    cancelSmoothScroll = interrupt;
+    frame = requestAnimationFrame(step);
+  }
+
   /** Hides the header while scrolling down and brings it back on any scroll up. */
   function autoHide(header: HTMLElement): () => void {
     const menu = header.querySelector<HTMLElement>('[popover]');
     const threshold = 8;
     let lastY = scrollY;
+    let guided = false;
 
     const show = () => header.removeAttribute('data-hidden');
+    // Keep the header in view during an eased scroll so the section indicator can be seen travelling.
+    const onStart = () => {
+      guided = true;
+      show();
+    };
+    const onEnd = () => {
+      guided = false;
+      lastY = scrollY;
+    };
+
     const stopScroll = onScrollFrame(() => {
       const y = scrollY;
       const delta = y - lastY;
-      if (Math.abs(delta) < threshold) {
+      if (guided || Math.abs(delta) < threshold) {
+        if (guided) lastY = y;
         return;
       }
       lastY = y;
@@ -262,19 +393,46 @@ const isHome = Astro.url.pathname === '/';
     });
 
     header.addEventListener('focusin', show);
+    document.addEventListener(scrollStart, onStart);
+    document.addEventListener(scrollEnd, onEnd);
     return () => {
       stopScroll();
       header.removeEventListener('focusin', show);
+      document.removeEventListener(scrollStart, onStart);
+      document.removeEventListener(scrollEnd, onEnd);
     };
+  }
+
+  /** Fills the line along the bottom of the header as the visitor reads down the page. */
+  function readingProgress(header: HTMLElement): () => void {
+    return onScrollFrame(() => {
+      const scrollable = document.documentElement.scrollHeight - innerHeight;
+      const progress = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
+      header.style.setProperty('--progress', progress.toFixed(4));
+    });
   }
 
   /** Marks the section currently being read as the current location in the on-page navigation. */
   function scrollSpy(nav: HTMLElement): () => void {
     const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
-    const targets = links.map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))));
+    const ids = links.map((link) => decodeURIComponent(link.hash.slice(1)));
+    const targets = ids.map((id) => document.getElementById(id));
+    const indicator = nav.querySelector<HTMLElement>('[data-spy-indicator]');
     let current: HTMLAnchorElement | undefined;
-    // A clicked link stays current until the visitor scrolls, even if its section cannot reach the top.
+    // After arriving at a section it stays current until the visitor scrolls, even if it cannot reach the top.
     let pinned: HTMLAnchorElement | undefined;
+
+    const placeIndicator = () => {
+      if (!indicator || !current) {
+        return;
+      }
+      indicator.style.setProperty('--indicator-x', `${current.offsetLeft}px`);
+      indicator.style.setProperty('--indicator-width', `${current.offsetWidth}px`);
+      if (!indicator.hasAttribute('data-ready')) {
+        // Show it only after the first placement has rendered, so it does not glide in from the edge.
+        requestAnimationFrame(() => indicator.setAttribute('data-ready', ''));
+      }
+    };
 
     const mark = (next: HTMLAnchorElement) => {
       if (next === current) {
@@ -283,10 +441,14 @@ const isHome = Astro.url.pathname === '/';
       current?.removeAttribute('aria-current');
       next.setAttribute('aria-current', 'location');
       current = next;
+      placeIndicator();
 
       // On narrow screens the links can overflow; keep the current one in view without scrolling the page.
       if (nav.scrollWidth > nav.clientWidth) {
-        nav.scrollLeft = next.offsetLeft - (nav.clientWidth - next.offsetWidth) / 2;
+        nav.scrollTo({
+          left: next.offsetLeft - (nav.clientWidth - next.offsetWidth) / 2,
+          behavior: reducedMotion.matches ? 'instant' : 'smooth',
+        });
       }
     };
 
@@ -296,7 +458,7 @@ const isHome = Astro.url.pathname === '/';
         return;
       }
       // A section becomes current once its top reaches the area just below the sticky header.
-      const line = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + 16;
+      const line = scrollOffset() + 16;
       const atBottom = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
       let index = 0;
       targets.forEach((target, i) => {
@@ -307,28 +469,51 @@ const isHome = Astro.url.pathname === '/';
       mark(links[atBottom ? links.length - 1 : index]);
     };
 
-    const onClick = (event: MouseEvent) => {
-      const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
-      if (link) {
-        pinned = link;
-        mark(link);
+    const pin = (id: string) => {
+      const index = ids.indexOf(id);
+      pinned = index === -1 ? undefined : links[index];
+      update();
+    };
+    const onEnd = (event: Event) => {
+      const { id, arrived } = (event as CustomEvent<{ id: string; arrived: boolean }>).detail;
+      guided = false;
+      if (arrived) {
+        pin(id);
+      }
+    };
+    // Covers jumps without the eased scroll, such as with reduced motion or Back and Forward.
+    // During an eased scroll the indicator travels with the page instead and is pinned on arrival.
+    let guided = false;
+    const onStart = () => {
+      guided = true;
+      pinned = undefined;
+    };
+    const onHashChange = () => {
+      if (!guided) {
+        pin(decodeURIComponent(location.hash.slice(1)));
       }
     };
     const unpin = () => {
       pinned = undefined;
     };
-    const unpinEvents = ['wheel', 'touchmove', 'keydown'] as const;
 
-    nav.addEventListener('click', onClick);
-    for (const type of unpinEvents) {
+    const resizer = new ResizeObserver(placeIndicator);
+    resizer.observe(nav);
+    document.addEventListener(scrollStart, onStart);
+    document.addEventListener(scrollEnd, onEnd);
+    addEventListener('hashchange', onHashChange);
+    for (const type of userScrollEvents) {
       addEventListener(type, unpin, { passive: true });
     }
     const stopScroll = onScrollFrame(update);
 
     return () => {
       stopScroll();
-      nav.removeEventListener('click', onClick);
-      for (const type of unpinEvents) {
+      resizer.disconnect();
+      document.removeEventListener(scrollStart, onStart);
+      document.removeEventListener(scrollEnd, onEnd);
+      removeEventListener('hashchange', onHashChange);
+      for (const type of userScrollEvents) {
         removeEventListener(type, unpin);
       }
     };

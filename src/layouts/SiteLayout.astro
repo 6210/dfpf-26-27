@@ -191,6 +191,11 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    /* Native smooth scrolling for in-page links when scripts are off; the header script eases them otherwise. */
+    :root {
+      scroll-behavior: smooth;
+    }
+
     body,
     a,
     button {

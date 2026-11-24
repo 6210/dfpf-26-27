@@ -271,7 +271,8 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   page passes `sections` (an `id` and short `label` each) to `SiteLayout`; the
   ids must exist on the page, which a page test checks. As the visitor scrolls,
   the section whose top has reached the area below the header is marked with
-  `aria-current="location"`, bold text, and a gradient underline. Pages
+  `aria-current="location"` and full-strength text (other links are slightly
+  muted), and a single gradient underline slides across to it. Pages
   without `sections`, such as 404, leave it out. Below 48rem (768 px) it moves
   to a second row and scrolls sideways if needed, keeping the current link in
   view.
@@ -285,6 +286,20 @@ any scroll up. It stays visible while it has keyboard focus or the menu is open,
 and slides without animation for visitors who prefer reduced motion. Without
 JavaScript it simply stays at the top and the section links are ordinary
 in-page links. `scroll-padding-top` keeps linked sections clear of the header.
+A thin gradient bar along the bottom of the header shows how far down the page
+the visitor has read.
+
+**Smooth scrolling.** Clicking any link to a section on the same page (in the
+header or anywhere in the content) glides there with a gentle ease-in-out
+curve. Longer trips take a little longer, between 0.45 and 1.1 seconds. While
+it moves, the header stays visible and the underline travels through each
+section it passes. Scrolling, touching, clicking, or pressing a key stops the
+glide and hands control back at once. The address bar, Back and Forward, and
+keyboard focus behave exactly as for an ordinary link: the script lets Astro's
+client router record the move, then animates to the position the browser chose.
+Visitors who prefer reduced motion jump straight there. Without JavaScript, CSS
+`scroll-behavior: smooth` gives a plain smooth scroll, also only when motion is
+allowed.
 
 `--gradient-accents` in `SiteLayout.astro` blends all six highlight colours
 (see below) into one gradient. It is the site's signature colour, used for the
@@ -301,6 +316,13 @@ click and on client navigation; light and dark themes; and the one-row layout at
 1280 px and the two-row layout at 360 px without horizontal scrolling. Closing
 the menu with Escape could not be confirmed: the test browser blocks Escape for
 every popover, including on a bare test page. Check it in a desktop browser.
+
+Smooth-scroll checks (local, not yet deployed, with the pages temporarily
+padded to be long): build, page tests, and Lighthouse passed on every page
+(performance 100, accessibility 100, at most about 38 KB of script). Browser
+checks covered gliding by mouse and keyboard, the underline travelling during the
+glide, stopping on wheel input, the reduced-motion jump, Back and Forward
+restoring each position, and Tab continuing from the target section.
 
 `src/components/SiteFooter.astro` appears on every page through the shared
 layout. It repeats the navigation and shows the year, Gqeberha, South Africa,
