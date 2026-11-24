@@ -36,15 +36,17 @@ The current site is a placeholder; none of these tasks are complete yet.
 
 ## Browser-preferred theme
 
-- [ ] Provide light and dark styles using the browser or operating system's
+- [x] Provide light and dark styles using the browser or operating system's
   preferred color scheme, without requiring JavaScript.
-- [ ] Check that the theme follows preference changes and that content,
-  controls, and focus indicators remain visible in both themes.
+- [x] Add a light/dark toggle that starts from the visitor's preference and
+  remembers their choice across pages and visits.
+- [ ] Check that the theme follows preference changes on real devices and that
+  content, controls, and focus indicators remain visible in both themes.
 - [ ] Verify text contrast of at least 4.5:1 for normal text and 3:1 for large
   text; verify relevant interface and focus indicators at 3:1 against adjacent
-  colors.
-- [ ] Decide whether a manual theme override is needed before adding one or
-  storing a preference.
+  colors. Recheck when the final palette is chosen.
+- [ ] Restyle the toggle as part of the visual design, and decide whether
+  visitors need a way to return to the system preference.
 
 ## Typography
 

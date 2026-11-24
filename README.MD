@@ -203,6 +203,23 @@ Deployed 2026-11-24 via the
 `/` and `/experience/` return 200, and unknown URLs return the 404 page with a
 404 status on Cloudflare Pages.
 
+### Light and dark theme
+
+The site starts in the visitor's system light or dark preference. The
+**Dark mode** button in the header switches themes; the choice is saved in the
+browser's `localStorage` and applies across pages and later visits. A small
+inline script in the page head sets the theme before content appears, so there
+is no flash of the wrong theme. Without JavaScript, the site follows the system
+preference and the button is hidden. Colors use CSS `light-dark()` with
+placeholder values until the visual design is chosen.
+
+Local checks (2026-11-24): build, page tests, and Lighthouse passed
+(accessibility 100). Browser checks covered light and dark preferences,
+toggling by mouse and keyboard, persistence across client navigation, back
+navigation, and reload, and a 360 px width. Live following of a system
+preference change could not be confirmed in the test browser; check it on a
+real device.
+
 ### Deploy to Cloudflare Pages
 
 The existing Cloudflare Pages project is connected to this repository. The

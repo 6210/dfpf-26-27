@@ -38,6 +38,10 @@ issue and discussing alternatives with the user before the change goes live.
 - Follow the browser or operating system's light or dark preference by default.
   Both themes must remain readable and accessible, including when the preference
   changes.
+- Provide a keyboard-accessible light/dark toggle. A visitor's choice overrides
+  their system preference and is remembered on their device with
+  `localStorage` (no cookies, no server request). Without JavaScript, the site
+  follows the system preference and the toggle is hidden.
 - Use a small set of self-hosted fonts with suitable fallback fonts. Check
   licenses and avoid third-party font requests.
 - Keep the initial content and navigation usable without JavaScript; add
@@ -122,7 +126,7 @@ Cloudflare can deploy a push before the checks finish.
 ## Decisions still to make
 
 - Exact primary action, approved content, and visual direction.
-- Whether a manual theme override is needed.
+- Whether to provide a way to reset the theme to the system preference.
 - The final production domain, approved search snippets, and sitemap contents.
 - Whether physics or other motion is needed, and how it should behave.
 - Applicable legal notices and any approved external services.

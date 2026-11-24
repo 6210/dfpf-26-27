@@ -25,6 +25,47 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <meta name="robots" content="noindex" />
     {canonical && <link rel="canonical" href={canonicalUrl} />}
+    <script is:inline>
+      (() => {
+        const key = 'theme';
+        const media = matchMedia('(prefers-color-scheme: dark)');
+        let unsavedTheme = null;
+        const stored = () => {
+          try {
+            const value = localStorage.getItem(key);
+            return value === 'light' || value === 'dark' ? value : null;
+          } catch {
+            return null;
+          }
+        };
+        const current = () => unsavedTheme ?? stored() ?? (media.matches ? 'dark' : 'light');
+        const apply = () => {
+          const theme = current();
+          document.documentElement.dataset.theme = theme;
+          for (const button of document.querySelectorAll('[data-theme-toggle]')) {
+            button.hidden = false;
+            button.setAttribute('aria-pressed', String(theme === 'dark'));
+          }
+        };
+
+        apply();
+        document.addEventListener('DOMContentLoaded', apply);
+        document.addEventListener('astro:after-swap', apply);
+        media.addEventListener('change', apply);
+        document.addEventListener('click', (event) => {
+          if (!(event.target instanceof Element) || !event.target.closest('[data-theme-toggle]')) {
+            return;
+          }
+          const next = current() === 'dark' ? 'light' : 'dark';
+          try {
+            localStorage.setItem(key, next);
+          } catch {
+            unsavedTheme = next;
+          }
+          apply();
+        });
+      })();
+    </script>
     <ClientRouter />
   </head>
   <body>
@@ -36,6 +77,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
           aria-current={Astro.url.pathname === '/experience/' ? 'page' : undefined}
         >Experience</a>
       </nav>
+      <button type="button" data-theme-toggle aria-pressed="false" hidden>Dark mode</button>
     </header>
     <main>
       <slot />
@@ -47,13 +89,38 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
   :root {
     color-scheme: light dark;
     font-family: system-ui, sans-serif;
+    --color-background: light-dark(#ffffff, #121212);
+    --color-text: light-dark(#1a1a1a, #ececec);
+    --color-link: light-dark(#0b57d0, #8ab4f8);
+  }
+
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
   }
 
   body {
+    background: var(--color-background);
     box-sizing: border-box;
+    color: var(--color-text);
     margin: 0 auto;
     max-width: 60rem;
     padding: 1.5rem;
+  }
+
+  a {
+    color: var(--color-link);
+  }
+
+  header {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
   }
 
   nav {
@@ -62,7 +129,22 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     gap: 1rem;
   }
 
-  a:focus-visible {
+  button {
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: 0.25rem;
+    color: inherit;
+    font: inherit;
+    padding: 0.25rem 0.75rem;
+  }
+
+  button[aria-pressed='true'] {
+    background: var(--color-text);
+    color: var(--color-background);
+  }
+
+  a:focus-visible,
+  button:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 3px;
   }

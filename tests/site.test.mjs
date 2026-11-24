@@ -27,6 +27,14 @@ test('shareable pages contain distinct metadata and crawlable navigation in HTML
   assert.equal(new Set(descriptions).size, pages.length);
 });
 
+test('the theme toggle stays hidden without JavaScript and the theme is set before content renders', async () => {
+  const html = await readFile('dist/index.html', 'utf8');
+  const head = html.slice(0, html.indexOf('</head>'));
+
+  assert.match(html, /<button type="button" data-theme-toggle aria-pressed="false" hidden>/);
+  assert.match(head, /dataset\.theme = theme/);
+});
+
 test('the generated not-found page is not presented as canonical content', async () => {
   const html = await readFile('dist/404.html', 'utf8');
 
