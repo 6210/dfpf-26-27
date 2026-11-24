@@ -97,9 +97,11 @@ product tasks and acceptance checks.
 ### Repository structure
 
 The existing Markdown files describe experience and provide project context.
-They are reference material, not automatically published website content. The
-current website contains placeholder home, about, experience, skills, and
-not-found pages.
+They are reference material, not automatically published website content; the
+role description at the top of this README predates the CV update and may be
+out of date. Published content lives in `src/content/` (see "Content and CV"
+below). The home, experience, and skills pages are built from it; the about page
+is still a placeholder.
 
 ```text
 .
@@ -109,9 +111,12 @@ not-found pages.
 ├── TODO.md                   Product and UI tasks
 ├── inspiration.md, stack.md  Design and technology references
 ├── astro.config.mjs          Production URL and URL format
+├── src/content.config.ts     Content schema (roles and profile)
+├── src/content/              Website content: profile and one file per role
+├── src/lib/                  Content helpers (sorting, dates, platforms)
 ├── src/pages/                Home, about, experience, skills, and 404 pages
 ├── src/layouts/              Shared page structure and client navigation
-├── src/components/           Navigation, footer, and physics placeholder
+├── src/components/           Navigation, footer, CV download, physics placeholder
 ├── public/                   Files served as-is (third-party license notices)
 ├── tests/                    Generated-page checks
 ├── .github/workflows/        Quality checks and deployment
@@ -125,7 +130,8 @@ flowchart TD
     Repo --> References["Experience and project Markdown"]
     Repo --> Planning["Requirements and TODO"]
     Repo --> Source["src/"]
-    Source --> Pages["pages/ (shareable pages)"]
+    Source --> Content["content/ (profile and roles)"]
+    Content --> Pages["pages/ (shareable pages)"]
     Source --> Layout["layouts/ (shared page structure)"]
     Source --> Components["components/ (navigation, footer, physics)"]
     Repo --> Public["public/ (served as-is)"]
@@ -135,8 +141,8 @@ flowchart TD
 ```
 
 As the site grows, use the following structure. `pages/`, `layouts/`,
-`components/`, and `public/` exist; the other folders are **proposed** and should
-be created only when needed:
+`components/`, `content/`, and `public/` exist; the other folders are
+**proposed** and should be created only when needed:
 
 ```text
 src/
@@ -154,14 +160,66 @@ site. Keep approved content separate from UI where practical. The content format
 or source can change later; do not assume every repository Markdown file should
 be published or introduce a content service until it is needed.
 
+### Content and CV
+
+The site's career content is structured like a CV and checked at build time
+against the schema in [src/content.config.ts](src/content.config.ts); a missing
+or misspelled field fails the build.
+
+- **Positioning:** [src/content/profile.json](src/content/profile.json) holds the
+  headline, summary, and focus areas (SEO, CRM integration, and campaign
+  technology). The site presents a marketing-department technical lead, not a
+  general developer role.
+- **Roles:** one Markdown file per role in
+  [src/content/roles/](src/content/roles/). Each role lists its areas of
+  responsibility, and each area lists the platforms used. The Experience page
+  shows roles newest first; the Skills page lists every platform with the areas
+  that use it, in the order they first appear. List the most relevant areas and
+  platforms first.
+- **CV download:** put the CV in `public/cv/` and add
+  `"cv": { "href": "/cv/<file>.pdf", "label": "Download CV (PDF)" }` to the
+  profile. A download link then appears on the home, about, and experience
+  pages. The build fails if the file is missing. The CV is public: leave out
+  your home address, ID number, and anything you would not post online.
+
+To add a role from the earlier CV, create a file such as
+`src/content/roles/previous-company.md`:
+
+```md
+---
+title: Job title
+department: Marketing department   # optional
+company: Company name
+companyNote: Any rename or merger   # optional
+start: '2014-03'                    # 'YYYY' or 'YYYY-MM'
+end: '2017-09'                      # leave out for the current role
+summary: >-
+  One or two sentences on the role's purpose.
+areas:
+  - title: Area of responsibility
+    accent: seo   # optional: operations, campaigns, automation, analytics, seo, documentation
+    summary: >-
+      What you delivered and the result.
+    platforms:
+      - Platform name
+---
+```
+
+Local checks (2026-11-24, not yet deployed): build, page tests, and Lighthouse
+passed on every page (performance 100, accessibility 100, no layout shift).
+A test CV file produced download links on the home, about, and experience
+pages, and removing the file stopped the build with a clear error. Pages were
+checked in Chrome at 360 px in both themes, with no horizontal scrolling or
+console errors.
+
 ### How the site is built and deployed
 
 ```mermaid
 flowchart LR
-    Docs["Existing Markdown<br/>experience references"]
-    Review["Review and approve<br/>content (planned)"]
-    Content["Website content<br/>(planned)"]
-    Page["Astro pages<br/>current placeholders"]
+    Docs["Existing Markdown and CV<br/>experience references"]
+    Review["Review and update<br/>content"]
+    Content["src/content/<br/>profile and roles"]
+    Page["Astro pages"]
     Build["Astro static build"]
     Checks["Page tests and<br/>Lighthouse quality checks"]
     Deploy["Cloudflare Pages"]
@@ -169,11 +227,11 @@ flowchart LR
 
     Docs -.-> Review
     Review -.-> Content
-    Content -.-> Page
+    Content --> Page
     Page --> Build --> Checks --> Deploy --> Site
 ```
 
-Dotted lines are future work, not an existing content pipeline. For a push to
+Dotted lines are manual editing steps; solid lines are automated. For a push to
 `main`, GitHub Actions runs the build and checks before deploying. The diagram
 renders on GitHub and in Markdown viewers with Mermaid support; it does not add
 a library or runtime request to the website.
@@ -276,7 +334,7 @@ on the site.
 |---|---|---|---|---|---|
 | Website and Platform Operations | `operations` | Blue | `#1d4ed8` | `#93c5fd` | Trust, stability, reliability |
 | Campaign Experiences and Lead Generation | `campaigns` | Orange | `#c2410c` | `#fdba74` | Energy, enthusiasm, calls to action |
-| Marketing Automation and Data Capture | `automation` | Teal | `#0f766e` | `#5eead4` | Flow, clarity, technology |
+| Marketing Automation and CRM Data Capture | `automation` | Teal | `#0f766e` | `#5eead4` | Flow, clarity, technology |
 | Analytics and Advertising Measurement | `analytics` | Purple | `#7e22ce` | `#d8b4fe` | Insight, analysis, imagination |
 | Regional Content, SEO, and Brand Transition | `seo` | Green | `#15803d` | `#86efac` | Growth, reach, organic search |
 | Documentation and Operational Ownership | `documentation` | Amber | `#a16207` | `#fde047` | Clarity, attention, guidance |

@@ -1,13 +1,46 @@
 ---
 import PhysicsPlaceholder from '../components/PhysicsPlaceholder.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { getPlatforms, getProfile } from '../lib/content';
+
+const { focusAreas } = await getProfile();
+const platforms = await getPlatforms();
 ---
 
 <SiteLayout
   title="Skills | Professional portfolio"
-  description="A dedicated page for sharing professional skills."
+  description="Focus areas and the platforms used across campaign, CRM, analytics, and SEO work."
 >
   <h1>Skills</h1>
-  <p>Skills content is being prepared.</p>
+  <h2>Focus areas</h2>
+  <ul>
+    {focusAreas.map((area) => <li>{area}</li>)}
+  </ul>
+  <h2>Platforms</h2>
+  <dl class="platforms">
+    {
+      platforms.map(({ name, uses }) => (
+        <div>
+          <dt>{name}</dt>
+          <dd>{[...new Set(uses.map(({ area }) => area))].join('; ')}</dd>
+        </div>
+      ))
+    }
+  </dl>
   <PhysicsPlaceholder label="Skills animation" />
 </SiteLayout>
+
+<style>
+  .platforms {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .platforms dt {
+    font-weight: 700;
+  }
+
+  .platforms dd {
+    margin: 0;
+  }
+</style>

@@ -1,7 +1,7 @@
 # Product and UI TODO
 
 Use [requirements.md](requirements.md) as the guardrail for all work below.
-The current site is a placeholder; none of these tasks are complete yet.
+The site is still in progress; checked items are done.
 
 ## Content and direction
 
@@ -13,6 +13,18 @@ The current site is a placeholder; none of these tasks are complete yet.
   material for the site, keeping the content source replaceable in the future.
 - [ ] Establish an original visual direction and a simple hierarchy across the
   shareable pages.
+
+## CV and career content
+
+- [x] Structure career content as CV entries in `src/content/` (profile and
+  one file per role), with platforms per area of responsibility.
+- [ ] Review the current role's areas, wording, and platforms; add any missing
+  platforms and the start month.
+- [ ] Add the roles from the earlier CV, then update them for the current
+  market.
+- [ ] Write the About page content.
+- [ ] Add the updated CV to `public/cv/` and the `cv` entry to the profile so
+  the download link appears.
 
 ## Core UI
 

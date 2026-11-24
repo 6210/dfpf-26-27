@@ -1,0 +1,20 @@
+---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { getProfile } from '../lib/content';
+
+const { cv } = await getProfile();
+
+// Builds run from the project root; fail rather than publish a broken download link.
+if (cv && !existsSync(join(process.cwd(), 'public', cv.href))) {
+  throw new Error(`The CV in src/content/profile.json points to public${cv.href}, which does not exist.`);
+}
+---
+
+{
+  cv && (
+    <p>
+      <a href={cv.href} download>{cv.label}</a>
+    </p>
+  )
+}

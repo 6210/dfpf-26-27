@@ -71,3 +71,13 @@ test('every responsibility accent on the experience page has a colour defined', 
     assert.match(css, new RegExp(`--color-accent-${accent}:\\s*light-dark\\(`), accent);
   }
 });
+
+test('experience and skills pages are built from the role content, including platforms', async () => {
+  const experience = (await readFile('dist/experience/index.html', 'utf8')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const skills = (await readFile('dist/skills/index.html', 'utf8')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+
+  assert.match(experience, /Lead Technical Website Developer Marketing department, Powerfleet · 2017 – Present/);
+  assert.match(experience, /Platforms: Salesforce Marketing Cloud Account Engagement \(Pardot\), Salesforce CRM, Google reCAPTCHA/);
+  assert.match(skills, /Salesforce Marketing Cloud Account Engagement \(Pardot\) Campaign Experiences and Lead Generation; Marketing Automation and CRM Data Capture/);
+  assert.doesNotMatch(experience + skills, /Privacy, Security, and Reliability/);
+});

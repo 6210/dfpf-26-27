@@ -1,14 +1,19 @@
 ---
+import CvDownload from '../components/CvDownload.astro';
 import PhysicsPlaceholder from '../components/PhysicsPlaceholder.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { getProfile } from '../lib/content';
+
+const { headline, summary } = await getProfile();
 ---
 
 <SiteLayout
   title="Professional portfolio"
   description="An interactive portfolio for sharing professional experience and work."
 >
-  <h1>Professional portfolio</h1>
-  <p>This portfolio is being prepared.</p>
+  <h1>{headline}</h1>
+  <p>{summary}</p>
   <p><a href="/experience/">Explore experience</a></p>
+  <CvDownload />
   <PhysicsPlaceholder label="Home animation" />
 </SiteLayout>

@@ -40,6 +40,17 @@ before switching.
   source flexible so another format or source can be adopted later.
 - Establish the site's purpose, intended audience, primary action, and real
   content before settling on a design.
+- Position the owner for SEO, CRM integration, and campaign technology roles in
+  a marketing context (currently Lead Technical Website Developer in a
+  marketing department), not as a general developer. Lead with the most
+  relevant areas and platforms.
+- Keep career content structured like a CV in `src/content/`: one entry per
+  role with dates, areas of responsibility, and the platforms used in each.
+  Use current product names (for example, Salesforce Marketing Cloud Account
+  Engagement (Pardot)) so recruiters recognise them.
+- Offer the CV as a download from the relevant pages once the owner supplies
+  it. It is public: exclude home address, ID numbers, and other personal data
+  the owner would not publish.
 - Follow the browser or operating system's light or dark preference by default.
   Both themes must remain readable and accessible, including when the preference
   changes.
@@ -137,6 +148,8 @@ Cloudflare can deploy a push before the checks finish.
 ## Decisions still to make
 
 - Exact primary action, approved content, and visual direction.
+- The start month of the current role, the earlier roles from the previous CV,
+  and the review of the listed platforms.
 - Whether to provide a way to reset the theme to the system preference.
 - The final production domain, approved search snippets, and sitemap contents.
 - Which pages keep a physics scene, the icon designs, and exactly how scrolling
