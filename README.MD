@@ -319,9 +319,12 @@ Visitors who prefer reduced motion jump straight there. Without JavaScript, CSS
 allowed.
 
 **Page transitions.** Moving to another page keeps the header in place while
-the content and footer fade, blur, and shrink slightly: going forward, the old
-page drifts up and away and the new one rises in from below; going Back, both
-move downward instead.
+the content and footer change: going forward, the old page accelerates up and
+away (0.35 s) while blurring, and the new one snaps in from well below and
+settles (0.8 s); going Back, both move downward instead. Both are slightly
+blurred and smaller while faded. Only position, size, opacity, and blur
+animate, and only on client-side navigation, so the first page load and what
+search engines see are unaffected.
 `pageFade` in `SiteLayout.astro` defines this with Astro's view transitions,
 and the `page-fade-*` keyframes sit in its global styles. Links to sections on
 the same page do not fade; they smooth-scroll as above. Visitors who prefer
@@ -588,16 +591,17 @@ To add a weight or font, install its `@fontsource/*` package with an exact
 version, add a variant pointing at the needed Latin WOFF2 file, and add its
 license to `public/third-party-licenses.txt`.
 
-Main headings (`h1`) use the design values 70px size, 72px line height, and
--2px letter spacing from 1024px wide. On narrower screens the size scales
-down (about 60px at 768px and 45px at 360px) with the same proportions, so long
-words fit without horizontal scrolling. Sizes use `rem`, so they also respect
-the visitor's browser text-size setting.
+Main headings (`h1`) use the design values 44px size and 48px line height from
+1024px wide. On narrower screens the size scales down to 32px at 360px with
+the same proportions, so long words fit without horizontal scrolling. Sizes
+use `rem`, so they also respect the visitor's browser text-size setting.
 
 The paragraph directly after a page's `h1` uses the global `.lead` class
 (`<p class="lead">`): 22px size, 34px line height, and weight 100 in the body
 font. Add it to that paragraph on any new page. Weight 100 depends on the system font: macOS and iOS show a hairline
-weight, while systems without one use their lightest available weight.
+weight, while systems without one use their lightest available weight. Hairline
+text washes out on small light screens, so in the light theme below 768px the
+lead uses weight 300 instead.
 
 The workflow also uses [checkout](https://github.com/actions/checkout) and
 [setup-node](https://github.com/actions/setup-node) (MIT), plus

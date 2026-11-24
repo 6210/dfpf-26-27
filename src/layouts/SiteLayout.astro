@@ -22,22 +22,28 @@ if (!Astro.site) {
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 
-// Content drifts up and away while the next page rises in; Back reverses the direction.
-const fade = (name: string, duration: string, delay = '0s') => ({
+// The old page accelerates away and the next one snaps in and settles; Back reverses the direction.
+const exit = (name: string) => ({
   name,
-  duration,
-  delay,
-  easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+  duration: '0.35s',
+  easing: 'cubic-bezier(0.55, 0, 1, 0.45)',
+  fillMode: 'both',
+});
+const enter = (name: string) => ({
+  name,
+  duration: '0.8s',
+  delay: '0.2s',
+  easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
   fillMode: 'both',
 });
 const pageFade: TransitionDirectionalAnimations = {
   forwards: {
-    old: fade('page-fade-out-up', '0.45s'),
-    new: fade('page-fade-in-up', '0.8s', '0.15s'),
+    old: exit('page-fade-out-up'),
+    new: enter('page-fade-in-up'),
   },
   backwards: {
-    old: fade('page-fade-out-down', '0.45s'),
-    new: fade('page-fade-in-down', '0.8s', '0.15s'),
+    old: exit('page-fade-out-down'),
+    new: enter('page-fade-in-down'),
   },
 };
 ---
@@ -166,14 +172,14 @@ const pageFade: TransitionDirectionalAnimations = {
   }
 
   /*
-   * Design values: 70px size, 72px line height, -2px letter spacing. The size
-   * scales from about 45px at 360px wide to 70px (4.375rem) at 1024px and
-   * wider; line height and spacing keep the same proportions at every size.
+   * Design values: 44px size, 48px line height. The size scales from 32px at
+   * 360px wide to 44px (2.75rem) at 1024px and wider; line height and spacing
+   * keep the same proportions at every size.
    */
   h1 {
-    font-size: clamp(2.5rem, 1.946rem + 3.795vw, 4.375rem);
+    font-size: clamp(2rem, 1.593rem + 1.807vw, 2.75rem);
     letter-spacing: calc(-2em / 70);
-    line-height: calc(72 / 70);
+    line-height: calc(48 / 44);
     overflow-wrap: break-word;
   }
 
@@ -182,6 +188,19 @@ const pageFade: TransitionDirectionalAnimations = {
     font-size: 1.375rem;
     font-weight: 100;
     line-height: calc(34 / 22);
+  }
+
+  /* Hairline text washes out on small light screens, so it is a little heavier there. */
+  @media (max-width: 48rem) {
+    :root[data-theme='light'] .lead {
+      font-weight: 300;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme]) .lead {
+        font-weight: 300;
+      }
+    }
   }
 
   nav {
@@ -237,41 +256,46 @@ const pageFade: TransitionDirectionalAnimations = {
     }
   }
 
-  /* Page-to-page fades; see pageFade above. The faded state also softens and shrinks slightly. */
+  /* Page-to-page fades; see pageFade above. The faded state is also blurred and slightly smaller. */
   @keyframes page-fade-out-up {
     to {
-      filter: blur(6px);
+      filter: blur(12px);
       opacity: 0;
-      scale: 0.98;
-      translate: 0 -3rem;
+      scale: 0.97;
+      translate: 0 -5rem;
     }
   }
 
   @keyframes page-fade-in-up {
     from {
-      filter: blur(6px);
+      filter: blur(12px);
       opacity: 0;
-      scale: 0.98;
-      translate: 0 3rem;
+      scale: 0.97;
+      translate: 0 7rem;
     }
   }
 
   @keyframes page-fade-out-down {
     to {
-      filter: blur(6px);
+      filter: blur(12px);
       opacity: 0;
-      scale: 0.98;
-      translate: 0 3rem;
+      scale: 0.97;
+      translate: 0 5rem;
     }
   }
 
   @keyframes page-fade-in-down {
     from {
-      filter: blur(6px);
+      filter: blur(12px);
       opacity: 0;
-      scale: 0.98;
-      translate: 0 -3rem;
+      scale: 0.97;
+      translate: 0 -7rem;
     }
+  }
+
+  /* New pages start at the top, so the slight scale grows from the visible edge. */
+  ::view-transition-new(page) {
+    transform-origin: 50% 0;
   }
 
   /* Pages swap instantly for visitors who prefer reduced motion. */
