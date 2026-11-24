@@ -2,15 +2,17 @@
 import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
 import SiteFooter from '../components/SiteFooter.astro';
-import SiteNav from '../components/SiteNav.astro';
+import SiteHeader, { type Section } from '../components/SiteHeader.astro';
 
 interface Props {
   title: string;
   description: string;
   canonical?: boolean;
+  /** Sections of the page, in order, for the header's on-page navigation. Each id must exist on the page. */
+  sections?: Section[];
 }
 
-const { title, description, canonical = true } = Astro.props;
+const { title, description, canonical = true, sections = [] } = Astro.props;
 
 if (!Astro.site) {
   throw new Error('Configure the production site URL in astro.config.mjs.');
@@ -67,13 +69,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     <ClientRouter />
   </head>
   <body>
-    <header>
-      <SiteNav label="Main navigation" />
-      <button type="button" data-theme-toggle>
-        <span data-theme-label="light">Dark mode</span>
-        <span data-theme-label="dark">Light mode</span>
-      </button>
-    </header>
+    <SiteHeader sections={sections} />
     <main>
       <slot />
     </main>
@@ -96,6 +92,18 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     --color-accent-seo: light-dark(#15803d, #86efac);
     --color-accent-documentation: light-dark(#a16207, #fde047);
     --color-accent: currentColor;
+    /* All six accents as one blend: the site's signature, used for the name and the current-section marker. */
+    --gradient-accents: linear-gradient(
+      90deg,
+      var(--color-accent-operations),
+      var(--color-accent-automation),
+      var(--color-accent-seo),
+      var(--color-accent-documentation),
+      var(--color-accent-campaigns),
+      var(--color-accent-analytics)
+    );
+    /* Keeps in-page link targets clear of the sticky header. */
+    scroll-padding-top: 6rem;
   }
 
   [data-accent='operations'] { --color-accent: var(--color-accent-operations); }
@@ -143,14 +151,6 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     letter-spacing: calc(-2em / 70);
     line-height: calc(72 / 70);
     overflow-wrap: break-word;
-  }
-
-  header {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: space-between;
   }
 
   nav {

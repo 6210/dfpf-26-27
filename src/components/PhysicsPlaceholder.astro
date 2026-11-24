@@ -1,12 +1,13 @@
 ---
 interface Props {
   label: string;
+  id?: string;
 }
 
-const { label } = Astro.props;
+const { label, id } = Astro.props;
 ---
 
-<figure class="physics" data-physics>
+<figure class="physics" id={id} data-physics>
   <div class="physics-stage" data-physics-stage aria-hidden="true"></div>
   <figcaption>
     <span data-physics-status>{label} placeholder. Click or scroll to change the shapes.</span>

@@ -10,12 +10,16 @@ const roles = await getRoles();
 <SiteLayout
   title="Experience | Professional portfolio"
   description="Roles, responsibilities, and the platforms used in each area of work."
+  sections={[
+    ...roles.map((role) => ({ id: `role-${role.id}`, label: role.data.company })),
+    { id: 'interactive', label: 'Interactive' },
+  ]}
 >
   <h1>Experience</h1>
   <CvDownload />
   {
     roles.map((role) => (
-      <article class="role">
+      <article class="role" id={`role-${role.id}`}>
         <h2>{role.data.title}</h2>
         <p class="role-meta">
           {[role.data.department && `${role.data.department}, `, role.data.company]}
@@ -42,7 +46,7 @@ const roles = await getRoles();
       </article>
     ))
   }
-  <PhysicsPlaceholder label="Experience animation" />
+  <PhysicsPlaceholder id="interactive" label="Experience animation" />
 </SiteLayout>
 
 <style>

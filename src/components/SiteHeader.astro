@@ -1,0 +1,336 @@
+---
+import { getProfile } from '../lib/content';
+import SiteNav from './SiteNav.astro';
+
+export interface Section {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  sections: Section[];
+}
+
+const { sections } = Astro.props;
+const { name } = await getProfile();
+const isHome = Astro.url.pathname === '/';
+---
+
+<header class="site-header" data-site-header>
+  {
+    isHome ? (
+      <span class="site-name">{name}</span>
+    ) : (
+      <a class="site-name" href="/">{name}</a>
+    )
+  }
+
+  {
+    sections.length > 0 && (
+      <nav class="spy" aria-label="On this page" data-spy>
+        {sections.map(({ id, label }) => (
+          <a href={`#${id}`}>{label}</a>
+        ))}
+      </nav>
+    )
+  }
+
+  <div class="actions">
+    <button type="button" data-theme-toggle>
+      <span data-theme-label="light">Dark mode</span>
+      <span data-theme-label="dark">Light mode</span>
+    </button>
+    <!-- The Popover API opens and closes the menu without JavaScript, including Escape and outside clicks. -->
+    <button type="button" class="menu-button" popovertarget="site-menu">
+      <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="visually-hidden">Menu</span>
+    </button>
+  </div>
+
+  <div id="site-menu" class="site-menu" popover>
+    <SiteNav label="Main navigation" />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    align-items: center;
+    background: var(--color-background);
+    column-gap: 1rem;
+    display: grid;
+    grid-template-areas: 'name actions' 'spy spy';
+    grid-template-columns: 1fr auto;
+    inset-block-start: 0;
+    margin-inline: -1.5rem;
+    padding: 0.75rem 1.5rem;
+    position: sticky;
+    row-gap: 0.5rem;
+    z-index: 10;
+  }
+
+  /* Wide enough for the page sections to sit centred between the name and the controls. */
+  @media (min-width: 48rem) {
+    .site-header {
+      grid-template-areas: 'name spy actions';
+      grid-template-columns: 1fr auto 1fr;
+    }
+  }
+
+  .site-header[data-hidden] {
+    transform: translateY(-100%);
+  }
+
+  .site-name {
+    background: var(--gradient-accents);
+    background-clip: text;
+    color: transparent;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    grid-area: name;
+    justify-self: start;
+    letter-spacing: calc(-2em / 70);
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .spy {
+    flex-wrap: nowrap;
+    grid-area: spy;
+    justify-self: center;
+    max-width: 100%;
+    overflow-x: auto;
+    position: relative;
+    scrollbar-width: none;
+  }
+
+  .spy a {
+    color: inherit;
+    padding-block: 0.25rem;
+    position: relative;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .spy a::after {
+    background: var(--gradient-accents);
+    block-size: 2px;
+    content: '';
+    inset: auto 0 0;
+    position: absolute;
+    transform: scaleX(0);
+  }
+
+  .spy [aria-current='location'] {
+    font-weight: 700;
+  }
+
+  .spy [aria-current='location']::after {
+    transform: scaleX(1);
+  }
+
+  .actions {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    grid-area: actions;
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  .menu-button {
+    line-height: 0;
+    padding: 0.5rem;
+  }
+
+  .menu-icon {
+    display: grid;
+    gap: 4px;
+    inline-size: 1.25rem;
+  }
+
+  .menu-icon span {
+    background: currentColor;
+    block-size: 2px;
+  }
+
+  .site-menu {
+    background: var(--color-background);
+    border: 1px solid currentColor;
+    border-radius: 0.5rem;
+    color: var(--color-text);
+    inset: 4rem 1rem auto auto;
+    margin: 0;
+    padding: 1rem 1.5rem;
+  }
+
+  .site-menu :global(nav) {
+    flex-direction: column;
+  }
+
+  .visually-hidden {
+    block-size: 1px;
+    clip-path: inset(50%);
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  @media (forced-colors: active) {
+    .site-name {
+      background: none;
+      color: CanvasText;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .site-header {
+      transition:
+        background-color 0.5s ease,
+        transform 0.3s ease;
+    }
+
+    .spy a::after {
+      transition: transform 0.3s ease;
+    }
+  }
+</style>
+
+<script>
+  const cleanups: Array<() => void> = [];
+
+  document.addEventListener('astro:page-load', () => {
+    const header = document.querySelector<HTMLElement>('[data-site-header]');
+    if (header) {
+      cleanups.push(autoHide(header));
+    }
+    const spy = document.querySelector<HTMLElement>('[data-spy]');
+    if (spy) {
+      cleanups.push(scrollSpy(spy));
+    }
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    for (const cleanup of cleanups.splice(0)) {
+      cleanup();
+    }
+  });
+
+  function onScrollFrame(callback: () => void): () => void {
+    let queued = false;
+    const listener = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(() => {
+          queued = false;
+          callback();
+        });
+      }
+    };
+    addEventListener('scroll', listener, { passive: true });
+    addEventListener('resize', listener, { passive: true });
+    callback();
+    return () => {
+      removeEventListener('scroll', listener);
+      removeEventListener('resize', listener);
+    };
+  }
+
+  /** Hides the header while scrolling down and brings it back on any scroll up. */
+  function autoHide(header: HTMLElement): () => void {
+    const menu = header.querySelector<HTMLElement>('[popover]');
+    const threshold = 8;
+    let lastY = scrollY;
+
+    const show = () => header.removeAttribute('data-hidden');
+    const stopScroll = onScrollFrame(() => {
+      const y = scrollY;
+      const delta = y - lastY;
+      if (Math.abs(delta) < threshold) {
+        return;
+      }
+      lastY = y;
+      // Stay visible while it holds keyboard focus or the menu is open.
+      const busy = header.contains(document.activeElement) || menu?.matches(':popover-open');
+      if (delta > 0 && y > header.offsetHeight && !busy) {
+        header.setAttribute('data-hidden', '');
+      } else {
+        show();
+      }
+    });
+
+    header.addEventListener('focusin', show);
+    return () => {
+      stopScroll();
+      header.removeEventListener('focusin', show);
+    };
+  }
+
+  /** Marks the section currently being read as the current location in the on-page navigation. */
+  function scrollSpy(nav: HTMLElement): () => void {
+    const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+    const targets = links.map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))));
+    let current: HTMLAnchorElement | undefined;
+    // A clicked link stays current until the visitor scrolls, even if its section cannot reach the top.
+    let pinned: HTMLAnchorElement | undefined;
+
+    const mark = (next: HTMLAnchorElement) => {
+      if (next === current) {
+        return;
+      }
+      current?.removeAttribute('aria-current');
+      next.setAttribute('aria-current', 'location');
+      current = next;
+
+      // On narrow screens the links can overflow; keep the current one in view without scrolling the page.
+      if (nav.scrollWidth > nav.clientWidth) {
+        nav.scrollLeft = next.offsetLeft - (nav.clientWidth - next.offsetWidth) / 2;
+      }
+    };
+
+    const update = () => {
+      if (pinned) {
+        mark(pinned);
+        return;
+      }
+      // A section becomes current once its top reaches the area just below the sticky header.
+      const line = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + 16;
+      const atBottom = innerHeight + scrollY >= document.documentElement.scrollHeight - 2;
+      let index = 0;
+      targets.forEach((target, i) => {
+        if (target && target.getBoundingClientRect().top <= line) {
+          index = i;
+        }
+      });
+      mark(links[atBottom ? links.length - 1 : index]);
+    };
+
+    const onClick = (event: MouseEvent) => {
+      const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+      if (link) {
+        pinned = link;
+        mark(link);
+      }
+    };
+    const unpin = () => {
+      pinned = undefined;
+    };
+    const unpinEvents = ['wheel', 'touchmove', 'keydown'] as const;
+
+    nav.addEventListener('click', onClick);
+    for (const type of unpinEvents) {
+      addEventListener(type, unpin, { passive: true });
+    }
+    const stopScroll = onScrollFrame(update);
+
+    return () => {
+      stopScroll();
+      nav.removeEventListener('click', onClick);
+      for (const type of unpinEvents) {
+        removeEventListener(type, unpin);
+      }
+    };
+  }
+</script>

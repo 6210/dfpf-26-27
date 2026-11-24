@@ -7,9 +7,13 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 <SiteLayout
   title="About | Professional portfolio"
   description="A dedicated page for sharing professional background."
+  sections={[
+    { id: 'about', label: 'About' },
+    { id: 'interactive', label: 'Interactive' },
+  ]}
 >
-  <h1>About</h1>
+  <h1 id="about">About</h1>
   <p>About content is being prepared.</p>
   <CvDownload />
-  <PhysicsPlaceholder label="About animation" />
+  <PhysicsPlaceholder id="interactive" label="About animation" />
 </SiteLayout>

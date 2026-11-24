@@ -34,6 +34,7 @@ const roles = defineCollection({
 const profile = defineCollection({
   loader: file('./src/content/profile.json'),
   schema: z.object({
+    name: z.string(),
     headline: z.string(),
     summary: z.string(),
     focusAreas: z.array(z.string()),

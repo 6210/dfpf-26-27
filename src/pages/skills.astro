@@ -10,13 +10,18 @@ const platforms = await getPlatforms();
 <SiteLayout
   title="Skills | Professional portfolio"
   description="Focus areas and the platforms used across campaign, CRM, analytics, and SEO work."
+  sections={[
+    { id: 'focus-areas', label: 'Focus areas' },
+    { id: 'platforms', label: 'Platforms' },
+    { id: 'interactive', label: 'Interactive' },
+  ]}
 >
   <h1>Skills</h1>
-  <h2>Focus areas</h2>
+  <h2 id="focus-areas">Focus areas</h2>
   <ul>
     {focusAreas.map((area) => <li>{area}</li>)}
   </ul>
-  <h2>Platforms</h2>
+  <h2 id="platforms">Platforms</h2>
   <dl class="platforms">
     {
       platforms.map(({ name, uses }) => (
@@ -27,7 +32,7 @@ const platforms = await getPlatforms();
       ))
     }
   </dl>
-  <PhysicsPlaceholder label="Skills animation" />
+  <PhysicsPlaceholder id="interactive" label="Skills animation" />
 </SiteLayout>
 
 <style>

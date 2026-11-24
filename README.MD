@@ -116,7 +116,7 @@ is still a placeholder.
 ├── src/lib/                  Content helpers (sorting, dates, platforms)
 ├── src/pages/                Home, about, experience, skills, and 404 pages
 ├── src/layouts/              Shared page structure and client navigation
-├── src/components/           Navigation, footer, CV download, physics placeholder
+├── src/components/           Header, navigation, footer, CV download, physics placeholder
 ├── public/                   Files served as-is (third-party license notices)
 ├── tests/                    Generated-page checks
 ├── .github/workflows/        Quality checks and deployment
@@ -167,7 +167,7 @@ against the schema in [src/content.config.ts](src/content.config.ts); a missing
 or misspelled field fails the build.
 
 - **Positioning:** [src/content/profile.json](src/content/profile.json) holds the
-  headline, summary, and focus areas (SEO, CRM integration, and campaign
+  name shown in the header, the headline, summary, and focus areas (SEO, CRM integration, and campaign
   technology). The site presents a marketing-department technical lead, not a
   general developer role.
 - **Roles:** one Markdown file per role in
@@ -256,9 +256,51 @@ available; ordinary links still work without it. The generated `404.html`
 supplies a not-found page.
 
 The navigation links are defined once in `src/components/SiteNav.astro` and
-used by both the header and the footer. The current
+used by the header menu and the footer. The current
 page's item is shown as plain, emphasized text with `aria-current="page"`
 rather than a link, so it cannot be clicked again and is skipped when tabbing.
+
+#### Header
+
+`src/components/SiteHeader.astro` holds, from left to right:
+
+- **Name**: "Dennis Ferreira" (the `name` field in `src/content/profile.json`)
+  in the heading font at a small size, filled with the accent gradient. It
+  links home, except on the home page.
+- **On this page** (centred): a scroll spy listing the page's sections. Each
+  page passes `sections` (an `id` and short `label` each) to `SiteLayout`; the
+  ids must exist on the page, which a page test checks. As the visitor scrolls,
+  the section whose top has reached the area below the header is marked with
+  `aria-current="location"`, bold text, and a gradient underline. Pages
+  without `sections`, such as 404, leave it out. Below 48rem (768 px) it moves
+  to a second row and scrolls sideways if needed, keeping the current link in
+  view.
+- **Theme toggle**, then a **menu button** (hamburger, placeholder styling)
+  that opens the page navigation. The menu uses the HTML Popover API, so it
+  opens, closes with Escape or an outside click, and returns focus without
+  JavaScript.
+
+The header is sticky: it slides out of view while scrolling down and returns on
+any scroll up. It stays visible while it has keyboard focus or the menu is open,
+and slides without animation for visitors who prefer reduced motion. Without
+JavaScript it simply stays at the top and the section links are ordinary
+in-page links. `scroll-padding-top` keeps linked sections clear of the header.
+
+`--gradient-accents` in `SiteLayout.astro` blends all six highlight colours
+(see below) into one gradient. It is the site's signature colour, used for the
+name and the current-section underline on every page; it follows the theme
+because each accent does. In forced-colours mode the name falls back to the
+system text colour.
+
+Header checks (2026-11-24, local, not yet deployed): build, page tests, and
+Lighthouse passed on every page (performance 100, accessibility 100, about
+9 KB of script). Browser checks covered the scroll spy while scrolling and after
+clicking section links; hiding the header on scroll down and showing it on
+scroll up; opening the menu by mouse and keyboard; closing it with an outside
+click and on client navigation; light and dark themes; and the one-row layout at
+1280 px and the two-row layout at 360 px without horizontal scrolling. Closing
+the menu with Escape could not be confirmed: the test browser blocks Escape for
+every popover, including on a bare test page. Check it in a desktop browser.
 
 `src/components/SiteFooter.astro` appears on every page through the shared
 layout. It repeats the navigation and shows the year, Gqeberha, South Africa,

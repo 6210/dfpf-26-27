@@ -42,13 +42,30 @@ test('shareable pages contain distinct metadata and crawlable navigation in HTML
   assert.equal(new Set(descriptions).size, pages.length);
 });
 
+test('the header shows the name, a menu, and on-page links to sections that exist', async () => {
+  for (const file of ['dist/index.html', 'dist/about/index.html', 'dist/experience/index.html', 'dist/skills/index.html']) {
+    const html = await readFile(file, 'utf8');
+    const header = html.match(/<header[^>]*>(.*?)<\/header>/s)?.[1] ?? '';
+    const spy = header.match(/<nav[^>]*aria-label="On this page"[^>]*>(.*?)<\/nav>/s)?.[1] ?? '';
+    const targets = [...spy.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]);
+
+    assert.match(header, /class="site-name"[^>]*>Dennis Ferreira</, file);
+    assert.match(header, /<button[^>]*popovertarget="site-menu"/, file);
+    assert.match(header, /<div id="site-menu"[^>]*popover/, file);
+    assert.ok(targets.length > 1, `${file} lists its sections`);
+    for (const id of targets) {
+      assert.match(html, new RegExp(`id="${id}"`), `${file} has #${id}`);
+    }
+  }
+});
+
 test('the theme is set in the head before content renders, with a label for each theme', async () => {
   const html = await readFile('dist/index.html', 'utf8');
   const head = html.slice(0, html.indexOf('</head>'));
 
   assert.match(head, /documentElement\.dataset\.theme = current\(\)/);
-  assert.match(html, /<span data-theme-label="light">Dark mode<\/span>/);
-  assert.match(html, /<span data-theme-label="dark">Light mode<\/span>/);
+  assert.match(html, /<span data-theme-label="light"[^>]*>Dark mode<\/span>/);
+  assert.match(html, /<span data-theme-label="dark"[^>]*>Light mode<\/span>/);
 });
 
 test('the generated not-found page is not presented as canonical content', async () => {
