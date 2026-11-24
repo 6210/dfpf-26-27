@@ -114,9 +114,9 @@ is still a placeholder.
 ├── src/content.config.ts     Content schema (roles and profile)
 ├── src/content/              Website content: profile and one file per role
 ├── src/lib/                  Content helpers (sorting, dates, platforms)
-├── src/pages/                Home, about, experience, skills, and 404 pages
+├── src/pages/                Home, about, experience, skills, downloads, and 404 pages
 ├── src/layouts/              Shared page structure and client navigation
-├── src/components/           Header, navigation, footer, CV download, physics placeholder
+├── src/components/           Header, navigation, Get in touch, footer, CV download, physics placeholder
 ├── public/                   Files served as-is (third-party license notices)
 ├── tests/                    Generated-page checks
 ├── .github/workflows/        Quality checks and deployment
@@ -176,11 +176,17 @@ or misspelled field fails the build.
   shows roles newest first; the Skills page lists every platform with the areas
   that use it, in the order they first appear. List the most relevant areas and
   platforms first.
-- **CV download:** put the CV in `public/cv/` and add
-  `"cv": { "href": "/cv/<file>.pdf", "label": "Download CV (PDF)" }` to the
-  profile. A download link then appears on the home, about, and experience
-  pages. The build fails if the file is missing. The CV is public: leave out
-  your home address, ID number, and anything you would not post online.
+- **Contact:** `contact.email` and `contact.phone` in the profile feed the
+  "Get in touch" section (see below). Update them there, for example when the
+  site's own domain email is ready.
+- **CV downloads:** the profile's `cv` list names each version, currently
+  `/cv/dennis-ferreira-cv.pdf` (PDF) and `/cv/dennis-ferreira-cv.docx` (Word).
+  The Downloads page (`/downloads/`) lists them all; a version shows "Coming
+  soon" until its file is added to `public/cv/` with that name, then becomes a
+  download link with its format and size. Once any version exists, a "Download
+  my CV" link to the Downloads page also appears on the home, about, and
+  experience pages. The CV is public: leave out your home address, ID number,
+  and anything you would not post online.
 
 To add a role from the earlier CV, create a file such as
 `src/content/roles/previous-company.md`:
@@ -248,8 +254,8 @@ Run `npm run build` to generate the static site in `dist/`, and
 
 ### Navigation and search
 
-Astro generates separate HTML pages for `/`, `/about/`, `/experience/`, and
-`/skills/`. To add a page, create it in `src/pages/` using `SiteLayout` and add
+Astro generates separate HTML pages for `/`, `/about/`, `/experience/`,
+`/skills/`, and `/downloads/`. To add a page, create it in `src/pages/` using `SiteLayout` and add
 it to the list in `src/components/SiteNav.astro`.
 Its built-in client router provides SPA-style navigation when JavaScript is
 available; ordinary links still work without it. The generated `404.html`
@@ -323,6 +329,31 @@ padded to be long): build, page tests, and Lighthouse passed on every page
 checks covered gliding by mouse and keyboard, the underline travelling during the
 glide, stopping on wheel input, the reduced-motion jump, Back and Forward
 restoring each position, and Tab continuing from the target section.
+
+#### Get in touch
+
+`src/components/GetInTouch.astro` closes every page's main content, just above
+the footer, with the email address and phone number from the profile as
+clickable email and call links. Pages with on-page links also get a "Contact"
+link in the header's scroll spy.
+
+The owner approved publishing both details (2026-11-24) with light spam
+protection that does not get in visitors' way. The built HTML holds each value
+only reversed and base64-encoded, and a few lines of script turn it into a
+normal link on load and after client navigation. Without JavaScript, visitors
+read "name at gmail dot com" and the phone number as text; a hidden decoy in
+each (not shown, copied, or read aloud) spoils the copy that simple scrapers
+extract. This stops casual harvesting, not a determined scraper that runs
+JavaScript. The plain values are in `src/content/profile.json`, so they are
+also visible in the repository. A page test checks that neither appears as
+plain text in any built page.
+
+Checks (2026-11-24, local, not yet deployed): build, page tests, and Lighthouse
+passed on every page, including Downloads (performance 100, accessibility 100).
+Browser checks covered the decoded links on load and after client navigation,
+the no-JavaScript text, the Downloads page with no CV files and with a test PDF,
+and the 360 px layout without horizontal scrolling. Calling and emailing from
+a phone were not tested.
 
 `src/components/SiteFooter.astro` appears on every page through the shared
 layout. It repeats the navigation and shows the year, Gqeberha, South Africa,

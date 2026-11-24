@@ -1,4 +1,6 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { existsSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 
 export type Role = CollectionEntry<'roles'>;
 
@@ -40,4 +42,27 @@ export async function getPlatforms(): Promise<PlatformUsage[]> {
     }
   }
   return [...platforms.values()];
+}
+
+export interface CvFile {
+  href: string;
+  label: string;
+  /** False until the file is added to public/. */
+  available: boolean;
+  /** "PDF" or "DOCX". */
+  format: string;
+  /** Rounded size, such as "120 KB", once the file exists. */
+  size?: string;
+}
+
+/** CV versions from the profile, checked against public/ at build time (builds run from the project root). */
+export async function getCvFiles(): Promise<CvFile[]> {
+  const { cv } = await getProfile();
+  return cv.map(({ href, label }) => {
+    const path = join(process.cwd(), 'public', href);
+    const available = existsSync(path);
+    const format = href.slice(href.lastIndexOf('.') + 1).toUpperCase();
+    const size = available ? `${Math.max(1, Math.round(statSync(path).size / 1024))} KB` : undefined;
+    return { href, label, available, format, size };
+  });
 }

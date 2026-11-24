@@ -50,7 +50,11 @@ before switching.
   Engagement (Pardot)) so recruiters recognise them.
 - Offer the CV as a download from the relevant pages once the owner supplies
   it. It is public: exclude home address, ID numbers, and other personal data
-  the owner would not publish.
+  the owner would not publish. The Downloads page lists every CV version.
+- Show the owner's email address and phone number in "Get in touch" on every
+  page (approved by the owner on 2026-11-24). Keep them out of the built HTML
+  as plain text, with light protection that does not hinder visitors, and keep
+  them readable without JavaScript.
 - Follow the browser or operating system's light or dark preference by default.
   Both themes must remain readable and accessible, including when the preference
   changes.
@@ -117,7 +121,8 @@ before switching.
   Self-host fonts, scripts, and other assets where permitted by their licenses.
 - Before adding an external request, analytics, cookies, or personal-data
   collection, explain the need and privacy implications and obtain approval.
-- Do not commit credentials, tokens, or personal data.
+- Do not commit credentials, tokens, or personal data, apart from the contact
+  details the owner approved for publication.
 
 ## Licenses and legal
 

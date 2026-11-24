@@ -23,8 +23,11 @@ The site is still in progress; checked items are done.
 - [ ] Add the roles from the earlier CV, then update them for the current
   market.
 - [ ] Write the About page content.
-- [ ] Add the updated CV to `public/cv/` and the `cv` entry to the profile so
-  the download link appears.
+- [ ] Add the updated CV to `public/cv/` as `dennis-ferreira-cv.pdf` and
+  `dennis-ferreira-cv.docx` (or change the `cv` list in the profile) so the
+  Downloads page links to them.
+- [ ] Replace the Gmail address in the profile's `contact` with an address on
+  the site's own domain once it is registered.
 
 ## Core UI
 

@@ -38,13 +38,22 @@ const profile = defineCollection({
     headline: z.string(),
     summary: z.string(),
     focusAreas: z.array(z.string()),
-    // Path to a CV file in public/, for example "/cv/cv.pdf". Leave out until the file exists.
+    // Published in "Get in touch" on every page; the built HTML only holds an encoded copy.
+    contact: z.object({
+      email: z.email(),
+      // International format with spaces, for example "+27 66 272 3763".
+      phone: z.string().regex(/^\+\d[\d ]+\d$/),
+    }),
+    // Versions of the CV, listed on the Downloads page. Each path is in public/; a version shows
+    // "Coming soon" until its file exists.
     cv: z
-      .object({
-        href: z.string().regex(/^\/.+\.(pdf|docx)$/),
-        label: z.string(),
-      })
-      .optional(),
+      .array(
+        z.object({
+          href: z.string().regex(/^\/cv\/.+\.(pdf|docx)$/),
+          label: z.string(),
+        }),
+      )
+      .default([]),
   }),
 });
 

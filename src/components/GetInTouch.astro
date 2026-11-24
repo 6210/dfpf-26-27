@@ -1,0 +1,73 @@
+---
+import { getProfile } from '../lib/content';
+
+const { contact } = await getProfile();
+
+/*
+ * Light spam protection: the HTML holds each value reversed and base64-encoded, and the script below
+ * turns it into a normal link. Without JavaScript, people read the fallback text; a hidden decoy inside
+ * it spoils the copy that scrapers extract, but is not shown, copied, or read aloud.
+ */
+const encode = (value: string) => btoa([...value].reverse().join(''));
+const [user, domain] = contact.email.split('@');
+const phoneGroups = contact.phone.split(' ');
+const phoneSplit = Math.ceil(phoneGroups.length / 2);
+---
+
+<section class="get-in-touch" id="contact" aria-labelledby="contact-heading">
+  <h2 id="contact-heading">Get in touch</h2>
+  <dl>
+    <div>
+      <dt>Email</dt>
+      <dd data-contact={encode(contact.email)} data-scheme="mailto">
+        {user}<span hidden>.nospam</span> at {domain.replaceAll('.', ' dot ')}
+      </dd>
+    </div>
+    <div>
+      <dt>Phone</dt>
+      <dd data-contact={encode(contact.phone)} data-scheme="tel">
+        {phoneGroups.slice(0, phoneSplit).join(' ')}<span hidden>-000</span>{' '}{phoneGroups.slice(phoneSplit).join(' ')}
+      </dd>
+    </div>
+  </dl>
+</section>
+
+<style>
+  .get-in-touch {
+    border-top: 1px solid currentColor;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+  }
+
+  dl {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    margin: 0;
+  }
+
+  dt {
+    font-weight: 700;
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+</style>
+
+<script>
+  function revealContacts() {
+    for (const item of document.querySelectorAll<HTMLElement>('[data-contact]')) {
+      const value = [...atob(item.dataset.contact ?? '')].reverse().join('');
+      const link = document.createElement('a');
+      link.href = `${item.dataset.scheme}:${value.replaceAll(' ', '')}`;
+      link.textContent = value;
+      item.replaceChildren(link);
+      item.removeAttribute('data-contact');
+    }
+  }
+
+  // Runs on the first load and after each client-side navigation.
+  document.addEventListener('astro:page-load', revealContacts);
+</script>

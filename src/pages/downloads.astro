@@ -1,0 +1,51 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { getCvFiles } from '../lib/content';
+
+const cvFiles = await getCvFiles();
+---
+
+<SiteLayout
+  title="Downloads | Professional portfolio"
+  description="Download Dennis Ferreira's CV in PDF and Word formats."
+  sections={[{ id: 'cv', label: 'CV' }]}
+>
+  <h1>Downloads</h1>
+  <p class="lead">My CV in the format that suits you, ready to save, print, or share.</p>
+  <h2 id="cv">CV</h2>
+  <ul class="downloads">
+    {
+      cvFiles.map((file) => (
+        <li>
+          {file.available ? (
+            <a href={file.href} download>
+              {file.label}
+            </a>
+          ) : (
+            <span>{file.label}</span>
+          )}
+          <span class="detail">{file.available ? `${file.format}, ${file.size}` : 'Coming soon'}</span>
+        </li>
+      ))
+    }
+  </ul>
+</SiteLayout>
+
+<style>
+  .downloads {
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+  }
+
+  .detail {
+    color: color-mix(in srgb, currentColor 70%, transparent);
+  }
+</style>

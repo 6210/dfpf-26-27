@@ -8,6 +8,7 @@ test('shareable pages contain distinct metadata and crawlable navigation in HTML
     { file: 'dist/about/index.html', path: '/about/', label: 'About' },
     { file: 'dist/experience/index.html', path: '/experience/', label: 'Experience' },
     { file: 'dist/skills/index.html', path: '/skills/', label: 'Skills' },
+    { file: 'dist/downloads/index.html', path: '/downloads/', label: 'Downloads' },
   ];
 
   const titles = [];
@@ -43,7 +44,7 @@ test('shareable pages contain distinct metadata and crawlable navigation in HTML
 });
 
 test('the header shows the name, a menu, and on-page links to sections that exist', async () => {
-  for (const file of ['dist/index.html', 'dist/about/index.html', 'dist/experience/index.html', 'dist/skills/index.html']) {
+  for (const file of ['dist/index.html', 'dist/about/index.html', 'dist/experience/index.html', 'dist/skills/index.html', 'dist/downloads/index.html']) {
     const html = await readFile(file, 'utf8');
     const header = html.match(/<header[^>]*>(.*?)<\/header>/s)?.[1] ?? '';
     const spy = header.match(/<nav[^>]*aria-label="On this page"[^>]*>(.*?)<\/nav>/s)?.[1] ?? '';
@@ -107,4 +108,37 @@ test('the heading font is preloaded from this site, not a CDN', async () => {
   assert.ok((await readdir('dist/_astro/fonts')).some((file) => preload.endsWith(file)));
   assert.match(html, /@font-face\{font-family:"Lexend Deca[^"]*";src:url\("\/_astro\/fonts\//);
   assert.doesNotMatch(html, /fonts\.(googleapis|gstatic)\.com|cdn\.jsdelivr\.net|fonts\.bunny\.net/);
+});
+
+test('every page has Get in touch, with the contact details encoded rather than in plain text', async () => {
+  const [{ contact }] = JSON.parse(await readFile('src/content/profile.json', 'utf8'));
+  const decode = (value) => [...Buffer.from(value, 'base64').toString()].reverse().join('');
+
+  for (const file of ['dist/index.html', 'dist/about/index.html', 'dist/experience/index.html', 'dist/skills/index.html', 'dist/downloads/index.html', 'dist/404.html']) {
+    const html = await readFile(file, 'utf8');
+    const section = html.match(/<section[^>]*id="contact"[^>]*>(.*?)<\/section>/s)?.[1] ?? '';
+    const encoded = [...section.matchAll(/data-contact="([^"]+)"/g)].map((match) => decode(match[1]));
+
+    assert.match(section, />Get in touch</, file);
+    assert.deepEqual(encoded, [contact.email, contact.phone], file);
+    assert.ok(!html.includes(contact.email), `${file} has no plain email`);
+    assert.ok(!html.replace(/\s/g, '').includes(contact.phone.replace(/\s/g, '')), `${file} has no plain phone number`);
+  }
+});
+
+test('the downloads page lists every CV version, as a link only once its file exists', async () => {
+  const [{ cv }] = JSON.parse(await readFile('src/content/profile.json', 'utf8'));
+  const html = await readFile('dist/downloads/index.html', 'utf8');
+  const files = await readdir('public/cv').catch(() => []);
+
+  assert.ok(cv.length > 0);
+  for (const { href, label } of cv) {
+    if (files.includes(href.slice('/cv/'.length))) {
+      assert.match(html, new RegExp(`<a href="${href}" download[^>]*>\\s*${label.replace(/[()]/g, '\\$&')}`), href);
+    } else {
+      assert.doesNotMatch(html, new RegExp(`href="${href}"`), href);
+      assert.ok(html.includes(label), label);
+    }
+  }
+  assert.match(html, /Coming soon|KB/);
 });

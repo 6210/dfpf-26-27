@@ -1,6 +1,7 @@
 ---
 import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
+import GetInTouch from '../components/GetInTouch.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader, { type Section } from '../components/SiteHeader.astro';
 
@@ -69,9 +70,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     <ClientRouter />
   </head>
   <body>
-    <SiteHeader sections={sections} />
+    <SiteHeader sections={sections.length > 0 ? [...sections, { id: 'contact', label: 'Contact' }] : sections} />
     <main>
       <slot />
+      <GetInTouch />
     </main>
     <SiteFooter />
   </body>

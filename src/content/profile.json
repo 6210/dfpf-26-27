@@ -4,6 +4,24 @@
     "name": "Dennis Ferreira",
     "headline": "Technical marketing lead for SEO, CRM integration and campaign technology",
     "summary": "Lead Technical Website Developer in a marketing department, connecting websites, campaigns, CRM and marketing automation, analytics and technical SEO so campaigns can launch, capture leads and be measured.",
-    "focusAreas": ["SEO", "CRM integration", "Campaign technology"]
+    "focusAreas": [
+      "SEO",
+      "CRM integration",
+      "Campaign technology"
+    ],
+    "contact": {
+      "email": "dennis.ferreira1@gmail.com",
+      "phone": "+27 66 272 3763"
+    },
+    "cv": [
+      {
+        "href": "/cv/dennis-ferreira-cv.pdf",
+        "label": "CV (PDF)"
+      },
+      {
+        "href": "/cv/dennis-ferreira-cv.docx",
+        "label": "CV (Word)"
+      }
+    ]
   }
 ]
