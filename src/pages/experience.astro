@@ -11,7 +11,8 @@ const roles = await getRoles();
   title="Experience | Professional portfolio"
   description="Roles, responsibilities, and the platforms used in each area of work."
   sections={[
-    ...roles.map((role) => ({ id: `role-${role.id}`, label: role.data.company })),
+    // Nav labels never name an employer: the current role is generic, past roles use their title.
+    ...roles.map((role) => ({ id: `role-${role.id}`, label: role.data.end ? role.data.title : 'Current role' })),
     { id: 'interactive', label: 'Interactive' },
   ]}
 >

@@ -275,7 +275,9 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   links home, except on the home page.
 - **On this page** (centred): a scroll spy listing the page's sections. Each
   page passes `sections` (an `id` and short `label` each) to `SiteLayout`; the
-  ids must exist on the page, which a page test checks. As the visitor scrolls,
+  ids must exist on the page, which a page test checks. Labels never name an
+  employer: on Experience the current role is "Current role" and past roles
+  use their job title. As the visitor scrolls,
   the section whose top has reached the area below the header is marked with
   `aria-current="location"` and full-strength text (other links are slightly
   muted), and a single gradient underline slides across to it. Pages
