@@ -205,7 +205,7 @@ areas:
 ---
 ```
 
-Local checks (2026-11-24, not yet deployed): build, page tests, and Lighthouse
+Checks (2026-11-24; live since [this workflow run](https://github.com/6210/dfpf-26-27/actions/runs/45385071984)): build, page tests, and Lighthouse
 passed on every page (performance 100, accessibility 100, no layout shift).
 A test CV file produced download links on the home, about, and experience
 pages, and removing the file stopped the build with a clear error. Pages were
@@ -349,7 +349,7 @@ Sources:
 [Verywell Mind, colour psychology](https://www.verywellmind.com/color-psychology-2795824)
 and [Interaction Design Foundation, colour in UX](https://ixdf.org/literature/topics/color).
 
-Local checks (2026-11-24, not yet deployed): build, page tests, and Lighthouse
+Checks (2026-11-24; live since [this workflow run](https://github.com/6210/dfpf-26-27/actions/runs/45385071984)): build, page tests, and Lighthouse
 passed on every page (performance 100, accessibility 100, no layout shift). In
 Chrome at 360 px, all six markers showed the expected colour in both themes,
 with no horizontal scrolling.
@@ -377,7 +377,7 @@ Without JavaScript, the empty placeholder area is shown.
 The animation is decorative and hidden from screen readers; the caption
 describes it. Keep one animation of this kind per page, as required.
 
-Local checks (2026-11-24, not yet deployed): build, page tests, and Lighthouse
+Checks (2026-11-24; live since [this workflow run](https://github.com/6210/dfpf-26-27/actions/runs/45385071984)): build, page tests, and Lighthouse
 passed for all pages (performance and accessibility 100, layout shift 0, about
 35 KiB of script). One earlier Lighthouse run scored 72 for the home page;
 six later runs scored 100, so watch for variance in CI. Visible Chrome checks
