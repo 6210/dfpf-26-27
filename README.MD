@@ -285,7 +285,7 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   to a second row and scrolls sideways if needed, keeping the current link in
   view.
 - **Theme toggle** (from 64rem / 1024 px wide, i.e. larger than an iPad), then a **menu button** (hamburger, placeholder styling)
-  that opens the page navigation full screen. A light veil and a soft 6 px blur
+  that opens the page navigation full screen. A light veil and a 12 px blur
   keep the page behind recognisable in both themes (the light theme gets a
   thinner veil, because a white wash hides more). The veil is solid when the
   browser cannot blur or the visitor prefers reduced transparency. Links are
@@ -326,8 +326,8 @@ allowed.
 
 **Page transitions.** Moving to another page keeps the header in place while
 the content and footer change: going forward, the old page accelerates up and
-away (0.35 s) while blurring, and the new one snaps in from well below and
-settles (0.8 s); going Back, both move downward instead. Both are slightly
+away fast (0.3 s, travelling 10rem) while blurring, and the new one snaps in from well below and
+settles (0.7 s, from 14rem); going Back, both move downward instead. Both are slightly
 blurred and smaller while faded. Only position, size, opacity, and blur
 animate, and only on client-side navigation, so the first page load and what
 search engines see are unaffected.

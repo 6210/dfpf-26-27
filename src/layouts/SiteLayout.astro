@@ -25,14 +25,14 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 // The old page accelerates away and the next one snaps in and settles; Back reverses the direction.
 const exit = (name: string) => ({
   name,
-  duration: '0.35s',
+  duration: '0.3s',
   easing: 'cubic-bezier(0.55, 0, 1, 0.45)',
   fillMode: 'both',
 });
 const enter = (name: string) => ({
   name,
-  duration: '0.8s',
-  delay: '0.2s',
+  duration: '0.7s',
+  delay: '0.15s',
   easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
   fillMode: 'both',
 });
@@ -262,37 +262,37 @@ const pageFade: TransitionDirectionalAnimations = {
   /* Page-to-page fades; see pageFade above. The faded state is also blurred and slightly smaller. */
   @keyframes page-fade-out-up {
     to {
-      filter: blur(12px);
+      filter: blur(20px);
       opacity: 0;
-      scale: 0.97;
-      translate: 0 -5rem;
+      scale: 0.94;
+      translate: 0 -10rem;
     }
   }
 
   @keyframes page-fade-in-up {
     from {
-      filter: blur(12px);
+      filter: blur(20px);
       opacity: 0;
-      scale: 0.97;
-      translate: 0 7rem;
+      scale: 0.94;
+      translate: 0 14rem;
     }
   }
 
   @keyframes page-fade-out-down {
     to {
-      filter: blur(12px);
+      filter: blur(20px);
       opacity: 0;
-      scale: 0.97;
-      translate: 0 5rem;
+      scale: 0.94;
+      translate: 0 10rem;
     }
   }
 
   @keyframes page-fade-in-down {
     from {
-      filter: blur(12px);
+      filter: blur(20px);
       opacity: 0;
-      scale: 0.97;
-      translate: 0 -7rem;
+      scale: 0.94;
+      translate: 0 -14rem;
     }
   }
 
