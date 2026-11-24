@@ -41,7 +41,7 @@ const isHome = Astro.url.pathname === '/';
       <span data-theme-label="light">Dark mode</span>
       <span data-theme-label="dark">Light mode</span>
     </button>
-    <!-- The Popover API opens and closes the menu without JavaScript, including Escape and outside clicks. -->
+    <!-- The Popover API opens and closes the menu without JavaScript, including with Escape. -->
     <button type="button" class="menu-button" popovertarget="site-menu">
       <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
       <span class="visually-hidden">Menu</span>
@@ -49,6 +49,11 @@ const isHome = Astro.url.pathname === '/';
   </div>
 
   <div id="site-menu" class="site-menu" popover>
+    <!-- The full-screen menu covers the menu button, so it has its own close button in the same place. -->
+    <button type="button" class="menu-button menu-close" popovertarget="site-menu" popovertargetaction="hide">
+      <span class="menu-icon" aria-hidden="true"><span></span><span></span></span>
+      <span class="visually-hidden">Close menu</span>
+    </button>
     <SiteNav label="Main navigation" />
   </div>
 
@@ -172,18 +177,99 @@ const isHome = Astro.url.pathname === '/';
     block-size: 2px;
   }
 
+  /* Full screen; the page shows faintly through a blur. */
   .site-menu {
     background: var(--color-background);
-    border: 1px solid currentColor;
-    border-radius: 0.5rem;
+    block-size: auto;
+    border: 0;
     color: var(--color-text);
-    inset: 4rem 1rem auto auto;
+    inline-size: auto;
+    inset: 0;
     margin: 0;
-    padding: 1rem 1.5rem;
+    max-block-size: none;
+    max-inline-size: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4.5rem 1.5rem;
+  }
+
+  .site-menu:popover-open {
+    display: grid;
+    place-items: center;
+  }
+
+  /* Opaque where blur is unsupported or the visitor asks for less transparency, keeping text readable. */
+  @supports (backdrop-filter: blur(1px)) {
+    @media (prefers-reduced-transparency: no-preference) {
+      .site-menu {
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        background: color-mix(in srgb, var(--color-background) 80%, transparent);
+      }
+    }
+  }
+
+  /* The page behind stays put while the menu is open. */
+  :global(html:has(#site-menu:popover-open)) {
+    overflow: hidden;
+  }
+
+  .menu-close {
+    inset: 0.75rem 1.5rem auto auto;
+    position: absolute;
+  }
+
+  .menu-close .menu-icon {
+    block-size: 1.25rem;
+    gap: 0;
+    place-content: center;
+  }
+
+  .menu-close .menu-icon span {
+    grid-area: 1 / 1;
+    inline-size: 1.25rem;
+    rotate: 45deg;
+  }
+
+  .menu-close .menu-icon span + span {
+    rotate: -45deg;
   }
 
   .site-menu :global(nav) {
+    align-items: center;
     flex-direction: column;
+    gap: 1.25rem;
+    text-align: center;
+  }
+
+  /* Same hover treatment as the on-page links: muted text brightens and a gradient underline grows. */
+  .site-menu :global(nav a) {
+    color: color-mix(in srgb, var(--color-text) 70%, var(--color-background));
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 1.2rem + 2.5vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: calc(-2em / 70);
+    line-height: 1.2;
+    padding-block-end: 0.25rem;
+    position: relative;
+    text-decoration: none;
+  }
+
+  .site-menu :global(nav a::after) {
+    background: var(--gradient-accents);
+    block-size: 2px;
+    content: '';
+    inset: auto 0 0;
+    position: absolute;
+    scale: 0 1;
+  }
+
+  .site-menu :global(nav a:is(:hover, :focus-visible, [aria-current='page'])) {
+    color: var(--color-text);
+  }
+
+  .site-menu :global(nav a:is(:hover, :focus-visible, [aria-current='page'])::after) {
+    scale: 1 1;
   }
 
   .visually-hidden {
@@ -213,6 +299,31 @@ const isHome = Astro.url.pathname === '/';
       transition: color 0.3s ease;
     }
 
+    .site-menu :global(nav a) {
+      transition: color 0.3s ease;
+    }
+
+    .site-menu :global(nav a::after) {
+      transition: scale 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    /* Fades in on open and out on close. */
+    .site-menu {
+      opacity: 0;
+      transition:
+        display 0.3s allow-discrete,
+        opacity 0.3s ease,
+        overlay 0.3s allow-discrete;
+    }
+
+    .site-menu:popover-open {
+      opacity: 1;
+
+      @starting-style {
+        opacity: 0;
+      }
+    }
+
     /* Glides between sections; the first placement happens before data-ready, so it does not slide in from the left. */
     .spy-indicator[data-ready] {
       transition:
@@ -224,8 +335,13 @@ const isHome = Astro.url.pathname === '/';
 
   @media (forced-colors: active) {
     .spy-indicator,
-    .progress {
+    .progress,
+    .site-menu :global(nav a::after) {
       background: Highlight;
+    }
+
+    .site-menu {
+      background: Canvas;
     }
   }
 </style>
@@ -248,7 +364,7 @@ const isHome = Astro.url.pathname === '/';
   document.addEventListener('astro:page-load', () => {
     const header = document.querySelector<HTMLElement>('[data-site-header]');
     if (header) {
-      cleanups.push(autoHide(header), readingProgress(header));
+      cleanups.push(autoHide(header), readingProgress(header), fullScreenMenu(header));
     }
     const spy = document.querySelector<HTMLElement>('[data-spy]');
     if (spy) {
@@ -355,6 +471,39 @@ const isHome = Astro.url.pathname === '/';
     }
     cancelSmoothScroll = interrupt;
     frame = requestAnimationFrame(step);
+  }
+
+  /** While the full-screen menu is open, keeps keyboard and screen reader focus out of the page behind it. */
+  function fullScreenMenu(header: HTMLElement): () => void {
+    const menu = header.querySelector<HTMLElement>('#site-menu');
+    if (!menu) {
+      return () => {};
+    }
+    const behind = () => [...header.children, document.querySelector('main'), document.querySelector('footer')].filter((element): element is HTMLElement => element instanceof HTMLElement && element !== menu);
+
+    const onBeforeToggle = (event: Event) => {
+      // Released before closing, so the browser can return focus to the menu button.
+      if ((event as ToggleEvent).newState === 'closed') {
+        for (const element of behind()) {
+          element.inert = false;
+        }
+      }
+    };
+    const onToggle = (event: Event) => {
+      if ((event as ToggleEvent).newState === 'open') {
+        for (const element of behind()) {
+          element.inert = true;
+        }
+        menu.querySelector<HTMLElement>('.menu-close')?.focus();
+      }
+    };
+
+    menu.addEventListener('beforetoggle', onBeforeToggle);
+    menu.addEventListener('toggle', onToggle);
+    return () => {
+      menu.removeEventListener('beforetoggle', onBeforeToggle);
+      menu.removeEventListener('toggle', onToggle);
+    };
   }
 
   /** Hides the header while scrolling down and brings it back on any scroll up. */
