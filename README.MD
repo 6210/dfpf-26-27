@@ -187,7 +187,7 @@ Run `npm run build` to generate the static site in `dist/`, and
 Astro generates separate HTML pages for `/` and `/experience/`. Its built-in
 client router provides SPA-style navigation when JavaScript is available;
 ordinary links still work without it. The generated `404.html` supplies a
-not-found page. Verify missing URLs on Cloudflare after deployment.
+not-found page.
 
 Each placeholder page has its own title, description, and canonical URL, but is
 temporarily marked `noindex`: it is not ready to appear in search results.
@@ -198,7 +198,10 @@ The canonical origin is currently `https://dfpf-26-27.pages.dev`; update
 Local implementation checks: the build, generated-page tests, and Lighthouse
 checks passed. Browser checks covered client navigation and history, direct
 loading, navigation without JavaScript, and widths of 360 px and 1280 px.
-These changes have not yet been deployed; repeat release checks before pushing.
+Deployed 2026-11-24 via the
+[quality-checked workflow](https://github.com/6210/dfpf-26-27/actions/runs/45345512289):
+`/` and `/experience/` return 200, and unknown URLs return the 404 page with a
+404 status on Cloudflare Pages.
 
 ### Deploy to Cloudflare Pages
 
