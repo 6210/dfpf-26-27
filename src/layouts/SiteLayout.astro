@@ -14,6 +14,12 @@ if (!Astro.site) {
 }
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/experience/', label: 'Experience' },
+  { href: '/skills/', label: 'Skills' },
+];
 ---
 
 <!doctype html>
@@ -44,7 +50,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
           document.documentElement.dataset.theme = theme;
           for (const button of document.querySelectorAll('[data-theme-toggle]')) {
             button.hidden = false;
-            button.setAttribute('aria-pressed', String(theme === 'dark'));
+            button.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
           }
         };
 
@@ -71,13 +77,15 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
   <body>
     <header>
       <nav aria-label="Main navigation">
-        <a href="/" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}>Home</a>
-        <a
-          href="/experience/"
-          aria-current={Astro.url.pathname === '/experience/' ? 'page' : undefined}
-        >Experience</a>
+        {navItems.map(({ href, label }) =>
+          Astro.url.pathname === href ? (
+            <a aria-current="page">{label}</a>
+          ) : (
+            <a href={href}>{label}</a>
+          ),
+        )}
       </nav>
-      <button type="button" data-theme-toggle aria-pressed="false" hidden>Dark mode</button>
+      <button type="button" data-theme-toggle hidden>Dark mode</button>
     </header>
     <main>
       <slot />
@@ -138,9 +146,9 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     padding: 0.25rem 0.75rem;
   }
 
-  button[aria-pressed='true'] {
-    background: var(--color-text);
-    color: var(--color-background);
+  nav [aria-current='page'] {
+    color: inherit;
+    font-weight: 700;
   }
 
   a:focus-visible,

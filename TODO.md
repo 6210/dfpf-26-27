@@ -23,6 +23,8 @@ The current site is a placeholder; none of these tasks are complete yet.
   keyboard, and respect reduced-motion preferences.
 - [ ] Build on Astro's static pages and client router; check navigation
   accessibility and the JavaScript budget as interactions are added.
+- [ ] Add a self-hosted favicon; browsers currently request `/favicon.ico` and
+  receive a 404.
 
 ## Search and shareable pages
 

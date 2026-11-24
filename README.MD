@@ -98,7 +98,8 @@ product tasks and acceptance checks.
 
 The existing Markdown files describe experience and provide project context.
 They are reference material, not automatically published website content. The
-current website contains placeholder home, experience, and not-found pages.
+current website contains placeholder home, experience, skills, and not-found
+pages.
 
 ```text
 .
@@ -108,7 +109,7 @@ current website contains placeholder home, experience, and not-found pages.
 ├── TODO.md                   Product and UI tasks
 ├── inspiration.md, stack.md  Design and technology references
 ├── astro.config.mjs          Production URL and URL format
-├── src/pages/                Home, experience, and not-found pages
+├── src/pages/                Home, experience, skills, and not-found pages
 ├── src/layouts/              Shared page structure and client navigation
 ├── tests/                    Generated-page checks
 ├── .github/workflows/        Quality checks and deployment
@@ -184,10 +185,14 @@ Run `npm run build` to generate the static site in `dist/`, and
 
 ### Navigation and search
 
-Astro generates separate HTML pages for `/` and `/experience/`. Its built-in
-client router provides SPA-style navigation when JavaScript is available;
-ordinary links still work without it. The generated `404.html` supplies a
-not-found page.
+Astro generates separate HTML pages for `/`, `/experience/`, and `/skills/`.
+Its built-in client router provides SPA-style navigation when JavaScript is
+available; ordinary links still work without it. The generated `404.html`
+supplies a not-found page.
+
+The navigation is defined once in `src/layouts/SiteLayout.astro`. The current
+page's item is shown as plain, emphasized text with `aria-current="page"`
+rather than a link, so it cannot be clicked again and is skipped when tabbing.
 
 Each placeholder page has its own title, description, and canonical URL, but is
 temporarily marked `noindex`: it is not ready to appear in search results.
@@ -205,8 +210,9 @@ Deployed 2026-11-24 via the
 
 ### Light and dark theme
 
-The site starts in the visitor's system light or dark preference. The
-**Dark mode** button in the header switches themes; the choice is saved in the
+The site starts in the visitor's system light or dark preference. The theme
+button in the header names the mode it switches to: **Dark mode** while the
+site is light and **Light mode** while it is dark. The choice is saved in the
 browser's `localStorage` and applies across pages and later visits. A small
 inline script in the page head sets the theme before content appears, so there
 is no flash of the wrong theme. Without JavaScript, the site follows the system
@@ -219,6 +225,14 @@ toggling by mouse and keyboard, persistence across client navigation, back
 navigation, and reload, and a 360 px width. Live following of a system
 preference change could not be confirmed in the test browser; check it on a
 real device.
+
+Skills page and navigation update (2026-11-24, not yet deployed): build, page
+tests, and Lighthouse passed for all four pages. Browser checks confirmed the
+current nav item is not a link on each page, the theme button label switches
+between **Dark mode** and **Light mode**, and the layout fits at 360 px. Page
+transition errors appeared only in a hidden test tab, where browsers cancel
+view transitions; a visible Chrome session showed none. A missing favicon
+returns 404 (pre-existing; see TODO).
 
 ### Deploy to Cloudflare Pages
 

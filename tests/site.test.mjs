@@ -3,22 +3,28 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 test('shareable pages contain distinct metadata and crawlable navigation in HTML', async () => {
-  const home = await readFile('dist/index.html', 'utf8');
-  const experience = await readFile('dist/experience/index.html', 'utf8');
   const pages = [
-    { html: home, canonical: 'https://dfpf-26-27.pages.dev/' },
-    { html: experience, canonical: 'https://dfpf-26-27.pages.dev/experience/' },
+    { file: 'dist/index.html', path: '/', label: 'Home' },
+    { file: 'dist/experience/index.html', path: '/experience/', label: 'Experience' },
+    { file: 'dist/skills/index.html', path: '/skills/', label: 'Skills' },
   ];
 
   const titles = [];
   const descriptions = [];
 
-  for (const { html, canonical } of pages) {
+  for (const { file, path, label } of pages) {
+    const html = await readFile(file, 'utf8');
     titles.push(html.match(/<title>([^<]+)<\/title>/)?.[1]);
     descriptions.push(html.match(/<meta name="description" content="([^"]+)"/)?.[1]);
-    assert.ok(html.includes(`<link rel="canonical" href="${canonical}">`));
+    assert.ok(html.includes(`<link rel="canonical" href="https://dfpf-26-27.pages.dev${path}">`));
     assert.match(html, /<meta name="robots" content="noindex">/);
-    assert.match(html, /<a href="\/experience\/"/);
+
+    const nav = html.match(/<nav aria-label="Main navigation">(.*?)<\/nav>/s)?.[1] ?? '';
+    assert.ok(nav.includes(`<a aria-current="page">${label}</a>`), `${path} marks itself current`);
+    assert.doesNotMatch(nav, new RegExp(`href="${path}"`), `${path} does not link to itself`);
+    for (const other of pages.filter((page) => page.path !== path)) {
+      assert.ok(nav.includes(`<a href="${other.path}">${other.label}</a>`), `${path} links to ${other.path}`);
+    }
   }
 
   assert.ok(titles.every(Boolean));
@@ -31,7 +37,7 @@ test('the theme toggle stays hidden without JavaScript and the theme is set befo
   const html = await readFile('dist/index.html', 'utf8');
   const head = html.slice(0, html.indexOf('</head>'));
 
-  assert.match(html, /<button type="button" data-theme-toggle aria-pressed="false" hidden>/);
+  assert.match(html, /<button type="button" data-theme-toggle hidden>/);
   assert.match(head, /dataset\.theme = theme/);
 });
 
