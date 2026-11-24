@@ -42,16 +42,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
         };
         const current = () => unsavedTheme ?? stored() ?? (media.matches ? 'dark' : 'light');
         const apply = () => {
-          const theme = current();
-          document.documentElement.dataset.theme = theme;
-          for (const button of document.querySelectorAll('[data-theme-toggle]')) {
-            button.hidden = false;
-            button.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
-          }
+          document.documentElement.dataset.theme = current();
         };
 
         apply();
-        document.addEventListener('DOMContentLoaded', apply);
         document.addEventListener('astro:after-swap', apply);
         media.addEventListener('change', apply);
         document.addEventListener('click', (event) => {
@@ -73,7 +67,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
   <body>
     <header>
       <SiteNav label="Main navigation" />
-      <button type="button" data-theme-toggle hidden>Dark mode</button>
+      <button type="button" data-theme-toggle>
+        <span data-theme-label="light">Dark mode</span>
+        <span data-theme-label="dark">Light mode</span>
+      </button>
     </header>
     <main>
       <slot />
@@ -140,9 +137,31 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
     font-weight: 700;
   }
 
+  /*
+   * The head script sets data-theme before the page renders. Without JavaScript
+   * the toggle cannot work, so it is not shown. Each label is shown only in the
+   * theme it switches away from.
+   */
+  :root:not([data-theme]) [data-theme-toggle],
+  :root:not([data-theme='light']) [data-theme-label='light'],
+  :root:not([data-theme='dark']) [data-theme-label='dark'] {
+    display: none;
+  }
+
   a:focus-visible,
   button:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    body,
+    a,
+    button {
+      transition:
+        background-color 0.5s ease,
+        border-color 0.5s ease,
+        color 0.5s ease;
+    }
   }
 </style>

@@ -42,6 +42,8 @@ issue and discussing alternatives with the user before the change goes live.
   their system preference and is remembered on their device with
   `localStorage` (no cookies, no server request). Without JavaScript, the site
   follows the system preference and the toggle is hidden.
+- Fade between themes rather than switching colors instantly, except for
+  visitors who prefer reduced motion.
 - Use a small set of self-hosted fonts with suitable fallback fonts. Check
   licenses and avoid third-party font requests.
 - Keep the initial content and navigation usable without JavaScript; add
@@ -51,6 +53,10 @@ issue and discussing alternatives with the user before the change goes live.
   another site.
 - Keep interactions purposeful. Limit each page to one resource-intensive visual
   effect, such as a physics scene, 3D effect, shader, or particle system.
+- Use Matter.js for physics-based animated icons that respond to scrolling and
+  clicking. Load it only when needed, pause it when off screen, give click
+  actions a keyboard equivalent, and keep the scene decorative so no content
+  depends on it.
 - Keep component and motion dependencies minimal; avoid introducing competing
   libraries for the same purpose without a documented reason.
 
@@ -128,5 +134,6 @@ Cloudflare can deploy a push before the checks finish.
 - Exact primary action, approved content, and visual direction.
 - Whether to provide a way to reset the theme to the system preference.
 - The final production domain, approved search snippets, and sitemap contents.
-- Whether physics or other motion is needed, and how it should behave.
+- Which pages keep a physics scene, the icon designs, and exactly how scrolling
+  and clicking should change them.
 - Applicable legal notices and any approved external services.

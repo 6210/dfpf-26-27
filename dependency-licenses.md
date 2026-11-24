@@ -7,11 +7,16 @@ was generated from installed package metadata or the npm registry on
 2026-11-23. It is not a legal compliance determination; review individual
 notices and bundled third-party components before distributing dependencies.
 
-The initial static build contains only `index.html`; no dependency code
-is included in that output. Recheck the output and licensing obligations
-when client-side libraries, assets, or server rendering are added.
+The static build ships Astro's client router and Matter.js to visitors. The
+build removes their license comments, so their notices are published in
+[public/third-party-licenses.txt](public/third-party-licenses.txt). Recheck the
+output and licensing obligations when client-side libraries, assets, or server
+rendering are added.
 Notably, the dependency tree includes MPL-2.0 and LGPL-3.0-or-later
 components with additional conditions when applicable.
+
+`matter-js` 0.20.0 and `@types/matter-js` 0.20.2 were added on 2026-11-24
+(both MIT, with no further dependencies).
 
 | Package | Version | Declared license | Source |
 | --- | --- | --- | --- |
@@ -177,6 +182,7 @@ components with additional conditions when applicable.
 | `@types/estree` | `1.0.10` | `MIT` | [npm package](https://registry.npmjs.org/@types/estree/-/estree-1.0.10.tgz) |
 | `@types/estree-jsx` | `1.0.5` | `MIT` | [npm package](https://registry.npmjs.org/@types/estree-jsx/-/estree-jsx-1.0.5.tgz) |
 | `@types/hast` | `3.0.5` | `MIT` | [npm package](https://registry.npmjs.org/@types/hast/-/hast-3.0.5.tgz) |
+| `@types/matter-js` | `0.20.2` | `MIT` | [npm package](https://registry.npmjs.org/@types/matter-js/-/matter-js-0.20.2.tgz) |
 | `@types/mdast` | `4.0.4` | `MIT` | [npm package](https://registry.npmjs.org/@types/mdast/-/mdast-4.0.4.tgz) |
 | `@types/nlcst` | `2.0.3` | `MIT` | [npm package](https://registry.npmjs.org/@types/nlcst/-/nlcst-2.0.3.tgz) |
 | `@types/node` | `26.6.6` | `MIT` | [npm package](https://registry.npmjs.org/@types/node/-/node-26.6.6.tgz) |
@@ -403,6 +409,7 @@ components with additional conditions when applicable.
 | `magic-string` | `1.4.5` | `MIT` | [npm package](https://registry.npmjs.org/magic-string/-/magic-string-1.4.5.tgz) |
 | `magicast` | `0.5.5` | `MIT` | [npm package](https://registry.npmjs.org/magicast/-/magicast-0.5.5.tgz) |
 | `marky` | `1.3.0` | `Apache-2.0` | [npm package](https://registry.npmjs.org/marky/-/marky-1.3.0.tgz) |
+| `matter-js` | `0.20.0` | `MIT` | [npm package](https://registry.npmjs.org/matter-js/-/matter-js-0.20.0.tgz) |
 | `math-intrinsics` | `1.1.0` | `MIT` | [npm package](https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.1.0.tgz) |
 | `mdast-util-to-hast` | `13.2.2` | `MIT` | [npm package](https://registry.npmjs.org/mdast-util-to-hast/-/mdast-util-to-hast-13.2.2.tgz) |
 | `mdn-data` | `2.0.28` | `CC0-1.0` | [npm package](https://registry.npmjs.org/mdn-data/-/mdn-data-2.0.28.tgz) |

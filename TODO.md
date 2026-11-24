@@ -26,6 +26,16 @@ The current site is a placeholder; none of these tasks are complete yet.
 - [ ] Add a self-hosted favicon; browsers currently request `/favicon.ico` and
   receive a 404.
 
+## Physics icons (Matter.js)
+
+- [x] Add a Matter.js placeholder to each content page that reacts to clicks
+  and scrolling, loads only when needed, and respects reduced motion.
+- [ ] Design the animated icons and replace the placeholder shapes, keeping
+  them recognizable in both themes.
+- [ ] Decide how scrolling and clicking should change the icons on each page,
+  and which pages keep a scene.
+- [ ] Check touch scrolling and performance on a real phone.
+
 ## Search and shareable pages
 
 - [ ] Replace placeholders with approved, useful content and page-specific

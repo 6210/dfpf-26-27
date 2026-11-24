@@ -10,10 +10,12 @@
     "quality": "lhci collect && lhci assert --includePassedAssertions"
   },
   "dependencies": {
-    "astro": "^7.4.13"
+    "astro": "^7.4.13",
+    "matter-js": "0.20.0"
   },
   "devDependencies": {
-    "@lhci/cli": "0.16.1"
+    "@lhci/cli": "0.16.1",
+    "@types/matter-js": "0.20.2"
   },
   "engines": {
     "node": ">=22.23.4"

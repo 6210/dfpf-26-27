@@ -111,7 +111,8 @@ not-found pages.
 ├── astro.config.mjs          Production URL and URL format
 ├── src/pages/                Home, about, experience, skills, and 404 pages
 ├── src/layouts/              Shared page structure and client navigation
-├── src/components/           Shared navigation and footer
+├── src/components/           Navigation, footer, and physics placeholder
+├── public/                   Files served as-is (third-party license notices)
 ├── tests/                    Generated-page checks
 ├── .github/workflows/        Quality checks and deployment
 ├── package.json              Scripts and dependencies
@@ -126,15 +127,16 @@ flowchart TD
     Repo --> Source["src/"]
     Source --> Pages["pages/ (shareable pages)"]
     Source --> Layout["layouts/ (shared page structure)"]
-    Source --> Components["components/ (navigation and footer)"]
+    Source --> Components["components/ (navigation, footer, physics)"]
+    Repo --> Public["public/ (served as-is)"]
     Repo --> Workflow[".github/workflows/"]
     Repo --> Config["Package and quality configuration"]
     Repo --> Local["documents/ (local only; Git-ignored)"]
 ```
 
-As the site grows, use the following structure. `pages/`, `layouts/`, and
-`components/` exist; the other folders are **proposed** and should be created
-only when needed:
+As the site grows, use the following structure. `pages/`, `layouts/`,
+`components/`, and `public/` exist; the other folders are **proposed** and should
+be created only when needed:
 
 ```text
 src/
@@ -230,6 +232,11 @@ is no flash of the wrong theme. Without JavaScript, the site follows the system
 preference and the button is hidden. Colors use CSS `light-dark()` with
 placeholder values until the visual design is chosen.
 
+Switching themes fades colors over 0.5 seconds instead of changing them
+instantly. The fade is turned off for visitors who prefer reduced motion. The
+button label is chosen with CSS from the theme set in the page head, so the
+button does not appear late or shift the page when it loads.
+
 Local checks (2026-11-24): build, page tests, and Lighthouse passed
 (accessibility 100). Browser checks covered light and dark preferences,
 toggling by mouse and keyboard, persistence across client navigation, back
@@ -246,9 +253,43 @@ transition errors appeared only in a hidden test tab, where browsers cancel
 view transitions; a visible Chrome session showed none. A missing favicon
 returns 404 (pre-existing; see TODO).
 
-Footer update (2026-11-24, not yet deployed): build, page tests, and Lighthouse
-passed for all pages. Browser checks covered footer navigation and current-page
-state after client navigation, dark mode, and a 360 px width.
+Footer update (2026-11-24): build, page tests, and Lighthouse passed for all
+pages. Browser checks covered footer navigation and current-page state after
+client navigation, dark mode, and a 360 px width. The footer and About page
+were deployed in
+[this workflow run](https://github.com/6210/dfpf-26-27/actions/runs/45363526471).
+
+### Physics placeholders (Matter.js)
+
+Each content page (home, about, experience, skills) shows a placeholder built
+with [Matter.js](https://brm.io/matter-js/) in
+`src/components/PhysicsPlaceholder.astro`. It will later be replaced with
+animated icons. For now it drops simple shapes that react to the visitor:
+
+- **Click** the area to add shapes at that point and switch to the next shape.
+  The **Add shapes** button does the same for keyboard users.
+- **Scroll** to push the shapes; every 300 px of scrolling changes all shapes
+  (circle, square, triangle). On pages too short to scroll, mouse-wheel
+  movement is used instead.
+
+To keep pages fast, Matter.js (about 26 KiB compressed) is loaded only when a
+placeholder is near the screen, and once per visit. The animation pauses when
+it is off screen and is cleaned up between pages. At most 40 shapes exist at a
+time. Shapes use the theme's link color, so they fade with the theme. Visitors
+who prefer reduced motion see a still placeholder and Matter.js is not loaded.
+Without JavaScript, the empty placeholder area is shown.
+
+The animation is decorative and hidden from screen readers; the caption
+describes it. Keep one animation of this kind per page, as required.
+
+Local checks (2026-11-24, not yet deployed): build, page tests, and Lighthouse
+passed for all pages (performance and accessibility 100, layout shift 0, about
+35 KiB of script). One earlier Lighthouse run scored 72 for the home page;
+six later runs scored 100, so watch for variance in CI. Visible Chrome checks
+confirmed animation, click, wheel, and button interactions, shape changes,
+cleanup and reload across navigation, the theme fade, reduced motion,
+no-JavaScript behavior, a 360 px width, and no console errors. Touch scrolling
+on a real phone has not been checked.
 
 ### Deploy to Cloudflare Pages
 
@@ -277,9 +318,8 @@ and the workflow was pushed directly to `main`. The
 [first quality-checked deployment](https://github.com/6210/dfpf-26-27/actions/runs/45232769051)
 passed, and the live page was verified. Do not record secret values in this file.
 
-The site is static, so no Cloudflare adapter or Matter.js dependency is needed
-for this initial page. Connecting a repository and deploying require access to a
-Cloudflare account.
+The site is static, so no Cloudflare adapter is needed. Connecting a repository
+and deploying require access to a Cloudflare account.
 
 The initial `Hello World` page scored 100 for mobile performance in Lighthouse
 13.6.0 against a local production preview on 2026-11-23 (Headless Chrome 157 on
@@ -304,11 +344,18 @@ workflow from deploying. Manual checks are still required before pushing.
 | Dependency | Purpose | License | Source |
 | --- | --- | --- | --- |
 | Astro | Static website framework | MIT | https://github.com/withastro/astro |
+| Matter.js | Physics placeholders (shipped to visitors) | MIT | https://github.com/liabru/matter-js |
 | Lighthouse CI | Build quality checks | Apache-2.0 | https://github.com/GoogleChrome/lighthouse-ci |
+| @types/matter-js | Editor type definitions (not shipped) | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 
 See [dependency-licenses.md](dependency-licenses.md) for the locked dependency
 inventory and licensing review notes. Update the inventory and review the built
 output when dependencies or assets change.
+
+The build removes license comments from shipped code, so
+`public/third-party-licenses.txt` publishes the Matter.js and Astro license
+notices at `/third-party-licenses.txt`. Update it when either version changes or
+when other code is shipped to visitors.
 
 The workflow also uses [checkout](https://github.com/actions/checkout) and
 [setup-node](https://github.com/actions/setup-node) (MIT), plus
