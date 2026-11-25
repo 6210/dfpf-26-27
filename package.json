@@ -12,10 +12,12 @@
   "dependencies": {
     "@fontsource/lexend-deca": "5.3.0",
     "astro": "^7.4.13",
+    "flubber": "0.4.2",
     "matter-js": "0.20.0"
   },
   "devDependencies": {
     "@lhci/cli": "0.16.1",
+    "@types/flubber": "0.4.0",
     "@types/matter-js": "0.20.2"
   },
   "engines": {

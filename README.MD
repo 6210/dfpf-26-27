@@ -583,6 +583,18 @@ and the workflow was pushed directly to `main`. The
 [first quality-checked deployment](https://github.com/6210/dfpf-26-27/actions/runs/45232769051)
 passed, and the live page was verified. Do not record secret values in this file.
 
+#### Private while in development (Cloudflare Access)
+
+Since 2026-11-25 the live site (`dfpf-26-27.pages.dev`) and preview links
+(`*.dfpf-26-27.pages.dev`) are behind Cloudflare Access (Zero Trust Free
+plan). Visitors see a Cloudflare login page; only the owner's email address is
+allowed, using a one-time code. The setting lives in Zero Trust > Access
+controls > Applications > "dfpf-26-27 - Cloudflare Pages" (policy "Allow
+Members - Cloudflare Pages"). Deploys and the Lighthouse checks are not
+affected, because they use the API token and the local build. Remove the
+`dfpf-26-27.pages.dev` hostname from that application before launch (see
+TODO.md, "Before going live").
+
 The site is static, so no Cloudflare adapter is needed. Connecting a repository
 and deploying require access to a Cloudflare account.
 
@@ -610,9 +622,11 @@ workflow from deploying. Manual checks are still required before pushing.
 | --- | --- | --- | --- |
 | Astro | Static website framework | MIT | https://github.com/withastro/astro |
 | Matter.js | Physics placeholders (shipped to visitors) | MIT | https://github.com/liabru/matter-js |
+| flubber | Morphs one SVG shape into another; added for the planned skills/experience graphics, not used by any page yet | MIT | https://github.com/veltman/flubber |
 | Lexend Deca (`@fontsource/lexend-deca`) | Heading font (shipped to visitors) | OFL-1.1 | https://github.com/googlefonts/lexend |
 | Lighthouse CI | Build quality checks | Apache-2.0 | https://github.com/GoogleChrome/lighthouse-ci |
 | @types/matter-js | Editor type definitions (not shipped) | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
+| @types/flubber | Editor type definitions (not shipped) | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 
 See [dependency-licenses.md](dependency-licenses.md) for the locked dependency
 inventory and licensing review notes. Update the inventory and review the built

@@ -50,6 +50,12 @@ The site is still in progress; checked items are done.
 - [ ] Decide how scrolling and clicking should change the icons on each page,
   and which pages keep a scene.
 - [ ] Check touch scrolling and performance on a real phone.
+- [ ] On hold (waiting on example SVGs and visual styles): move the interactive
+  element beside the hero content and drop "Interactive" from the scroll
+  navigation. Test two SVGs built from the same nodes in two arrangements that
+  morph between pages and while scrolling. Undecided: replacing or keeping
+  Matter.js, which pages use which arrangement, and how it is fixed or sticky on
+  mobile and desktop.
 
 ## Search and shareable pages
 

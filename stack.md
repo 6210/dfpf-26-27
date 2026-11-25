@@ -19,6 +19,10 @@ it when it is dropped. Exact package versions live in
 - **[Wrangler](https://developers.cloudflare.com/workers/wrangler/) via
   `cloudflare/wrangler-action`**: the workflow step that uploads `dist/` to
   Cloudflare Pages after the checks pass.
+- **[Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/)
+  (Zero Trust Free plan)**: keeps the live site and preview links private while
+  the site is in development; only the owner's email can sign in with a
+  one-time code. To be removed from the live hostname before launch.
 
 ## Framework and content
 
@@ -47,6 +51,12 @@ it when it is dropped. Exact package versions live in
   demand when a placeholder comes into view, so it is not part of the first
   page load, and it is not loaded at all for visitors who prefer reduced
   motion.
+- **[flubber](https://github.com/veltman/flubber)** (MIT): smoothly morphs one
+  SVG shape into another. Added for the planned graphics that link each skill
+  to its Experience area by icon and colour (for example Google Tag Manager in
+  the Analytics colour). Not used by any page yet, so nothing is shipped; when
+  used, load it on demand like Matter.js and show the final shape without
+  animation for visitors who prefer reduced motion.
 - **[Lexend Deca](https://fontsource.org/fonts/lexend-deca) via Fontsource**:
   the bold heading font (h1 and the name in the header), installed from npm and
   served from this site, not a font CDN.

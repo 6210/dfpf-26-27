@@ -19,6 +19,17 @@ components with additional conditions when applicable.
 `matter-js` 0.20.0 and `@types/matter-js` 0.20.2 were added on 2026-11-24
 (both MIT, with no further dependencies).
 
+`flubber` 0.4.2 (MIT, by Noah Veltman, [source](https://github.com/veltman/flubber))
+and `@types/flubber` 0.4.0 (MIT, editor types only) were added on 2026-11-25 for
+morphing one SVG shape into another. flubber brings in `d3-array` 1.2.4 and
+`d3-polygon` 1.0.6 (BSD-3-Clause), `earcut` 2.2.4, `svg-path-properties` 0.2.2
+and `topojson-client` 3.1.0 (ISC), `svgpath` 2.6.0 (MIT), and `commander`
+2.20.3 (MIT, used only by the topojson command-line tool, never shipped). No
+page imports flubber yet, so nothing is shipped. When a page first imports it,
+add the notices of flubber and the bundled dependencies (all except
+`commander`) to `public/third-party-licenses.txt`, and recheck the script
+budget (the full minified build is about 52 KB, 18 KB gzipped).
+
 The theme toggle icon in `src/components/ThemeToggle.astro` is adapted from the
 "Simple" toggle by Alfie Jones ([toggles.dev](https://toggles.dev/toggles/simple),
 [source](https://github.com/AlfieJones/theme-toggles)), added on 2026-11-25. It
@@ -77,6 +88,7 @@ license is published in `public/third-party-licenses.txt`.
 | `@emnapi/wasi-threads` | `1.2.2` | `MIT` | [npm package](https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.2.tgz) |
 | `@emnapi/wasi-threads` | `1.2.3` | `MIT` | [npm package](https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.3.tgz) |
 | `@emnapi/wasi-threads` | `2.2.0` | `MIT` | [npm package](https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-2.2.0.tgz) |
+| `@fontsource/lexend-deca` | `5.3.0` | `OFL-1.1` | [npm package](https://registry.npmjs.org/@fontsource/lexend-deca/-/lexend-deca-5.3.0.tgz) |
 | `@formatjs/ecma402-abstract` | `2.3.6` | `MIT` | [npm package](https://registry.npmjs.org/@formatjs/ecma402-abstract/-/ecma402-abstract-2.3.6.tgz) |
 | `@formatjs/fast-memoize` | `2.2.7` | `MIT` | [npm package](https://registry.npmjs.org/@formatjs/fast-memoize/-/fast-memoize-2.2.7.tgz) |
 | `@formatjs/icu-messageformat-parser` | `2.11.4` | `MIT` | [npm package](https://registry.npmjs.org/@formatjs/icu-messageformat-parser/-/icu-messageformat-parser-2.11.4.tgz) |
@@ -184,7 +196,6 @@ license is published in `public/third-party-licenses.txt`.
 | `@sentry/server-utils` | `11.16.0` | `MIT` | [npm package](https://registry.npmjs.org/@sentry/server-utils/-/server-utils-11.16.0.tgz) |
 | `@shikijs/core` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/core/-/core-4.6.0.tgz) |
 | `@shikijs/engine-javascript` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/engine-javascript/-/engine-javascript-4.6.0.tgz) |
-| `@fontsource/lexend-deca` | `5.3.0` | `OFL-1.1` | [npm package](https://registry.npmjs.org/@fontsource/lexend-deca/-/lexend-deca-5.3.0.tgz) |
 | `@shikijs/engine-oniguruma` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/engine-oniguruma/-/engine-oniguruma-4.6.0.tgz) |
 | `@shikijs/langs` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/langs/-/langs-4.6.0.tgz) |
 | `@shikijs/primitive` | `4.6.0` | `MIT` | [npm package](https://registry.npmjs.org/@shikijs/primitive/-/primitive-4.6.0.tgz) |
@@ -194,6 +205,7 @@ license is published in `public/third-party-licenses.txt`.
 | `@tybys/wasm-util` | `0.10.5` | `MIT` | [npm package](https://registry.npmjs.org/@tybys/wasm-util/-/wasm-util-0.10.5.tgz) |
 | `@types/estree` | `1.0.10` | `MIT` | [npm package](https://registry.npmjs.org/@types/estree/-/estree-1.0.10.tgz) |
 | `@types/estree-jsx` | `1.0.5` | `MIT` | [npm package](https://registry.npmjs.org/@types/estree-jsx/-/estree-jsx-1.0.5.tgz) |
+| `@types/flubber` | `0.4.0` | `MIT` | [npm package](https://registry.npmjs.org/@types/flubber/-/flubber-0.4.0.tgz) |
 | `@types/hast` | `3.0.5` | `MIT` | [npm package](https://registry.npmjs.org/@types/hast/-/hast-3.0.5.tgz) |
 | `@types/matter-js` | `0.20.2` | `MIT` | [npm package](https://registry.npmjs.org/@types/matter-js/-/matter-js-0.20.2.tgz) |
 | `@types/mdast` | `4.0.4` | `MIT` | [npm package](https://registry.npmjs.org/@types/mdast/-/mdast-4.0.4.tgz) |
@@ -258,6 +270,7 @@ license is published in `public/third-party-licenses.txt`.
 | `color-name` | `1.1.4` | `MIT` | [npm package](https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz) |
 | `comma-separated-tokens` | `2.0.3` | `MIT` | [npm package](https://registry.npmjs.org/comma-separated-tokens/-/comma-separated-tokens-2.0.3.tgz) |
 | `commander` | `11.1.0` | `MIT` | [npm package](https://registry.npmjs.org/commander/-/commander-11.1.0.tgz) |
+| `commander` | `2.20.3` | `MIT` | [npm package](https://registry.npmjs.org/commander/-/commander-2.20.3.tgz) |
 | `common-ancestor-path` | `2.0.0` | `BlueOak-1.0.0` | [npm package](https://registry.npmjs.org/common-ancestor-path/-/common-ancestor-path-2.0.0.tgz) |
 | `compressible` | `2.0.18` | `MIT` | [npm package](https://registry.npmjs.org/compressible/-/compressible-2.0.18.tgz) |
 | `compression` | `1.8.2` | `MIT` | [npm package](https://registry.npmjs.org/compression/-/compression-1.8.2.tgz) |
@@ -276,6 +289,8 @@ license is published in `public/third-party-licenses.txt`.
 | `css-tree` | `3.2.1` | `MIT` | [npm package](https://registry.npmjs.org/css-tree/-/css-tree-3.2.1.tgz) |
 | `css-what` | `7.0.0` | `BSD-2-Clause` | [npm package](https://registry.npmjs.org/css-what/-/css-what-7.0.0.tgz) |
 | `csso` | `5.0.5` | `MIT` | [npm package](https://registry.npmjs.org/csso/-/csso-5.0.5.tgz) |
+| `d3-array` | `1.2.4` | `BSD-3-Clause` | [npm package](https://registry.npmjs.org/d3-array/-/d3-array-1.2.4.tgz) |
+| `d3-polygon` | `1.0.6` | `BSD-3-Clause` | [npm package](https://registry.npmjs.org/d3-polygon/-/d3-polygon-1.0.6.tgz) |
 | `data-uri-to-buffer` | `8.0.0` | `MIT` | [npm package](https://registry.npmjs.org/data-uri-to-buffer/-/data-uri-to-buffer-8.0.0.tgz) |
 | `debug` | `2.6.9` | `MIT` | [npm package](https://registry.npmjs.org/debug/-/debug-2.6.9.tgz) |
 | `debug` | `4.4.3` | `MIT` | [npm package](https://registry.npmjs.org/debug/-/debug-4.4.3.tgz) |
@@ -306,6 +321,7 @@ license is published in `public/third-party-licenses.txt`.
 | `dotenv` | `17.4.2` | `BSD-2-Clause` | [npm package](https://registry.npmjs.org/dotenv/-/dotenv-17.4.2.tgz) |
 | `dset` | `3.1.4` | `MIT` | [npm package](https://registry.npmjs.org/dset/-/dset-3.1.4.tgz) |
 | `dunder-proto` | `1.0.1` | `MIT` | [npm package](https://registry.npmjs.org/dunder-proto/-/dunder-proto-1.0.1.tgz) |
+| `earcut` | `2.2.4` | `ISC` | [npm package](https://registry.npmjs.org/earcut/-/earcut-2.2.4.tgz) |
 | `ee-first` | `1.1.1` | `MIT` | [npm package](https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz) |
 | `emoji-regex` | `10.6.0` | `MIT` | [npm package](https://registry.npmjs.org/emoji-regex/-/emoji-regex-10.6.0.tgz) |
 | `emoji-regex` | `8.0.0` | `MIT` | [npm package](https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz) |
@@ -337,6 +353,7 @@ license is published in `public/third-party-licenses.txt`.
 | `finalhandler` | `1.3.2` | `MIT` | [npm package](https://registry.npmjs.org/finalhandler/-/finalhandler-1.3.2.tgz) |
 | `find-up` | `4.1.0` | `MIT` | [npm package](https://registry.npmjs.org/find-up/-/find-up-4.1.0.tgz) |
 | `flattie` | `1.1.1` | `MIT` | [npm package](https://registry.npmjs.org/flattie/-/flattie-1.1.1.tgz) |
+| `flubber` | `0.4.2` | `MIT` | [npm package](https://registry.npmjs.org/flubber/-/flubber-0.4.2.tgz) |
 | `fnv1a-64` | `0.1.2` | `MIT` | [npm package](https://registry.npmjs.org/fnv1a-64/-/fnv1a-64-0.1.2.tgz) |
 | `fontace` | `0.4.1` | `MIT` | [npm package](https://registry.npmjs.org/fontace/-/fontace-0.4.1.tgz) |
 | `fontkitten` | `1.0.3` | `MIT` | [npm package](https://registry.npmjs.org/fontkitten/-/fontkitten-1.0.3.tgz) |
@@ -422,8 +439,8 @@ license is published in `public/third-party-licenses.txt`.
 | `magic-string` | `1.4.5` | `MIT` | [npm package](https://registry.npmjs.org/magic-string/-/magic-string-1.4.5.tgz) |
 | `magicast` | `0.5.5` | `MIT` | [npm package](https://registry.npmjs.org/magicast/-/magicast-0.5.5.tgz) |
 | `marky` | `1.3.0` | `Apache-2.0` | [npm package](https://registry.npmjs.org/marky/-/marky-1.3.0.tgz) |
-| `matter-js` | `0.20.0` | `MIT` | [npm package](https://registry.npmjs.org/matter-js/-/matter-js-0.20.0.tgz) |
 | `math-intrinsics` | `1.1.0` | `MIT` | [npm package](https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.1.0.tgz) |
+| `matter-js` | `0.20.0` | `MIT` | [npm package](https://registry.npmjs.org/matter-js/-/matter-js-0.20.0.tgz) |
 | `mdast-util-to-hast` | `13.2.2` | `MIT` | [npm package](https://registry.npmjs.org/mdast-util-to-hast/-/mdast-util-to-hast-13.2.2.tgz) |
 | `mdn-data` | `2.0.28` | `CC0-1.0` | [npm package](https://registry.npmjs.org/mdn-data/-/mdn-data-2.0.28.tgz) |
 | `mdn-data` | `2.27.1` | `CC0-1.0` | [npm package](https://registry.npmjs.org/mdn-data/-/mdn-data-2.27.1.tgz) |
@@ -564,7 +581,9 @@ license is published in `public/third-party-licenses.txt`.
 | `stubborn-fs` | `2.0.0` | `MIT` | [npm package](https://registry.npmjs.org/stubborn-fs/-/stubborn-fs-2.0.0.tgz) |
 | `stubborn-utils` | `1.0.2` | `MIT` | [npm package](https://registry.npmjs.org/stubborn-utils/-/stubborn-utils-1.0.2.tgz) |
 | `supports-color` | `7.2.0` | `MIT` | [npm package](https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz) |
+| `svg-path-properties` | `0.2.2` | `ISC` | [npm package](https://registry.npmjs.org/svg-path-properties/-/svg-path-properties-0.2.2.tgz) |
 | `svgo` | `4.1.0` | `MIT` | [npm package](https://registry.npmjs.org/svgo/-/svgo-4.1.0.tgz) |
+| `svgpath` | `2.6.0` | `MIT` | [npm package](https://registry.npmjs.org/svgpath/-/svgpath-2.6.0.tgz) |
 | `tagged-tag` | `1.0.0` | `MIT` | [npm package](https://registry.npmjs.org/tagged-tag/-/tagged-tag-1.0.0.tgz) |
 | `third-party-web` | `0.30.0` | `MIT` | [npm package](https://registry.npmjs.org/third-party-web/-/third-party-web-0.30.0.tgz) |
 | `through` | `2.3.8` | `MIT` | [npm package](https://registry.npmjs.org/through/-/through-2.3.8.tgz) |
@@ -576,6 +595,7 @@ license is published in `public/third-party-licenses.txt`.
 | `tldts-core` | `7.5.5` | `MIT` | [npm package](https://registry.npmjs.org/tldts-core/-/tldts-core-7.5.5.tgz) |
 | `tldts-icann` | `7.5.5` | `MIT` | [npm package](https://registry.npmjs.org/tldts-icann/-/tldts-icann-7.5.5.tgz) |
 | `toidentifier` | `1.0.1` | `MIT` | [npm package](https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.1.tgz) |
+| `topojson-client` | `3.1.0` | `ISC` | [npm package](https://registry.npmjs.org/topojson-client/-/topojson-client-3.1.0.tgz) |
 | `tr46` | `0.0.3` | `MIT` | [npm package](https://registry.npmjs.org/tr46/-/tr46-0.0.3.tgz) |
 | `tree-kill` | `1.2.2` | `MIT` | [npm package](https://registry.npmjs.org/tree-kill/-/tree-kill-1.2.2.tgz) |
 | `trim-lines` | `3.0.1` | `MIT` | [npm package](https://registry.npmjs.org/trim-lines/-/trim-lines-3.0.1.tgz) |
