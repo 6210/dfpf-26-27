@@ -94,6 +94,11 @@ The site is still in progress; checked items are done.
 
 ## Before going live
 
+- [ ] Remove the temporary Cloudflare Access restriction on the production
+  site (`dfpf-26-27.pages.dev`, and the custom domain if added) so the public
+  can view it. In Zero Trust, open Access controls > Applications >
+  "dfpf-26-27 - Cloudflare Pages" and remove the production hostname (keep
+  the `*` preview hostname if previews should stay private).
 - [ ] Check layouts at 360 px and wider, keyboard access, focus visibility, and
   reduced-motion behavior.
 - [ ] Run the Lighthouse checks and address failures: mobile performance and

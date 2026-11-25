@@ -121,7 +121,8 @@ is still a placeholder.
 ├── tests/                    Generated-page checks
 ├── .github/workflows/        Quality checks and deployment
 ├── package.json              Scripts and dependencies
-└── documents/                Local reference files; ignored by Git
+├── documents/                Local reference files; ignored by Git
+└── screenshot/               Local setup screenshots (for example block-users/); ignored by Git
 ```
 
 ```mermaid

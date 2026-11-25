@@ -6,6 +6,8 @@ dist/
 .cache/
 coverage/
 /documents/
+# Local reference screenshots (for example Cloudflare setup), never committed
+/screenshot/
 
 .env
 .env.*
