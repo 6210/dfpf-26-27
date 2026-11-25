@@ -167,8 +167,9 @@ against the schema in [src/content.config.ts](src/content.config.ts); a missing
 or misspelled field fails the build.
 
 - **Positioning:** [src/content/profile.json](src/content/profile.json) holds the
-  name shown in the header, the headline, summary, and focus areas (SEO, CRM integration, and campaign
-  technology). The site presents a marketing-department technical lead, not a
+  name (the header and the home page `h1`), the headline (the home page lead),
+  the summary (the home page About section, which links to the full About
+  page), and focus areas (SEO, CRM integration, and campaign technology). The site presents a marketing-department technical lead, not a
   general developer role.
 - **Roles:** one Markdown file per role in
   [src/content/roles/](src/content/roles/). Each role lists its areas of

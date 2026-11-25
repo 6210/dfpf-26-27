@@ -1,0 +1,17 @@
+---
+import { getProfile } from '../lib/content';
+
+const { summary } = await getProfile();
+---
+
+<section class="about-summary" id="about" aria-labelledby="about-heading">
+  <h2 id="about-heading">About</h2>
+  <p>{summary}</p>
+  <p><a href="/about/">More about me</a></p>
+</section>
+
+<style>
+  .about-summary {
+    margin-top: 3rem;
+  }
+</style>

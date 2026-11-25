@@ -1,10 +1,11 @@
 ---
+import AboutSummary from '../components/AboutSummary.astro';
 import CvDownload from '../components/CvDownload.astro';
 import PhysicsPlaceholder from '../components/PhysicsPlaceholder.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getProfile } from '../lib/content';
 
-const { headline, summary } = await getProfile();
+const { name, headline } = await getProfile();
 ---
 
 <SiteLayout
@@ -12,12 +13,14 @@ const { headline, summary } = await getProfile();
   description="An interactive portfolio for sharing professional experience and work."
   sections={[
     { id: 'intro', label: 'Intro' },
+    { id: 'about', label: 'About' },
     { id: 'interactive', label: 'Interactive' },
   ]}
 >
-  <h1 id="intro">{headline}</h1>
-  <p class="lead">{summary}</p>
+  <h1 id="intro">{name}</h1>
+  <p class="lead">{headline}</p>
   <p><a href="/experience/">Explore experience</a></p>
   <CvDownload />
+  <AboutSummary />
   <PhysicsPlaceholder id="interactive" label="Home animation" />
 </SiteLayout>
