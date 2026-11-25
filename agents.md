@@ -16,3 +16,8 @@ this project, and remove entries that are no longer used.
 
 Keep [flow.md](flow.md) current: when a page, component, or content source is
 added, removed, or rewired, update its Mermaid diagrams in the same change.
+
+While the site is private (behind Cloudflare Access) and no branching strategy
+exists, commit and push finished, checked changes straight to `main` without
+asking first, then confirm the deployment succeeded. Stop doing this once the
+site is public or a branching strategy is agreed.

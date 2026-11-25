@@ -87,6 +87,10 @@ The site is still in progress; checked items are done.
   in both themes (see README "Highlight colours (draft)").
 - [ ] Decide the final palette; update the accent properties and recheck
   contrast.
+- [x] Test icons per area (Phosphor "fill") on Experience and Skills, with a
+  badge that morphs between them (flubber) on scroll, hover, and page change.
+- [ ] Choose the final icons for each area and decide whether to keep the
+  floating badge or move the morph into the hero graphic.
 - [ ] Review small design examples and SVG icons (24 × 24, single colour,
   strokes outlined) to choose the icon style and interaction effects.
 

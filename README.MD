@@ -524,6 +524,34 @@ passed on every page (performance 100, accessibility 100, no layout shift). In
 Chrome at 360 px, all six markers showed the expected colour in both themes,
 with no horizontal scrolling.
 
+### Area icons and morphing badge (test)
+
+An interactivity test that links Skills to Experience by icon and colour. Each
+area of work has an icon from [Phosphor Icons](https://phosphoricons.com)
+("fill" weight, MIT) in its accent colour. The icon paths are copied into
+[src/lib/area-icons.ts](src/lib/area-icons.ts), which also defines the list of
+accents used by the content schema, so a new accent needs an icon.
+
+- `AreaIcon.astro` draws an area's icon. Experience shows it beside each area
+  title; Skills shows the icons of every area a platform is used in (for
+  example Google Tag Manager gets the purple Analytics icon).
+- `AreaBadge.astro` is a small badge fixed to the bottom right (with the area
+  name from 768 px). It follows the area in view: as you scroll or hover an
+  area card (Experience) or a platform (Skills), the icon morphs into the next
+  area's icon with [flubber](https://github.com/veltman/flubber) and the
+  colour fades across. The badge persists across page changes, so moving
+  between Experience and Skills morphs it too. It hides on pages with no areas.
+- Targets are any element in `<main>` with `data-morph="<accent>"` and
+  `data-morph-label="<area title>"`.
+- flubber (about 18 KB gzipped) is loaded only for the first animated morph.
+  With reduced motion the icon changes without animation; without JavaScript
+  the badge stays hidden and the static icons still show.
+- The badge is decorative (`aria-hidden`); the area names are in the content.
+
+Checks (2026-11-25): build, page tests, and Lighthouse passed. In Chrome at
+1440 px the badge morphed on scroll, hover, and Experience → Skills
+navigation; at 360 and 768 px there was no horizontal scrolling.
+
 ### Physics placeholders (Matter.js)
 
 Each content page (home, about, experience, skills) shows a placeholder built
@@ -622,7 +650,7 @@ workflow from deploying. Manual checks are still required before pushing.
 | --- | --- | --- | --- |
 | Astro | Static website framework | MIT | https://github.com/withastro/astro |
 | Matter.js | Physics placeholders (shipped to visitors) | MIT | https://github.com/liabru/matter-js |
-| flubber | Morphs one SVG shape into another; added for the planned skills/experience graphics, not used by any page yet | MIT | https://github.com/veltman/flubber |
+| flubber | Morphs the area badge icon (shipped to visitors, loaded on demand) | MIT | https://github.com/veltman/flubber |
 | Lexend Deca (`@fontsource/lexend-deca`) | Heading font (shipped to visitors) | OFL-1.1 | https://github.com/googlefonts/lexend |
 | Lighthouse CI | Build quality checks | Apache-2.0 | https://github.com/GoogleChrome/lighthouse-ci |
 | @types/matter-js | Editor type definitions (not shipped) | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
@@ -633,8 +661,8 @@ inventory and licensing review notes. Update the inventory and review the built
 output when dependencies or assets change.
 
 The build removes license comments from shipped code, so
-`public/third-party-licenses.txt` publishes the Matter.js, Astro, and Lexend
-Deca license notices at `/third-party-licenses.txt`. Update it when any of
+`public/third-party-licenses.txt` publishes the Matter.js, Astro, Lexend
+Deca, flubber (and the packages it bundles), toggles.dev, and Phosphor Icons license notices at `/third-party-licenses.txt`. Update it when any of
 their versions change or when other code or fonts are shipped to visitors.
 
 ### Fonts

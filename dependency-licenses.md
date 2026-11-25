@@ -7,8 +7,9 @@ was generated from installed package metadata or the npm registry on
 2026-11-23. It is not a legal compliance determination; review individual
 notices and bundled third-party components before distributing dependencies.
 
-The static build ships Astro's client router, Matter.js, the Lexend Deca
-font, and the adapted toggles.dev theme icon to visitors. The
+The static build ships Astro's client router, Matter.js, flubber, the Lexend
+Deca font, the adapted toggles.dev theme icon, and Phosphor icon paths to
+visitors. The
 build removes their license comments, so their notices are published in
 [public/third-party-licenses.txt](public/third-party-licenses.txt). Recheck the
 output and licensing obligations when client-side libraries, assets, or server
@@ -24,11 +25,16 @@ and `@types/flubber` 0.4.0 (MIT, editor types only) were added on 2026-11-25 for
 morphing one SVG shape into another. flubber brings in `d3-array` 1.2.4 and
 `d3-polygon` 1.0.6 (BSD-3-Clause), `earcut` 2.2.4, `svg-path-properties` 0.2.2
 and `topojson-client` 3.1.0 (ISC), `svgpath` 2.6.0 (MIT), and `commander`
-2.20.3 (MIT, used only by the topojson command-line tool, never shipped). No
-page imports flubber yet, so nothing is shipped. When a page first imports it,
-add the notices of flubber and the bundled dependencies (all except
-`commander`) to `public/third-party-licenses.txt`, and recheck the script
-budget (the full minified build is about 52 KB, 18 KB gzipped).
+2.20.3 (MIT, used only by the topojson command-line tool, never shipped).
+Since 2026-11-25 the area badge loads flubber's minified build (about 52 KB,
+18 KB gzipped) on demand; it bundles the other packages except `commander`, and
+their notices are in `public/third-party-licenses.txt`.
+
+The area icons in `src/lib/area-icons.ts` are copied SVG paths from Phosphor
+Icons (`@phosphor-icons/core` 2.1.1, MIT,
+[source](https://github.com/phosphor-icons/core)), added on 2026-11-25. They are
+copied code, not an installed package; the notice is in
+`public/third-party-licenses.txt`.
 
 The theme toggle icon in `src/components/ThemeToggle.astro` is adapted from the
 "Simple" toggle by Alfie Jones ([toggles.dev](https://toggles.dev/toggles/simple),

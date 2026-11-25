@@ -1,4 +1,5 @@
 ---
+import AreaIcon from '../components/AreaIcon.astro';
 import PhysicsPlaceholder from '../components/PhysicsPlaceholder.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getPlatforms, getProfile } from '../lib/content';
@@ -28,12 +29,24 @@ const platforms = await getPlatforms();
   <h2 id="platforms">Platforms</h2>
   <dl class="platforms">
     {
-      platforms.map(({ name, uses }) => (
-        <div>
-          <dt>{name}</dt>
-          <dd>{[...new Set(uses.map(({ area }) => area))].join('; ')}</dd>
-        </div>
-      ))
+      platforms.map(({ name, uses }) => {
+        const areas = [...new Map(uses.map((use) => [use.area, use])).values()];
+        const accents = [...new Set(areas.flatMap(({ accent }) => (accent ? [accent] : [])))];
+        const first = areas.find(({ accent }) => accent);
+        return (
+          <div data-morph={first?.accent} data-morph-label={first?.area}>
+            <dt>
+              {name}
+              <span class="area-icons">
+                {accents.map((accent) => (
+                  <AreaIcon accent={accent} />
+                ))}
+              </span>
+            </dt>
+            <dd>{areas.map(({ area }) => area).join('; ')}</dd>
+          </div>
+        );
+      })
     }
   </dl>
   <PhysicsPlaceholder id="interactive" label="Skills animation" />
@@ -46,7 +59,16 @@ const platforms = await getPlatforms();
   }
 
   .platforms dt {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
     font-weight: 700;
+    gap: 0.5rem;
+  }
+
+  .area-icons {
+    display: inline-flex;
+    gap: 0.25rem;
   }
 
   .platforms dd {

@@ -52,11 +52,15 @@ it when it is dropped. Exact package versions live in
   page load, and it is not loaded at all for visitors who prefer reduced
   motion.
 - **[flubber](https://github.com/veltman/flubber)** (MIT): smoothly morphs one
-  SVG shape into another. Added for the planned graphics that link each skill
-  to its Experience area by icon and colour (for example Google Tag Manager in
-  the Analytics colour). Not used by any page yet, so nothing is shipped; when
-  used, load it on demand like Matter.js and show the final shape without
-  animation for visitors who prefer reduced motion.
+  SVG shape into another. Morphs the floating area badge (`AreaBadge.astro`)
+  from one area icon to the next as visitors scroll, hover, or change page, so
+  Skills and Experience share one visual (for example Google Tag Manager in the
+  Analytics colour). Loaded on demand for the first animated morph; visitors
+  who prefer reduced motion get an instant swap.
+- **[Phosphor Icons](https://phosphoricons.com)** ("fill" weight, MIT): one
+  icon per area of work (gear, megaphone, flow arrow, chart, magnifying glass,
+  document), copied as SVG paths into `src/lib/area-icons.ts` rather than
+  installed, and shown beside areas on Experience and platforms on Skills.
 - **[Lexend Deca](https://fontsource.org/fonts/lexend-deca) via Fontsource**:
   the bold heading font (h1 and the name in the header), installed from npm and
   served from this site, not a font CDN.

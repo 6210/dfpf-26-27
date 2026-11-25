@@ -1,11 +1,12 @@
 import { defineCollection } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { accents } from './lib/area-icons';
 
 // Year ("2017") or year and month ("2017-10").
 const yearMonth = z.string().regex(/^\d{4}(-(0[1-9]|1[0-2]))?$/);
 
-const accent = z.enum(['operations', 'campaigns', 'automation', 'analytics', 'seo', 'documentation']);
+const accent = z.enum(accents);
 
 const roles = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/roles' }),

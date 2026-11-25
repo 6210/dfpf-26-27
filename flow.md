@@ -57,23 +57,29 @@ flowchart TD
         CvDownload["CvDownload.astro"]
         AboutSummary["AboutSummary.astro<br/>home About section"]
         Physics["PhysicsPlaceholder.astro<br/>(Matter.js, lazy-loaded)"]
+        AreaIcon["AreaIcon.astro<br/>area icon in its colour"]
+        AreaBadge["AreaBadge.astro<br/>morphing area badge<br/>(flubber, lazy-loaded)"]
     end
 
     subgraph Content["Content"]
         lib["src/lib/content.ts<br/>getProfile, getRoles,<br/>getPlatforms, getCvFiles"]
+        icons["src/lib/area-icons.ts<br/>accents and Phosphor icon paths"]
         profile[("src/content/profile.json")]
         roles[("src/content/roles/*.md")]
         cvfiles[("CV files in public/")]
     end
 
     index & about & experience & skills & downloads & notfound --> SiteLayout
-    SiteLayout --> SiteHeader & GetInTouch & SiteFooter
+    SiteLayout --> SiteHeader & GetInTouch & SiteFooter & AreaBadge
     SiteHeader & SiteFooter --> SiteNav
     SiteHeader --> ThemeToggle
 
     index & about & experience --> CvDownload
     index --> AboutSummary
     index & about & experience & skills --> Physics
+    experience & skills --> AreaIcon
+    AreaIcon & AreaBadge -. "icon paths" .-> icons
+    experience & skills -. "data-morph targets" .-> AreaBadge
 
     index & skills & SiteHeader & GetInTouch & AboutSummary -. "getProfile" .-> lib
     skills -. "getPlatforms" .-> lib

@@ -142,3 +142,18 @@ test('the downloads page lists every CV version, as a link only once its file ex
   }
   assert.match(html, /Coming soon|KB/);
 });
+
+test('experience areas and skills platforms share area icons and morph targets', async () => {
+  const experience = await readFile('dist/experience/index.html', 'utf8');
+  const skills = await readFile('dist/skills/index.html', 'utf8');
+  const accents = ['operations', 'campaigns', 'automation', 'analytics', 'seo', 'documentation'];
+
+  for (const accent of accents) {
+    assert.match(experience, new RegExp(`<li[^>]*data-morph="${accent}"[^>]*>\\s*<h3[^>]*>\\s*<svg[^>]*class="area-icon`), `Experience ${accent} card has an icon`);
+  }
+  const gtm = skills.match(/<div[^>]*data-morph="([^"]+)"[^>]*>\s*<dt[^>]*>Google Tag Manager/);
+  assert.equal(gtm?.[1], 'analytics', 'Google Tag Manager links to the analytics area');
+  for (const html of [experience, skills]) {
+    assert.match(html, /<div[^>]*class="area-badge"[^>]*data-area-badge hidden/, 'the badge is hidden until its script runs');
+  }
+});

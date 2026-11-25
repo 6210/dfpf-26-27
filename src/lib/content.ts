@@ -1,6 +1,7 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import type { Accent } from './area-icons';
 
 export type Role = CollectionEntry<'roles'>;
 
@@ -26,7 +27,7 @@ export async function getProfile() {
 
 export interface PlatformUsage {
   name: string;
-  uses: { area: string; role: string }[];
+  uses: { area: string; accent?: Accent; role: string }[];
 }
 
 /** Every platform across all roles, with the areas that use it, in the order they first appear in the content. */
@@ -36,7 +37,7 @@ export async function getPlatforms(): Promise<PlatformUsage[]> {
     for (const area of role.data.areas) {
       for (const name of area.platforms) {
         const usage = platforms.get(name) ?? { name, uses: [] };
-        usage.uses.push({ area: area.title, role: `${role.data.title}, ${role.data.company}` });
+        usage.uses.push({ area: area.title, accent: area.accent, role: `${role.data.title}, ${role.data.company}` });
         platforms.set(name, usage);
       }
     }

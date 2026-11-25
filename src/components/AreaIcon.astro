@@ -1,0 +1,36 @@
+---
+// Decorative icon for an area of work, drawn in the area's accent colour.
+import { areaIcons, type Accent } from '../lib/area-icons';
+
+interface Props {
+  accent: Accent;
+  class?: string;
+}
+
+const { accent, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['area-icon', className]}
+  data-accent={accent}
+  viewBox="0 0 256 256"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={areaIcons[accent].parts.join('')} fill="currentColor"></path>
+</svg>
+
+<style>
+  .area-icon {
+    block-size: 1.25em;
+    color: var(--color-accent);
+    flex: none;
+    inline-size: 1.25em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .area-icon {
+      transition: color 1s ease;
+    }
+  }
+</style>

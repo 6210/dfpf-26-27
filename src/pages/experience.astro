@@ -1,4 +1,5 @@
 ---
+import AreaIcon from '../components/AreaIcon.astro';
 import CvDownload from '../components/CvDownload.astro';
 import PhysicsPlaceholder from '../components/PhysicsPlaceholder.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
@@ -36,8 +37,11 @@ const roles = await getRoles();
         <p>{role.data.summary}</p>
         <ul class="areas">
           {role.data.areas.map((area) => (
-            <li data-accent={area.accent}>
-              <h3>{area.title}</h3>
+            <li data-accent={area.accent} data-morph={area.accent} data-morph-label={area.title}>
+              <h3>
+                {area.accent && <AreaIcon accent={area.accent} />}
+                {area.title}
+              </h3>
               <p>{area.summary}</p>
               {area.platforms.length > 0 && (
                 <p class="platforms">
@@ -73,7 +77,10 @@ const roles = await getRoles();
   }
 
   .areas h3 {
+    align-items: center;
+    display: flex;
     font-size: 1.05rem;
+    gap: 0.5rem;
     margin: 0 0 0.25rem;
   }
 
