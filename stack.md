@@ -73,7 +73,9 @@ it when it is dropped. Exact package versions live in
 ## Browser platform features (no library needed)
 
 - **Popover API**: the full-screen hamburger menu opens and closes, handles
-  Escape, and returns focus without JavaScript.
+  Escape, and returns focus without JavaScript. Also shows the short "Dark
+  mode on" / "Light mode on" message after a theme switch, in the top layer
+  above the menu.
 - **View Transitions API**: the browser feature that Astro's view transitions
   use for page-to-page animation.
 - **SVG `clipPath` and the CSS `d` property**: morph the theme toggle icon

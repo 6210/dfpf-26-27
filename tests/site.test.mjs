@@ -65,8 +65,10 @@ test('the theme is set in the head before content renders, with a label for each
   const head = html.slice(0, html.indexOf('</head>'));
 
   assert.match(head, /documentElement\.dataset\.theme = current\(\)/);
-  assert.match(html, /<span data-theme-label="light"[^>]*>Dark mode<\/span>/);
-  assert.match(html, /<span data-theme-label="dark"[^>]*>Light mode<\/span>/);
+  assert.match(html, /<span data-theme-label="light"[^>]*>Switch to dark mode<\/span>/);
+  assert.match(html, /<span data-theme-label="dark"[^>]*>Switch to light mode<\/span>/);
+  assert.match(html, /<div[^>]*data-theme-status[^>]*popover="manual"/);
+  assert.match(html, /<p[^>]*role="status"[^>]*data-theme-announce/);
 });
 
 test('the generated not-found page is not presented as canonical content', async () => {

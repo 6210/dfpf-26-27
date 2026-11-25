@@ -334,7 +334,7 @@ const isHome = Astro.url.pathname === '/';
   @media (prefers-reduced-motion: no-preference) {
     .site-header {
       transition:
-        background-color 1s ease,
+        background-color var(--theme-fade) ease,
         transform 0.3s ease;
     }
 
@@ -415,9 +415,9 @@ const isHome = Astro.url.pathname === '/';
       filter: blur(4px);
       opacity: 0;
       transition:
-        background-color 1s ease,
-        border-color 1s ease,
-        color 1s ease,
+        background-color var(--theme-fade) ease,
+        border-color var(--theme-fade) ease,
+        color var(--theme-fade) ease,
         filter 0.6s ease 0.5s,
         opacity 0.6s ease 0.5s,
         translate 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s;

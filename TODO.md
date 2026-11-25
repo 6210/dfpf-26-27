@@ -91,6 +91,10 @@ The site is still in progress; checked items are done.
   badge that morphs between them (flubber) on scroll, hover, and page change.
 - [ ] Choose the final icons for each area and decide whether to keep the
   floating badge or move the morph into the hero graphic.
+- [ ] Redesign how the area icons are shown; the current badge and inline
+  icons stay for now as context for later work.
+- [ ] Add an elastic effect and more shapes on the page that signify the
+  current experience area or skill (follows the theme feedback work).
 - [ ] Review small design examples and SVG icons (24 × 24, single colour,
   strokes outlined) to choose the icon style and interaction effects.
 

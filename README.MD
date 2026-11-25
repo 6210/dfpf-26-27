@@ -449,19 +449,25 @@ button (`src/components/ThemeToggle.astro`; in the header from 1024px wide, at
 the bottom of the menu on phones and tablets) shows an animated icon adapted
 from the toggles.dev "Simple" toggle (MIT): a full circle in the light theme
 that a sliding cut-out turns into a crescent moon in the dark theme. It is an
-inline SVG animated with CSS only (0.6 s, off for reduced motion), with a
+inline SVG animated with CSS only (1 s, off for reduced motion), with a
 static fallback in browsers that cannot animate SVG paths with CSS. In the
-header it is icon-only; in the menu the text sits beside it. Its name, shown or
-read aloud, is the mode it switches to: **Dark mode** while the
-site is light and **Light mode** while it is dark. The choice is saved in the
+header it is icon-only, with a small hint ("Switch to dark mode") that appears
+below it on mouse hover or keyboard focus; in the menu the text sits beside it.
+Its name, shown or read aloud, is the action: **Switch to dark mode** while the
+site is light and **Switch to light mode** while it is dark. The choice is saved in the
 browser's `localStorage` and applies across pages and later visits. A small
 inline script in the page head sets the theme before content appears, so there
 is no flash of the wrong theme. Without JavaScript, the site follows the system
 preference and the button is hidden. Colors use CSS `light-dark()` with
 placeholder values until the visual design is chosen.
 
-Switching themes fades colors over 1 second instead of changing them
-instantly. The fade is turned off for visitors who prefer reduced motion. The
+Switching themes fades colors over 1.5 seconds (the `--theme-fade` token in
+`SiteLayout.astro`, shared by every theme transition) instead of changing them
+instantly. After a click, a short message ("Dark mode on" or "Light mode on")
+appears near the top right for about 2.6 seconds, shown as a popover so it
+sits above the open menu, and the same text is announced to screen readers
+through a hidden status region. The fade and the message's slide-in are turned
+off for visitors who prefer reduced motion. The
 button label is chosen with CSS from the theme set in the page head, so the
 button does not appear late or shift the page when it loads.
 
