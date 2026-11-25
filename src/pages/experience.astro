@@ -58,9 +58,11 @@ const roles = await getRoles();
     margin-block: 0.25rem;
   }
 
+  /* One column on phones, two on tablets and small laptops, three on 13-inch laptops and wider. */
   .areas {
     display: grid;
-    gap: 1rem;
+    gap: 1.5rem 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
     list-style: none;
     padding: 0;
   }

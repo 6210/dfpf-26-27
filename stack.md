@@ -65,6 +65,11 @@ it when it is dropped. Exact package versions live in
 - **SVG `clipPath` and the CSS `d` property**: morph the theme toggle icon
   between a circle and a crescent.
 - **CSS `backdrop-filter`**: blurs the page behind the open menu.
+- **CSS `clamp()`, `max()` and `svh` units**: the fluid layout. The page
+  gutter, page width and physics stage height grow smoothly with the screen
+  between a few breakpoints (see "Layout and breakpoints" in the README).
+- **CSS grid `auto-fill` with `minmax()`**: the Experience responsibility
+  cards flow into one, two or three columns depending on the available width.
 - **CSS `@starting-style` and transitions**: menu entry animations and the
   light/dark colour fade.
 - **`prefers-color-scheme`, `prefers-reduced-motion`,

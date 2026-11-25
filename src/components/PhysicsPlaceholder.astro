@@ -25,7 +25,8 @@ const { label, id } = Astro.props;
     border-radius: 0.5rem;
     color: var(--color-link);
     cursor: pointer;
-    height: 16rem;
+    /* Taller on bigger screens, without pushing the caption off a short laptop screen. */
+    height: clamp(16rem, 50svh, 40rem);
     overflow: hidden;
     touch-action: manipulation;
   }

@@ -97,7 +97,7 @@ const pageFade: TransitionDirectionalAnimations = {
   </head>
   <body>
     <SiteHeader sections={sections.length > 0 ? [...sections, { id: 'contact', label: 'Contact' }] : sections} />
-    <div transition:name="page" transition:animate={pageFade}>
+    <div class="page" transition:name="page" transition:animate={pageFade}>
       <main>
         <slot />
         <GetInTouch />
@@ -111,6 +111,15 @@ const pageFade: TransitionDirectionalAnimations = {
   :root {
     color-scheme: light dark;
     font-family: system-ui, sans-serif;
+    /*
+     * Page layout. Content fills the screen up to --page-max (1600px), centred beyond that, with a
+     * side margin that grows from 24px on phones to 80px on wide screens. Paragraphs stop at
+     * --measure for comfortable reading; interactive pieces use the full width.
+     */
+    --page-max: 100rem;
+    --gutter: clamp(1.5rem, 4vw, 5rem);
+    --page-inset: max(var(--gutter), (100% - var(--page-max)) / 2);
+    --measure: 70ch;
     --color-background: light-dark(#ffffff, #121212);
     --color-text: light-dark(#1a1a1a, #ececec);
     --color-link: light-dark(#0b57d0, #8ab4f8);
@@ -155,9 +164,17 @@ const pageFade: TransitionDirectionalAnimations = {
     background: var(--color-background);
     box-sizing: border-box;
     color: var(--color-text);
-    margin: 0 auto;
-    max-width: 60rem;
-    padding: 1.5rem;
+    margin: 0;
+    padding-block: 1.5rem;
+  }
+
+  .page {
+    padding-inline: var(--page-inset);
+  }
+
+  main p,
+  main li {
+    max-inline-size: var(--measure);
   }
 
   a {

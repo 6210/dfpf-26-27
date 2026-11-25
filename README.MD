@@ -253,6 +253,40 @@ npm run dev
 Run `npm run build` to generate the static site in `dist/`, and
 `npm run preview` to preview the build locally.
 
+### Layout and breakpoints
+
+The layout is fluid: sizes grow smoothly with the screen instead of jumping at
+many breakpoints (the approach recommended by [Utopia](https://utopia.fyi/) and
+web.dev's [macro layouts](https://web.dev/learn/design/macro-layouts)). Tokens
+in `:root` in `SiteLayout.astro`:
+
+- `--page-max: 100rem` (1600 px): the widest the content gets.
+- `--gutter: clamp(1.5rem, 4vw, 5rem)`: side space, from 24 px on phones to
+  80 px on large screens.
+- `--page-inset`: the gutter, or more on screens wider than `--page-max`, so
+  content stays centred. The header and the `.page` wrapper both use it, so the
+  name and buttons line up with the content edges.
+- `--measure: 70ch`: paragraphs and list items in `main` stop at a readable line
+  length, while headings, grids and animations use the full width.
+
+The physics stage is `clamp(16rem, 50svh, 40rem)` tall. The Experience
+responsibilities use a grid with `minmax(min(100%, 24rem), 1fr)` columns: one
+column on phones, two from about 1024 px, three from about 1440 px.
+
+| Breakpoint | Typical screens | What changes |
+| --- | --- | --- |
+| below 48rem (768 px) | Phones | Two-row header, smaller h1 and `.lead` |
+| 48rem (768 px) | Tablets | One-row header with the centred scroll spy |
+| 64rem (1024 px) | Large tablets, small laptops | Theme toggle moves from the menu to the header |
+| fluid up to 100rem (1600 px) | 1366–1920 px laptops and monitors | Gutter and content width grow |
+| above 100rem | 2560 px and ultrawide (3440 px) | Content stays 1600 px wide and centred |
+
+The most common desktop sizes (StatCounter, November 2025 to October 2026) are
+1920×1080 (21%), 1536×864 (7.9%), 1366×768 (6.3%), 1280×720, 2560×1440 and
+1440×900, so the fluid range covers them. On a 13-inch MacBook Pro (about
+1440 px) the content is about 1325 px wide. Ultrawide tuning is still to be
+tested on a real screen.
+
 ### Navigation and search
 
 Astro generates separate HTML pages for `/`, `/about/`, `/experience/`,
