@@ -410,7 +410,14 @@ Deployed 2026-11-24 via the
 ### Light and dark theme
 
 The site starts in the visitor's system light or dark preference. The theme
-button (in the header from 1024px wide, at the bottom of the menu on phones and tablets) names the mode it switches to: **Dark mode** while the
+button (`src/components/ThemeToggle.astro`; in the header from 1024px wide, at
+the bottom of the menu on phones and tablets) shows an animated icon adapted
+from the toggles.dev "Simple" toggle (MIT): a full circle in the light theme
+that a sliding cut-out turns into a crescent moon in the dark theme. It is an
+inline SVG animated with CSS only (0.6 s, off for reduced motion), with a
+static fallback in browsers that cannot animate SVG paths with CSS. In the
+header it is icon-only; in the menu the text sits beside it. Its name, shown or
+read aloud, is the mode it switches to: **Dark mode** while the
 site is light and **Light mode** while it is dark. The choice is saved in the
 browser's `localStorage` and applies across pages and later visits. A small
 inline script in the page head sets the theme before content appears, so there

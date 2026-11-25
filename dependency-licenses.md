@@ -7,8 +7,8 @@ was generated from installed package metadata or the npm registry on
 2026-11-23. It is not a legal compliance determination; review individual
 notices and bundled third-party components before distributing dependencies.
 
-The static build ships Astro's client router, Matter.js, and the Lexend Deca
-font to visitors. The
+The static build ships Astro's client router, Matter.js, the Lexend Deca
+font, and the adapted toggles.dev theme icon to visitors. The
 build removes their license comments, so their notices are published in
 [public/third-party-licenses.txt](public/third-party-licenses.txt). Recheck the
 output and licensing obligations when client-side libraries, assets, or server
@@ -18,6 +18,13 @@ components with additional conditions when applicable.
 
 `matter-js` 0.20.0 and `@types/matter-js` 0.20.2 were added on 2026-11-24
 (both MIT, with no further dependencies).
+
+The theme toggle icon in `src/components/ThemeToggle.astro` is adapted from the
+"Simple" toggle by Alfie Jones ([toggles.dev](https://toggles.dev/toggles/simple),
+[source](https://github.com/AlfieJones/theme-toggles)), added on 2026-11-25. It
+is copied code, not an npm package. The project's README and its npm packages
+declare the MIT license (the repository has no separate license file); the
+notice is in [public/third-party-licenses.txt](public/third-party-licenses.txt).
 
 `@fontsource/lexend-deca` 5.3.0 was added on 2026-11-24 (OFL-1.1, no further
 dependencies). Only the Latin bold WOFF2 file is shipped to visitors; its

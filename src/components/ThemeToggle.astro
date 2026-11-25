@@ -1,0 +1,77 @@
+---
+/*
+ * Theme toggle icon adapted from the "Simple" toggle by Alfie Jones (https://toggles.dev, MIT).
+ * A circle (light theme) is cut into a crescent moon (dark theme) by sliding a clip-path cut-out
+ * across it. The head script's click handler for [data-theme-toggle] does the switching; this
+ * component only draws the button, and its CSS follows :root[data-theme].
+ */
+interface Props {
+  /** Unique per page, so each SVG clip-path has its own id. */
+  id: string;
+  class?: string;
+  /** Show the "Dark mode" / "Light mode" text next to the icon instead of only to screen readers. */
+  showLabel?: boolean;
+}
+
+const { id, class: className, showLabel = false } = Astro.props;
+const clipId = `${id}-cutout`;
+---
+
+<button type="button" class:list={['theme-toggle', className]} data-theme-toggle>
+  <svg aria-hidden="true" viewBox="0 0 32 32" fill="currentColor">
+    <clipPath id={clipId}>
+      <path d="M0-5h55v37h-55zm32 12a1 1 0 0025 0 1 1 0 00-25 0"></path>
+    </clipPath>
+    <g clip-path={`url(#${clipId})`}>
+      <circle cx="16" cy="16" r="15"></circle>
+    </g>
+  </svg>
+  <span class:list={['theme-toggle-label', { 'visually-hidden': !showLabel }]}>
+    <span data-theme-label="light">Dark mode</span>
+    <span data-theme-label="dark">Light mode</span>
+  </span>
+</button>
+
+<style>
+  .theme-toggle {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.5rem;
+    line-height: 1.2;
+  }
+
+  svg {
+    block-size: 1.25rem;
+    flex: none;
+    inline-size: 1.25rem;
+  }
+
+  /* Dark theme: the cut-out slides over the circle, leaving a crescent. */
+  :root[data-theme='dark'] path {
+    d: path('M-18-1h55v37h-55zm32 12a1 1 0 0025 0 1 1 0 00-25 0');
+  }
+
+  /* Browsers that cannot set an SVG path with CSS move the same cut-out instead. */
+  @supports not (d: path('M0 0')) {
+    :root[data-theme='dark'] path {
+      translate: -18px 4px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    path {
+      transition:
+        d 0.6s cubic-bezier(0, 0, 0.15, 1.25),
+        translate 0.6s cubic-bezier(0, 0, 0.15, 1.25);
+    }
+  }
+
+  .visually-hidden {
+    block-size: 1px;
+    clip-path: inset(50%);
+    inline-size: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+</style>

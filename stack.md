@@ -51,12 +51,19 @@ it when it is dropped. Exact package versions live in
   the bold heading font (h1 and the name in the header), installed from npm and
   served from this site, not a font CDN.
 
+- **Theme toggle icon adapted from [toggles.dev](https://toggles.dev/toggles/simple)**
+  ("Simple" by Alfie Jones, MIT): the sun-to-moon icon on the light/dark
+  button (`ThemeToggle.astro`). Copied in as inline SVG and CSS, not installed
+  as a package, so it adds no script.
+
 ## Browser platform features (no library needed)
 
 - **Popover API**: the full-screen hamburger menu opens and closes, handles
   Escape, and returns focus without JavaScript.
 - **View Transitions API**: the browser feature that Astro's view transitions
   use for page-to-page animation.
+- **SVG `clipPath` and the CSS `d` property**: morph the theme toggle icon
+  between a circle and a crescent.
 - **CSS `backdrop-filter`**: blurs the page behind the open menu.
 - **CSS `@starting-style` and transitions**: menu entry animations and the
   light/dark colour fade.

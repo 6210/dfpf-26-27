@@ -51,6 +51,7 @@ flowchart TD
     subgraph Components["src/components"]
         SiteHeader["SiteHeader.astro<br/>name, scroll spy,<br/>theme toggle, menu"]
         SiteNav["SiteNav.astro<br/>page links"]
+        ThemeToggle["ThemeToggle.astro<br/>sun/moon icon button"]
         SiteFooter["SiteFooter.astro"]
         GetInTouch["GetInTouch.astro<br/>email and phone"]
         CvDownload["CvDownload.astro"]
@@ -68,6 +69,7 @@ flowchart TD
     index & about & experience & skills & downloads & notfound --> SiteLayout
     SiteLayout --> SiteHeader & GetInTouch & SiteFooter
     SiteHeader & SiteFooter --> SiteNav
+    SiteHeader --> ThemeToggle
 
     index & about & experience --> CvDownload
     index --> AboutSummary
