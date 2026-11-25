@@ -102,6 +102,16 @@ The site is still in progress; checked items are done.
 - [x] Self-host only the necessary font files and weights, with readable system
   fallbacks; avoid external font requests.
 
+## Repository maintenance
+
+- [ ] Clean up the local Git repository. On 2026-11-25, `git push` warned about
+  too many unreachable loose objects: about 9,100 objects (37 MiB) in `.git`,
+  against 243 KiB of packed history. These live only in the local `.git`
+  folder. They are never pushed or deployed, so they do not affect the site's
+  size or page speed. Run `git prune`, delete `.git/gc.log`, then
+  `git gc`, and check with `git count-objects -vH`. Repeat if the warning
+  returns.
+
 ## Before going live
 
 - [ ] Remove the temporary Cloudflare Access restriction on the production
