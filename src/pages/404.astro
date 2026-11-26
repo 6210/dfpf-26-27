@@ -1,4 +1,5 @@
 ---
+import PageHero from '../components/PageHero.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 ---
 
@@ -7,9 +8,8 @@ import SiteLayout from '../layouts/SiteLayout.astro';
   description="The requested page could not be found."
   canonical={false}
 >
-  <section>
-    <h1>Page not found</h1>
+  <PageHero title="Page not found">
     <p class="lead">The page you requested does not exist.</p>
     <p><a href="/">Return home</a></p>
-  </section>
+  </PageHero>
 </SiteLayout>

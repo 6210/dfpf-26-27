@@ -93,8 +93,8 @@ SOFTWARE.
 """
 
 -----
-Theme toggle icon ("Simple"), adapted from toggles.dev / theme-toggles
-https://toggles.dev/toggles/simple
+Theme toggle icon ("Spin"), adapted from toggles.dev / theme-toggles
+https://toggles.dev/toggles/spin
 https://github.com/AlfieJones/theme-toggles
 
 MIT License

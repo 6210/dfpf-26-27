@@ -1,0 +1,47 @@
+---
+import PhysicsPlaceholder from './PhysicsPlaceholder.astro';
+
+interface Props {
+  title: string;
+  id?: string;
+  /** Label for the animation shown beside the text; no animation when omitted. */
+  animation?: string;
+}
+
+const { title, id, animation } = Astro.props;
+---
+
+<section class="hero" id={id}>
+  <div class="hero-text">
+    <h1>{title}</h1>
+    <slot />
+  </div>
+  {animation && <PhysicsPlaceholder label={animation} />}
+</section>
+
+<style>
+  /*
+   * Text first; from 1024px the animation sits beside it on the right (text gets about 60% of the width),
+   * both centred vertically. The animation box keeps a 4:3 shape at every size.
+   */
+  .hero {
+    align-content: center;
+    display: grid;
+    gap: var(--row-gap) var(--column-gap);
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+    --physics-height: auto;
+    --physics-ratio: 4 / 3;
+  }
+
+  .hero-text > :first-child {
+    margin-block-start: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .hero:has(> [data-physics]) {
+      align-items: center;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.6fr);
+    }
+  }
+</style>

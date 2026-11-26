@@ -1,6 +1,6 @@
 ---
 import AreaIcon from '../components/AreaIcon.astro';
-import PhysicsPlaceholder from '../components/PhysicsPlaceholder.astro';
+import PageHero from '../components/PageHero.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getPlatforms, getProfile } from '../lib/content';
 
@@ -14,16 +14,14 @@ const platforms = await getPlatforms();
   sections={[
     { id: 'focus-areas', label: 'Focus areas' },
     { id: 'platforms', label: 'Platforms' },
-    { id: 'interactive', label: 'Interactive' },
   ]}
 >
-  <section>
-    <h1>Skills</h1>
+  <PageHero title="Skills" animation="Skills animation">
     <p class="lead">
       My work connects the website platform, campaign experiences, marketing automation, analytics, regional content,
       and lead-conversion workflows.
     </p>
-  </section>
+  </PageHero>
   <section id="focus-areas">
     <h2>Focus areas</h2>
     <ul>
@@ -55,7 +53,6 @@ const platforms = await getPlatforms();
       }
     </dl>
   </section>
-  <PhysicsPlaceholder id="interactive" label="Skills animation" />
 </SiteLayout>
 
 <style>

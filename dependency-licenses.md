@@ -32,13 +32,13 @@ their notices are in `public/third-party-licenses.txt`.
 
 The area icons in `src/lib/area-icons.ts` are copied SVG paths from Phosphor
 Icons (`@phosphor-icons/core` 2.1.1, MIT,
-[source](https://github.com/phosphor-icons/core)), added on 2026-11-25. They are
+[source](https://github.com/phosphor-icons/core)), added on 2026-11-25 (as "Simple") and switched to "Spin" on 2026-11-26. They are
 copied code, not an installed package; the notice is in
 `public/third-party-licenses.txt`.
 
 The theme toggle icon in `src/components/ThemeToggle.astro` is adapted from the
-"Simple" toggle by Alfie Jones ([toggles.dev](https://toggles.dev/toggles/simple),
-[source](https://github.com/AlfieJones/theme-toggles)), added on 2026-11-25. It
+"Spin" toggle by Alfie Jones ([toggles.dev](https://toggles.dev/toggles/spin),
+[source](https://github.com/AlfieJones/theme-toggles)), added on 2026-11-25 (as "Simple") and switched to "Spin" on 2026-11-26. It
 is copied code, not an npm package. The project's README and its npm packages
 declare the MIT license (the repository has no separate license file); the
 notice is in [public/third-party-licenses.txt](public/third-party-licenses.txt).

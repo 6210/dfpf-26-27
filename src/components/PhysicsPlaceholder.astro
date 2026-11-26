@@ -1,13 +1,12 @@
 ---
 interface Props {
   label: string;
-  id?: string;
 }
 
-const { label, id } = Astro.props;
+const { label } = Astro.props;
 ---
 
-<figure class="physics" id={id} data-physics>
+<figure class="physics" data-physics>
   <div class="physics-stage" data-physics-stage aria-hidden="true"></div>
   <figcaption>
     <span data-physics-status>{label} placeholder. Click or scroll to change the shapes.</span>
@@ -17,18 +16,23 @@ const { label, id } = Astro.props;
 
 <style>
   .physics-stage {
+    aspect-ratio: var(--physics-ratio, auto);
     border: 1px dashed currentColor;
     border-radius: 0.5rem;
     color: var(--color-accent);
     cursor: pointer;
-    /* Taller on bigger screens, without pushing the caption off a short laptop screen. */
-    height: clamp(16rem, 50svh, 40rem);
+    /* Taller on bigger screens, without pushing the caption off a short laptop screen. The hero uses a 4:3 shape instead. */
+    height: var(--physics-height, clamp(16rem, 50svh, 40rem));
     overflow: hidden;
     touch-action: manipulation;
   }
 
   .physics-stage :global(canvas) {
     display: block;
+  }
+
+  .physics {
+    margin: 0;
   }
 
   figcaption {

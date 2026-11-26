@@ -66,8 +66,8 @@ it when it is dropped. Exact package versions live in
   the bold heading font (h1 and other headings), installed from npm and
   served from this site, not a font CDN.
 
-- **Theme toggle icon adapted from [toggles.dev](https://toggles.dev/toggles/simple)**
-  ("Simple" by Alfie Jones, MIT): the sun-to-moon icon on the light/dark
+- **Theme toggle icon adapted from [toggles.dev](https://toggles.dev/toggles/spin)**
+  ("Spin" by Alfie Jones, MIT): the sun-to-moon icon on the light/dark
   button (`ThemeToggle.astro`). Copied in as inline SVG and CSS, not installed
   as a package, so it adds no script.
 

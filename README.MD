@@ -168,7 +168,8 @@ against the schema in [src/content.config.ts](src/content.config.ts); a missing
 or misspelled field fails the build.
 
 - **Positioning:** [src/content/profile.json](src/content/profile.json) holds the
-  name (the header and the home page `h1`), the headline (the home page lead),
+  name (the header logo's link text), the title (the home page `h1`,
+  "Technical Marketing Developer"), the headline (the home page lead),
   the summary (the home page About section, which links to the full About
   page), and focus areas (website development, CRM integration, and technical
   SEO). The site presents a technical website developer in a marketing
@@ -319,7 +320,13 @@ in `:root` in `SiteLayout.astro`:
   `main` reserves it on the right for a future side element.
 
 Every direct child of `main` is a section (a test checks that each page starts
-with `<main><section><h1>`). Each one is at least `80svh` tall, with its
+with `<main><section><h1>`, allowing one wrapper around the hero text).
+
+Each page opens with a hero from `src/components/PageHero.astro`: the h1,
+lead and links on the left, and the page's physics placeholder on the right
+from 1024 px (text about 60% of the width, both centred vertically). Below
+1024 px the placeholder sits under the text. Downloads and the 404 page use the
+same hero without a placeholder. Each one is at least `80svh` tall, with its
 content centred vertically. Paragraphs and list items use a 1.6 line height,
 and headings use 1.2.
 
@@ -336,7 +343,8 @@ without animation. The rule uses longhand `animation-*` properties, because
 the CSS minifier would otherwise fold `view()` into an `animation` shorthand
 that browsers reject.
 
-The physics stage is `clamp(16rem, 50svh, 40rem)` tall. The Experience
+The physics stage in the hero keeps a 4:3 shape at every width (elsewhere it
+would be `clamp(16rem, 50svh, 40rem)` tall). The Experience
 responsibilities use a grid with `minmax(min(100%, 24rem), 1fr)` columns: one
 column on phones, two from about 1024 px, three from about 1440 px.
 
@@ -425,8 +433,10 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   the veil fades in as the blur deepens and the links rise into place, unblurring,
   one after another; on closing they fade away together. None of this animates for
   visitors who prefer reduced motion. Because the menu covers the hamburger, it
-  has its own close button: a borderless X about 5px from the top-right corner
-  (28px tap target). Below 64rem (1024 px; phones and iPads) the theme
+  has its own close button: an X about 8px from the top-right corner. The
+  theme toggle, menu button and close X are bare 32px icons with no border or
+  padding (each a 32px tap target); a keyboard focus ring still appears around
+  them. Below 64rem (1024 px; phones and iPads) the theme
   toggle is not in the header; it moves into the menu, below the links, and rises in last; wider
   screens keep it in the header and leave it out of the menu.
   The menu uses the HTML Popover API, so it opens and closes with the buttons
@@ -546,10 +556,10 @@ Deployed 2026-11-24 via the
 The site starts in the visitor's system light or dark preference. The theme
 button (`src/components/ThemeToggle.astro`; in the header from 1024px wide, at
 the bottom of the menu on phones and tablets) shows an animated icon adapted
-from the toggles.dev "Simple" toggle (MIT), drawn as outlines: a circle in the
-light theme that a sliding cut-out turns into an outlined crescent moon in the
-dark theme. It is an
-inline SVG animated with CSS only (1 s, off for reduced motion), with a
+from the toggles.dev "Spin" toggle (MIT), drawn as outlines: a sun with eight
+rays in the light theme; going dark, the rays spin away while the sun grows and
+a sliding bite turns it into an outlined crescent moon. It is an
+inline SVG animated with CSS only (0.6 s with a slight bounce, off for reduced motion), with a
 static fallback in browsers that cannot animate SVG paths with CSS. In the
 header it is icon-only, with a small hint ("Switch to dark mode") that appears
 below it on mouse hover or keyboard focus; in the menu the text sits beside it.
@@ -686,7 +696,8 @@ navigation; at 360 and 768 px there was no horizontal scrolling.
 
 ### Physics placeholders (Matter.js)
 
-Each content page (home, about, experience, skills) shows a placeholder built
+Each content page (home, about, experience, skills) shows a placeholder beside
+its hero text (it is not a separate section or on-page link), built
 with [Matter.js](https://brm.io/matter-js/) in
 `src/components/PhysicsPlaceholder.astro`. It will later be replaced with
 animated icons. For now it drops simple shapes that react to the visitor:

@@ -57,6 +57,7 @@ flowchart TD
         GetInTouch["GetInTouch.astro<br/>email and phone"]
         CvDownload["CvDownload.astro"]
         AboutSummary["AboutSummary.astro<br/>home About section"]
+        PageHero["PageHero.astro<br/>h1, lead, animation beside it"]
         Physics["PhysicsPlaceholder.astro<br/>(Matter.js, lazy-loaded)"]
         RoleEntry["RoleEntry.astro<br/>one role and its areas"]
         Recommendations["Recommendations.astro<br/>quotes, placeholders labelled"]
@@ -81,7 +82,8 @@ flowchart TD
 
     index & about & experience --> CvDownload
     index --> AboutSummary
-    index & about & experience & skills --> Physics
+    index & about & experience & skills & downloads & notfound --> PageHero
+    PageHero --> Physics
     experience --> RoleEntry & Recommendations
     RoleEntry & skills --> AreaIcon
     AreaIcon & AreaBadge -. "icon paths" .-> icons

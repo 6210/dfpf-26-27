@@ -1,28 +1,25 @@
 ---
 import AboutSummary from '../components/AboutSummary.astro';
 import CvDownload from '../components/CvDownload.astro';
-import PhysicsPlaceholder from '../components/PhysicsPlaceholder.astro';
+import PageHero from '../components/PageHero.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getProfile } from '../lib/content';
 
-const { name, headline } = await getProfile();
+const { title, headline } = await getProfile();
 ---
 
 <SiteLayout
-  title="Professional portfolio"
+  title="Dennis Ferreira | Technical Marketing Developer"
   description="An interactive portfolio for sharing professional experience and work."
   sections={[
     { id: 'intro', label: 'Intro' },
     { id: 'about', label: 'About' },
-    { id: 'interactive', label: 'Interactive' },
   ]}
 >
-  <section id="intro">
-    <h1>{name}</h1>
+  <PageHero id="intro" title={title} animation="Home animation">
     <p class="lead">{headline}</p>
     <p><a href="/experience/">Explore experience</a></p>
     <CvDownload />
-  </section>
+  </PageHero>
   <AboutSummary />
-  <PhysicsPlaceholder id="interactive" label="Home animation" />
 </SiteLayout>

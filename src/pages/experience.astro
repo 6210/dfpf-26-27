@@ -1,6 +1,6 @@
 ---
 import CvDownload from '../components/CvDownload.astro';
-import PhysicsPlaceholder from '../components/PhysicsPlaceholder.astro';
+import PageHero from '../components/PageHero.astro';
 import Recommendations from '../components/Recommendations.astro';
 import RoleEntry from '../components/RoleEntry.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
@@ -20,16 +20,14 @@ const hasRecommendations = (await getRecommendations()).length > 0;
     ...currentRoles.map((role) => ({ id: `role-${role.id}`, label: 'Current role' })),
     ...(earlierRoles.length > 0 ? [{ id: 'earlier-roles', label: 'Earlier roles' }] : []),
     ...(hasRecommendations ? [{ id: 'recommendations', label: 'Recommendations' }] : []),
-    { id: 'interactive', label: 'Interactive' },
   ]}
 >
-  <section>
-    <h1>Experience</h1>
+  <PageHero title="Experience" animation="Experience animation">
     <p class="lead">
       I take projects from requirements and implementation through testing, release, monitoring, and documentation.
     </p>
     <CvDownload />
-  </section>
+  </PageHero>
   {currentRoles.map((role) => <RoleEntry role={role} />)}
   {
     earlierRoles.length > 0 && (
@@ -42,7 +40,6 @@ const hasRecommendations = (await getRecommendations()).length > 0;
     )
   }
   <Recommendations />
-  <PhysicsPlaceholder id="interactive" label="Experience animation" />
 </SiteLayout>
 
 <style>

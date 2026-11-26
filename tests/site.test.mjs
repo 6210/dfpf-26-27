@@ -91,7 +91,7 @@ test('the theme is set in the head before content renders, with a label for each
 test('the generated not-found page is not presented as canonical content', async () => {
   const html = await readFile('dist/404.html', 'utf8');
 
-  assert.match(html, /<h1>Page not found<\/h1>/);
+  assert.match(html, /<h1[^>]*>Page not found<\/h1>/);
   assert.match(html, /<meta name="robots" content="noindex">/);
   assert.doesNotMatch(html, /rel="canonical"/);
 });
@@ -197,6 +197,6 @@ test('recommendations show on the experience page, with placeholder entries labe
 test('page content is grouped into sections, starting with the one that holds the h1', async () => {
   for (const file of ['dist/index.html', 'dist/about/index.html', 'dist/experience/index.html', 'dist/skills/index.html', 'dist/downloads/index.html', 'dist/404.html']) {
     const html = await readFile(file, 'utf8');
-    assert.match(html, /<main[^>]*>\s*<section[^>]*>\s*<h1/, file);
+    assert.match(html, /<main[^>]*>\s*<section[^>]*>\s*(<div[^>]*>\s*)?<h1/, file);
   }
 });

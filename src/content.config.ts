@@ -36,6 +36,8 @@ const profile = defineCollection({
   loader: file('./src/content/profile.json'),
   schema: z.object({
     name: z.string(),
+    /** The home page h1. */
+    title: z.string(),
     headline: z.string(),
     summary: z.string(),
     focusAreas: z.array(z.string()),
