@@ -1,8 +1,9 @@
 ---
 import PageHero from '../components/PageHero.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
-import { getCvFiles } from '../lib/content';
+import { getCvFiles, getProfile } from '../lib/content';
 
+const { name } = await getProfile();
 const cvFiles = await getCvFiles();
 ---
 
@@ -11,7 +12,7 @@ const cvFiles = await getCvFiles();
   description="Download Dennis Ferreira's CV in PDF and Word formats."
   sections={[{ id: 'cv', label: 'CV' }]}
 >
-  <PageHero title="Downloads">
+  <PageHero eyebrow={name} title="Downloads">
     <p class="lead">My CV in the format that suits you, ready to save, print, or share.</p>
   </PageHero>
   <section id="cv">

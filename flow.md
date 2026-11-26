@@ -56,14 +56,15 @@ flowchart TD
         SiteFooter["SiteFooter.astro"]
         GetInTouch["GetInTouch.astro<br/>email and phone"]
         CvDownload["CvDownload.astro"]
-        AboutSummary["AboutSummary.astro<br/>home About section"]
+        AboutSummary["AboutSummary.astro<br/>home About section,<br/>photo placeholder"]
         PageHero["PageHero.astro<br/>h1, lead, animation beside it"]
         Physics["PhysicsPlaceholder.astro<br/>(Matter.js, lazy-loaded)"]
-        RoleEntry["RoleEntry.astro<br/>one role and its areas"]
+        Timeline["Timeline.astro<br/>one page section: the whole timeline"]
+        RoleEntry["RoleEntry.astro<br/>one timeline chapter: a role and its areas"]
         Recommendations["Recommendations.astro<br/>quotes, placeholders labelled"]
         AreaIcon["AreaIcon.astro<br/>area icon in the accent colour"]
         AreaBadge["AreaBadge.astro<br/>morphing area badge<br/>(flubber, lazy-loaded)"]
-        DotGrid["DotGrid.astro<br/>fixed dot grid that<br/>moves away from the cursor"]
+        DotGrid["DotGrid.astro<br/>fixed dot grid that<br/>moves away from the cursor,<br/>softer on the left"]
     end
 
     subgraph Content["Content"]
@@ -84,8 +85,9 @@ flowchart TD
     index --> AboutSummary
     index & about & experience & skills & downloads & notfound --> PageHero
     PageHero --> Physics
-    experience --> RoleEntry & Recommendations
-    RoleEntry & skills --> AreaIcon
+    experience --> Timeline & RoleEntry & Recommendations
+    Timeline -- "slot" --> RoleEntry
+    skills --> AreaIcon
     AreaIcon & AreaBadge -. "icon paths" .-> icons
     experience & skills -. "data-morph targets" .-> AreaBadge
 

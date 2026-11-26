@@ -1,56 +1,219 @@
 ---
 import type { Role } from '../lib/content';
 import { formatYearMonth } from '../lib/content';
-import AreaIcon from './AreaIcon.astro';
 
 interface Props {
   role: Role;
   /** Heading level of the role title; its areas use the next level down. */
   level?: 2 | 3;
+  /** Leave out the summary when the page shows it elsewhere, such as in the hero. */
+  showSummary?: boolean;
+  /** First and last stops on the timeline: the view scrolls in with the first and out with the last. */
+  first?: boolean;
+  last?: boolean;
+  /** Stops along the timeline's year axis, spaced by year: each role's start year, then where the last one ends. */
+  axis?: { label: string; href: string }[];
+  /** A company merger shown as a branch leaving the axis in the role at `stop`, placed at `year`. */
+  branch?: { stop: number; year: number };
+  /** This role's place on the axis, counting from 0. */
+  stop?: number;
 }
 
-const { role, level = 2 } = Astro.props;
-const { title, department, company, companyNote, start, end, summary, areas } = role.data;
+const {
+  role,
+  level = 2,
+  showSummary = true,
+  first = false,
+  last = false,
+  axis = [],
+  branch,
+  stop: axisStop = 0,
+} = Astro.props;
+const { title, department, company, companyNote, merger, start, end, summary, areas } = role.data;
 const Heading = `h${level}` as 'h2' | 'h3';
 const AreaHeading = `h${level + 1}` as 'h3' | 'h4';
+
+/*
+ * Timeline pacing for this role: its areas slide through the right column at a steady pace, with no
+ * pauses and no empty column. The role starts with its first area in place and ends with its last area in
+ * place; the next role then takes over with its own first area in place. A role with one area stays still
+ * for a short stretch. The last role ends on a short extra stretch with the axis complete: its end stop is
+ * reached and the year above the axis shows where the timeline ends. One unit is one area's worth of
+ * scrolling (--unit in the CSS).
+ */
+const count = Math.max(areas.length, 1);
+const moves = count - 1;
+const ending = last && axis.length > 1;
+const still = moves === 0 ? 0.75 : 0;
+const endHold = ending ? 0.5 : 0;
+const units = moves + still + endHold;
+const endAt = +(((units - endHold) / units) * 100).toFixed(3);
+const segments = Math.max(axis.length - 1, 1);
+// Stops are placed to scale by year, so longer roles take up more of the line, but each gets at least
+// a small share so neighbouring years stay readable (evenly if the years can't be read).
+const axisYears = axis.map(({ label }) => Number(label));
+const axisSpan = (axisYears.at(-1) ?? 0) - (axisYears[0] ?? 0);
+const scaled = axisSpan > 0 && axisYears.every((year, index) => index === 0 || year >= axisYears[index - 1]);
+const shares = axisYears
+  .slice(1)
+  .map((year, index) => (scaled ? Math.max((year - axisYears[index]) / axisSpan, 0.1) : 1));
+const shareTotal = shares.reduce((sum, share) => sum + share, 0);
+const stops = [0, ...shares.map((_, index) => shares.slice(0, index + 1).reduce((a, b) => a + b, 0) / shareTotal)].map(
+  (at) => +at.toFixed(4),
+);
+// Where a year falls on the line, within the segment that contains it.
+const place = (year: number) => {
+  const index = Math.max(axisYears.findLastIndex((stopYear) => stopYear <= year), 0);
+  const next = Math.min(index + 1, stops.length - 1);
+  const span = axisYears[next] - axisYears[index];
+  return +(stops[index] + (span > 0 ? (year - axisYears[index]) / span : 0) * (stops[next] - stops[index])).toFixed(4);
+};
+// The year above the axis counts up from this role's start year to the next stop as the role goes by.
+const fromYear = Number(start.slice(0, 4));
+const toYear = Number(axis[axisStop + 1]?.label) || fromYear;
+// Years of experience so far, counted from the first stop.
+const firstYear = Number(axis[0]?.label) || fromYear;
+// Where in this role's scroll the company takes its new name, in step with the year counting up to it.
+const mergeAt =
+  merger && toYear > fromYear
+    ? +(((Number(merger.on.slice(0, 4)) - fromYear) / (toYear - fromYear)) * endAt).toFixed(3)
+    : 0;
+const activeFill = first && last ? 'both' : first ? 'backwards' : last ? 'forwards' : 'none';
 ---
 
-<article class="role" id={`role-${role.id}`}>
-  <header class="reveal">
-    <Heading>{title}</Heading>
-    <p class="role-meta">
-      {[department && `${department}, `, company]}
-      {' · '}
-      <time datetime={start}>{formatYearMonth(start)}</time>
-      {' – '}
-      {end ? <time datetime={end}>{formatYearMonth(end)}</time> : 'Present'}
-    </p>
-    {companyNote && <p class="role-meta">{companyNote}</p>}
-    <p>{summary}</p>
-  </header>
-  {
-    areas.length > 0 && (
-      <ul class="areas">
-        {areas.map((area) => (
-          <li class="reveal" data-accent={area.accent} data-morph={area.accent} data-morph-label={area.title}>
-            <AreaHeading>
-              {area.accent && <AreaIcon accent={area.accent} />}
-              {area.title}
-            </AreaHeading>
-            <p>{area.summary}</p>
-            {area.platforms.length > 0 && (
-              <p class="platforms">
-                <span>Platforms:</span> {area.platforms.join(', ')}
-              </p>
-            )}
-          </li>
-        ))}
-      </ul>
-    )
-  }
+<!-- One stop on the Experience timeline. --units sets how far the page scrolls while this role is on screen. -->
+<article
+  class:list={['role', { ending }]}
+  id={`role-${role.id}`}
+  style={`--units: ${units}; --moves: ${moves}; --active-fill: ${activeFill}; --end-at: ${endAt}%; --merge-at: ${mergeAt}%`}
+>
+  <div class="role-view">
+    <div
+      class="role-head"
+      style={`--from-year: ${fromYear}; --to-year: ${toYear}; --from-years: ${fromYear - firstYear}; --to-years: ${toYear - firstYear}`}
+    >
+      <p class="role-year" aria-hidden="true">
+        <span>{fromYear}</span>
+      </p>
+      <p class="role-company">
+        {merger && <span class="role-company-former" aria-hidden="true">{merger.from}</span>}
+        <span class="role-company-name">{company}</span>
+      </p>
+      <p class="role-experience" aria-hidden="true"><span>{fromYear - firstYear} Years Experience</span></p>
+    </div>
+    {
+      axis.length > 1 && (
+        <div
+          class="role-axis"
+          aria-hidden="true"
+          style={`--from: ${stops[axisStop]}; --to: ${stops[axisStop + 1] ?? 1}`}
+        >
+          <ol>
+            {axis.map(({ label, href }, index) => (
+              <li
+                class:list={{ reached: index <= axisStop, current: index === axisStop }}
+                style={`--at: ${stops[index]}`}
+              >
+                <a href={href} tabindex="-1">
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ol>
+          {branch && (
+            <div
+              class:list={[
+                'role-branch',
+                { merging: axisStop === branch.stop, merged: axisStop > branch.stop },
+              ]}
+              style={`--join: ${scaled ? place(branch.year) : (stops[branch.stop] + stops[branch.stop + 1]) / 2}`}
+              aria-hidden="true"
+            />
+          )}
+        </div>
+      )
+    }
+    <header class="role-context reveal">
+      <Heading>{title}</Heading>
+      <p class="role-meta">
+        {department && `${department} · `}
+        <time datetime={start}>{formatYearMonth(start)}</time>
+        {' – '}
+        {end ? <time datetime={end}>{formatYearMonth(end)}</time> : 'Present'}
+      </p>
+      {companyNote && <p class="role-meta">{companyNote}</p>}
+      {showSummary && <p>{summary}</p>}
+    </header>
+    {
+      areas.length > 0 && (
+        <div class="role-track" data-morph-clip>
+          <ul class="areas">
+            {areas.map((area) => (
+              <li class="reveal" data-morph={area.accent} data-morph-label={area.title}>
+                <AreaHeading>{area.title}</AreaHeading>
+                <p>{area.summary}</p>
+                {area.platforms.length > 0 && (
+                  <p class="platforms">
+                    <span>Platforms:</span> {area.platforms.join(', ')}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+  {ending && <span class="role-end" id="timeline-end" />}
 </article>
 
 <style>
+  /* The year, large, with the company to its right. */
+  .role-head {
+    align-items: baseline;
+    column-gap: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    margin-block-end: 0.5rem;
+  }
+
+  .role-year {
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .role-company {
+    font-family: var(--font-heading);
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Shown only with the timeline, where it counts up. */
+  .role-experience {
+    display: none;
+  }
+
+  /* The company's earlier name, shown only on the timeline until the merger. */
+  .role-company-former {
+    display: none;
+  }
+
+  .role-end {
+    display: block;
+  }
+
+  .role h2,
+  .role h3 {
+    margin-block: 0 0.25rem;
+  }
+
   .role-meta {
     margin-block: 0.25rem;
   }
@@ -64,16 +227,8 @@ const AreaHeading = `h${level + 1}` as 'h3' | 'h4';
     padding: 0;
   }
 
-  .areas li {
-    border-inline-start: 0.375rem solid var(--color-accent);
-    padding-inline-start: 0.75rem;
-  }
-
   .areas :is(h3, h4) {
-    align-items: center;
-    display: flex;
     font-size: 1.05rem;
-    gap: 0.5rem;
     margin: 0 0 0.25rem;
   }
 
@@ -85,9 +240,564 @@ const AreaHeading = `h${level + 1}` as 'h3' | 'h4';
     font-weight: 700;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .areas li {
-      transition: border-color var(--theme-fade) ease;
+  .role-axis {
+    display: none;
+  }
+
+  /*
+   * Timeline: one pinned view for all roles that moves only sideways. The role's start year sits above a
+   * year axis across the full width, with a stop per role; the axis fills from this role's stop to the
+   * next as the role goes by. Below it, the left column holds the title and company. The role's areas cross the right column one at a time, easing after the scroll. When a role's
+   * last area has left, the next (later) role takes over: its context replaces the previous one at once
+   * and its first area is in place.
+   *
+   * Each role is its own tall block with its own view timeline. Consecutive roles overlap by a screen
+   * height, so the next one pins exactly as the previous one lets go, and a role is only shown during its
+   * own turn, so nothing slides vertically at the hand-over. Scroll-driven animations only, no JavaScript.
+   * Phones, short windows, reduced motion, print and browsers without support (currently Firefox) show
+   * each role with its areas as a grid instead.
+   */
+  @keyframes role-active {
+    from,
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  /* A whole number, so the year can be counted up by a scroll-driven animation and shown with a counter. */
+  @property --year {
+    syntax: '<integer>';
+    inherits: false;
+    initial-value: 0;
+  }
+
+  /* Inherited, so the label can check for 1 and say "Year". */
+  @property --years {
+    syntax: '<integer>';
+    inherits: true;
+    initial-value: 0;
+  }
+
+  @keyframes role-count {
+    from {
+      --year: var(--from-year);
+      --years: var(--from-years);
+    }
+
+    to {
+      --year: var(--to-year);
+      --years: var(--to-years);
+    }
+  }
+
+  /*
+   * Handing over from one stop to the next, eased along with the scroll: the stop being left shrinks back
+   * and its year fades to muted, while the next one fills, grows and turns bold as the line reaches it.
+   */
+  @keyframes stop-label-leave {
+    from {
+      color: var(--color-text);
+      font-weight: 700;
+    }
+
+    to {
+      color: color-mix(in srgb, var(--color-text) 70%, var(--color-background));
+      font-weight: 400;
+    }
+  }
+
+  @keyframes stop-label-arrive {
+    from {
+      color: color-mix(in srgb, var(--color-text) 70%, var(--color-background));
+      font-weight: 400;
+    }
+
+    to {
+      color: var(--color-text);
+      font-weight: 700;
+    }
+  }
+
+  @keyframes stop-dot-leave {
+    from {
+      scale: var(--current-scale);
+    }
+
+    to {
+      scale: 1;
+    }
+  }
+
+  @keyframes stop-dot-arrive {
+    from {
+      background: var(--color-background);
+      border-color: color-mix(in srgb, currentColor 60%, transparent);
+      scale: 1;
+    }
+
+    to {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      scale: var(--current-scale);
+    }
+  }
+
+  /* The axis fills from this role's stop to the next one. */
+  /*
+   * How far through this role the scroll is, from 0 to 1. The cards and the line are placed from it with a
+   * short eased transition, so they glide after the scroll instead of stepping with each wheel notch.
+   */
+  @property --progress {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+
+  /* Held only until the merger point in the role's scroll: the earlier company name, then the new one. */
+  @keyframes company-before-merger {
+    from,
+    to {
+      visibility: visible;
+    }
+  }
+
+  @keyframes company-after-merger {
+    from,
+    to {
+      visibility: hidden;
+    }
+  }
+
+  @keyframes branch-join {
+    from {
+      background: var(--color-background);
+      border-color: color-mix(in srgb, currentColor 60%, transparent);
+    }
+
+    to {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+    }
+  }
+
+  @keyframes branch-line {
+    from {
+      border-color: color-mix(in srgb, currentColor 25%, transparent);
+    }
+
+    to {
+      border-color: var(--color-accent);
+    }
+  }
+
+  @keyframes role-progress {
+    from {
+      --progress: 0;
+    }
+
+    to {
+      --progress: 1;
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media screen and (min-width: 48rem) and (min-height: 40rem) and (prefers-reduced-motion: no-preference) {
+      .role {
+        block-size: calc(100svh + var(--units) * var(--unit));
+        --unit: 40svh;
+        /* How much scrolling the next stop takes to ease in. */
+        --fade: 12svh;
+        /* How the cards and the line catch up with the scroll. */
+        --glide: 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        --step-start: calc(100% - var(--fade));
+        --step-end: 100%;
+        display: block;
+        padding-block: 0;
+        /* Roles overlap, so only the view showing takes clicks. */
+        pointer-events: none;
+        position: relative;
+        /* In-page links land where the role pins, not short of it under the header space. */
+        scroll-margin-block-start: -6rem;
+        view-timeline: --role block;
+        /* Measured against the whole screen, not the scroll padding kept clear for the header. */
+        view-timeline-inset: 0;
+      }
+
+      .role + .role {
+        margin-block-start: -100svh;
+      }
+
+      .role-view {
+        /* A fixed top, not centred, so the year and axis stay put however much text each role has. */
+        align-content: start;
+        block-size: 100svh;
+        box-sizing: border-box;
+        column-gap: var(--column-gap);
+        display: grid;
+        grid-template-areas:
+          'year year'
+          'axis axis'
+          'context track';
+        grid-template-columns: minmax(12rem, 0.3fr) minmax(0, 1fr);
+        inset-block-start: 0;
+        opacity: 0;
+        pointer-events: auto;
+        /* Hidden roles stay out of the way of clicks on the one showing. */
+        visibility: hidden;
+        /* Below the header bar, which can slide back in, and a little down the screen. */
+        padding-block: clamp(5rem, 25svh, 14rem) 1.5rem;
+        position: sticky;
+        row-gap: 1.5rem;
+        animation-fill-mode: var(--active-fill), both;
+        animation-name: role-active, role-progress;
+        animation-range:
+          contain 0% contain 100%,
+          contain 0% contain var(--end-at);
+        animation-timeline: --role;
+        animation-timing-function: linear;
+      }
+
+      /*
+       * The year and the years of experience count up a year at a time as the line fills, reaching the
+       * next stop's year as it gets there.
+       */
+      .role-head {
+        counter-reset: year var(--year) years var(--years);
+        grid-area: year;
+        /* Sits just above the axis, closer than the space between rows. */
+        margin: 0 0 -0.5rem;
+        animation-fill-mode: both;
+        animation-name: role-count;
+        animation-range: contain 0% contain var(--end-at);
+        animation-timeline: --role;
+        animation-timing-function: linear;
+      }
+
+      .role-year::before {
+        content: counter(year);
+      }
+
+      .role-experience {
+        display: block;
+        font-size: clamp(1rem, 0.9rem + 0.4vw, 1.25rem);
+        font-variant-numeric: tabular-nums;
+        margin: 0 0 0 auto;
+      }
+
+      .role-experience::before {
+        content: counter(years) ' Years Experience';
+      }
+
+      @container style(--years: 1) {
+        .role-experience::before {
+          content: counter(years) ' Year Experience';
+        }
+      }
+
+      .role-year > span,
+      .role-experience > span {
+        display: none;
+      }
+
+      /* Where the timeline ends: links to the final stop land with the axis complete. */
+      .role-end {
+        inset-block-end: 100svh;
+        position: absolute;
+        scroll-margin-block-start: -6rem;
+      }
+
+      /* A horizontal year axis across the full width: a stop per role, filled up to the current role. */
+      .role-axis {
+        --dot: 0.75rem;
+        display: block;
+        grid-area: axis;
+        min-block-size: 2.75rem;
+        position: relative;
+      }
+
+      .role-axis::before,
+      .role-axis::after {
+        block-size: 0.125rem;
+        content: '';
+        inset-block-start: calc(var(--dot) / 2 - 0.0625rem);
+        inset-inline: 0;
+        position: absolute;
+      }
+
+      .role-axis::before {
+        background: color-mix(in srgb, currentColor 25%, transparent);
+      }
+
+      .role-axis::after {
+        background: var(--color-accent);
+        scale: calc(var(--from) + (var(--to) - var(--from)) * var(--progress)) 1;
+        transform-origin: left;
+        transition: scale var(--glide);
+      }
+
+      .role-axis ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .role-axis li {
+        /* Muted but still above 4.5:1 in both themes. */
+        color: color-mix(in srgb, var(--color-text) 70%, var(--color-background));
+        font-size: 0.875rem;
+        font-variant-numeric: tabular-nums;
+        inset-block-start: 0;
+        inset-inline-start: calc(var(--at) * 100%);
+        max-inline-size: none;
+        position: absolute;
+        translate: -50% 0;
+        white-space: nowrap;
+        z-index: 1;
+      }
+
+      .role-axis li::before {
+        background: var(--color-background);
+        block-size: var(--dot);
+        border: 0.125rem solid color-mix(in srgb, currentColor 60%, transparent);
+        border-radius: 50%;
+        box-sizing: border-box;
+        content: '';
+        inline-size: var(--dot);
+        inset-block-start: 0;
+        inset-inline-start: 50%;
+        /* Clicks on the dot go to the link under it. */
+        pointer-events: none;
+        position: absolute;
+        transition: scale 0.2s ease-out;
+        translate: -50% 0;
+      }
+
+      /* The dot and the year are one link to that stop. */
+      .role-axis a {
+        color: inherit;
+        display: block;
+        padding-block-start: calc(var(--dot) + 0.5rem);
+        text-decoration: none;
+      }
+
+      .role-axis a:hover {
+        text-decoration: underline;
+        text-decoration-color: var(--color-accent);
+      }
+
+      .role-axis li:hover::before {
+        scale: 1.25;
+      }
+
+      /* The end labels line up with the ends of the axis; their dots stay on the ends. */
+      .role-axis li:first-child {
+        translate: 0;
+      }
+
+      .role-axis li:first-child::before {
+        inset-inline-start: 0;
+      }
+
+      .role-axis li:last-child {
+        translate: -100% 0;
+      }
+
+      .role-axis li:last-child::before {
+        inset-inline-start: 100%;
+      }
+
+      .role-axis li.reached::before {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+      }
+
+      .role-axis {
+        --current-scale: 1.5;
+      }
+
+      .role-axis li.current {
+        color: var(--color-text);
+        font-weight: 700;
+      }
+
+      .role-axis li.current::before {
+        scale: var(--current-scale);
+      }
+
+      /* A merger: the company's earlier name shows in the same place until the line reaches it. */
+      .role-company:has(.role-company-former) {
+        display: grid;
+      }
+
+      .role-company > span {
+        grid-area: 1 / 1;
+      }
+
+      .role-company-former,
+      .role-company-former + .role-company-name {
+        animation-fill-mode: backwards;
+        animation-range: contain 0% contain var(--merge-at);
+        animation-timeline: --role;
+      }
+
+      .role-company-former {
+        display: inline;
+        visibility: hidden;
+        animation-name: company-before-merger;
+      }
+
+      .role-company-former + .role-company-name {
+        animation-name: company-after-merger;
+      }
+
+      /*
+       * The merger as a branch: a line that leaves the axis where the company merged, drops below it and
+       * runs on to the end. Drawn with the box's left and bottom borders, rounded where it turns.
+       */
+      .role-axis:has(.role-branch) {
+        min-block-size: 3.75rem;
+      }
+
+      .role-branch {
+        block-size: 2.75rem;
+        border: 0.125rem solid color-mix(in srgb, currentColor 25%, transparent);
+        border-block-start: 0;
+        border-end-start-radius: 1rem;
+        border-inline-end: 0;
+        box-sizing: border-box;
+        inline-size: calc((1 - var(--join)) * 100%);
+        inset-block-start: calc(var(--dot) / 2);
+        inset-inline-start: calc(var(--join) * 100%);
+        pointer-events: none;
+        position: absolute;
+      }
+
+      .role-branch.merged {
+        border-color: var(--color-accent);
+      }
+
+      /* Where the branch leaves the axis, and where it ends. */
+      .role-branch::before,
+      .role-branch::after {
+        background: var(--color-background);
+        border: 0.125rem solid color-mix(in srgb, currentColor 60%, transparent);
+        border-radius: 50%;
+        box-sizing: border-box;
+        content: '';
+        position: absolute;
+        translate: -50% -50%;
+      }
+
+      .role-branch::before {
+        block-size: var(--dot);
+        inline-size: var(--dot);
+        inset-block-start: 0;
+        inset-inline-start: -0.0625rem;
+        z-index: 1;
+      }
+
+      .role-branch::after {
+        block-size: 0.5rem;
+        inline-size: 0.5rem;
+        inset-block-start: calc(100% - 0.0625rem);
+        inset-inline-start: 100%;
+      }
+
+      .role-branch.merged::before,
+      .role-branch.merged::after {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+      }
+
+      .role-branch.merging,
+      .role-branch.merging::before,
+      .role-branch.merging::after {
+        animation-fill-mode: forwards;
+        animation-name: branch-join;
+        animation-range: contain var(--merge-at) contain calc(var(--merge-at) + var(--fade));
+        animation-timeline: --role;
+        animation-timing-function: ease-in-out;
+      }
+
+      .role-branch.merging {
+        animation-name: branch-line;
+      }
+
+      /*
+       * As the line nears the next stop, this role's axis eases into the next role's, so the swap between
+       * them can't be seen. The last role does the same once its line reaches the end stop.
+       */
+      .role.ending {
+        --step-start: var(--end-at);
+        --step-end: calc(var(--end-at) + var(--fade));
+      }
+
+      .role:is(:has(+ .role), .ending) .role-axis li:is(.current, .current + li),
+      .role:is(:has(+ .role), .ending) .role-axis li:is(.current, .current + li)::before {
+        animation-fill-mode: forwards;
+        animation-range: contain var(--step-start) contain var(--step-end);
+        animation-timeline: --role;
+        animation-timing-function: ease-in-out;
+      }
+
+      .role:is(:has(+ .role), .ending) .role-axis li.current {
+        animation-name: stop-label-leave;
+      }
+
+      .role:is(:has(+ .role), .ending) .role-axis li.current::before {
+        animation-name: stop-dot-leave;
+      }
+
+      .role:is(:has(+ .role), .ending) .role-axis li.current + li {
+        animation-name: stop-label-arrive;
+      }
+
+      .role:is(:has(+ .role), .ending) .role-axis li.current + li::before {
+        animation-name: stop-dot-arrive;
+      }
+
+      .role-context {
+        align-self: start;
+        grid-area: context;
+      }
+
+      .role-context,
+      .areas li {
+        /* Hold still: the timeline moves only sideways. */
+        animation-name: none;
+      }
+
+      .role-context h2,
+      .role-context h3 {
+        font-size: clamp(1.125rem, 0.9rem + 0.6vw, 1.5rem);
+      }
+
+      .role-context .role-meta {
+        font-size: 0.9375rem;
+      }
+
+      .role-track {
+        align-self: start;
+        container-type: inline-size;
+        grid-area: track;
+        overflow-x: clip;
+      }
+
+      .areas {
+        column-gap: var(--column-gap);
+        display: flex;
+        inline-size: max-content;
+        margin: 0;
+        transition: translate var(--glide);
+        translate: calc(var(--progress) * var(--moves) * -1 * (100cqi + var(--column-gap))) 0;
+      }
+
+      .areas li {
+        box-sizing: border-box;
+        flex: 0 0 100cqi;
+        max-inline-size: none;
+      }
     }
   }
 </style>

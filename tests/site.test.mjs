@@ -98,7 +98,7 @@ test('the generated not-found page is not presented as canonical content', async
 
 test('every responsibility area has an accent key, and the site uses one accent colour', async () => {
   const html = await readFile('dist/experience/index.html', 'utf8');
-  const accents = [...html.matchAll(/<li[^>]*data-accent="([a-z]+)"/g)].map((match) => match[1]);
+  const accents = [...html.matchAll(/<li[^>]*data-morph="([a-z]+)"/g)].map((match) => match[1]);
   const cssFiles = (await readdir('dist/_astro')).filter((file) => file.endsWith('.css'));
   const css = [html, ...(await Promise.all(cssFiles.map((file) => readFile(`dist/_astro/${file}`, 'utf8'))))].join('\n');
 
@@ -115,12 +115,31 @@ test('experience and skills pages are built from the role content, including pla
   const experience = (await readFile('dist/experience/index.html', 'utf8')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   const skills = (await readFile('dist/skills/index.html', 'utf8')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 
-  assert.match(experience, /Lead Technical Website Developer Marketing department, Powerfleet · Nov 2017 – Present/);
-  assert.match(experience, /Freelance Web Developer Self-employed · Mar 2013 – 2019/);
-  // Earlier roles have no heading of their own and come before the recommendations.
-  assert.doesNotMatch(experience, /<h2[^>]*>\s*Earlier roles/);
-  assert.ok(experience.indexOf('Urban Lava Advertising') < experience.indexOf('Recommendations Placeholder'));
-  assert.match(experience, /Front-end Developer I3 Zone Development · Nov 2013 – Nov 2017/);
+  assert.match(experience, /2017 MiX Telematics Powerfleet .*Lead Technical Website Developer Marketing department · Nov 2017 – Present/);
+  // The timeline runs from the first role up to today, then the recommendations.
+  const order = ['Urban Lava Advertising', 'RPS Media', 'I3 Zone Development', 'Lead Technical Website Developer', 'Recommendations Placeholder'];
+  const positions = order.map((text) => experience.indexOf(text));
+  assert.ok(positions.every((position, i) => position > (positions[i - 1] ?? -1)), `Timeline order: ${order.join(', ')}`);
+  const experienceHtml = await readFile('dist/experience/index.html', 'utf8');
+  // The current role's summary introduces the page in the hero, once.
+  const hero = experienceHtml.slice(experienceHtml.indexOf('<h1'), experienceHtml.indexOf('id="role-powerfleet"'));
+  assert.match(hero, /Own the technical delivery/);
+  assert.equal(experienceHtml.split('Own the technical delivery').length, 2);
+  // The whole timeline is one stop in the on-page navigation, not one per role.
+  assert.match(experienceHtml, /<a href="#timeline"[^>]*>Timeline</);
+  // Role links only appear on the timeline's axis, kept out of the tab order.
+  assert.doesNotMatch(experienceHtml, /<a href="#role-[^"]*"(?![^>]*tabindex="-1")/);
+  // Each role shows the same year axis: one linked stop per role's start year, ending at the current year.
+  const axis = experienceHtml.match(/<div class="role-axis[^"]*"[^>]*>(.*?)<\/div>/s)?.[1] ?? '';
+  assert.deepEqual(
+    [...axis.matchAll(/<a href="([^"]+)"[^>]*>\s*([^<]+?)\s*<\/a>/g)].map((match) => `${match[2]} ${match[1]}`),
+    ['2010 #role-urban-lava', '2011 #role-rps-media', '2013 #role-i3-zone', '2017 #role-powerfleet', `${new Date().getFullYear()} #timeline-end`],
+  );
+  assert.match(experienceHtml, /id="timeline-end"/);
+  // The merger shows as an unlabelled, decorative branch, with the earlier company name kept from screen readers.
+  assert.match(experienceHtml, /<div class="role-branch[^"]*"[^>]*aria-hidden="true"[^>]*><\/div>/);
+  assert.match(experienceHtml, /<span class="role-company-former"[^>]*aria-hidden="true"[^>]*>MiX Telematics<\/span>/);
+  assert.match(experience, /I3 Zone Development .*Front-end Developer Nov 2013 – Nov 2017/);
   assert.match(experience, /Platforms: Salesforce Marketing Cloud Account Engagement \(Pardot\), Salesforce CRM, Google reCAPTCHA/);
   assert.match(skills, /Salesforce Marketing Cloud Account Engagement \(Pardot\) Campaign Experiences and Lead Generation; Marketing Automation and CRM Data Capture/);
   assert.doesNotMatch(experience + skills, /Privacy, Security, and Reliability/);
@@ -169,13 +188,13 @@ test('the downloads page lists every CV version, as a link only once its file ex
   assert.match(html, /Coming soon|KB/);
 });
 
-test('experience areas and skills platforms share area icons and morph targets', async () => {
+test('experience areas and skills platforms share morph targets', async () => {
   const experience = await readFile('dist/experience/index.html', 'utf8');
   const skills = await readFile('dist/skills/index.html', 'utf8');
   const accents = ['operations', 'campaigns', 'automation', 'analytics', 'seo', 'documentation'];
 
   for (const accent of accents) {
-    assert.match(experience, new RegExp(`<li[^>]*data-morph="${accent}"[^>]*>\\s*<h3[^>]*>\\s*<svg[^>]*class="area-icon`), `Experience ${accent} card has an icon`);
+    assert.match(experience, new RegExp(`<li[^>]*data-morph="${accent}"`), `Experience ${accent} card is a morph target`);
   }
   const gtm = skills.match(/<div[^>]*data-morph="([^"]+)"[^>]*>\s*<dt[^>]*>Google Tag Manager/);
   assert.equal(gtm?.[1], 'analytics', 'Google Tag Manager links to the analytics area');
@@ -192,6 +211,22 @@ test('recommendations show on the experience page, with placeholder entries labe
   assert.equal([...section.matchAll(/<blockquote/g)].length, recommendations.length);
   assert.equal([...section.matchAll(/>Placeholder<\/p>/g)].length, recommendations.filter((entry) => entry.placeholder).length);
   assert.match(html, /<a[^>]*href="#recommendations"/);
+});
+
+test('each page h1 starts with the name, except the not-found page', async () => {
+  const expected = {
+    'dist/index.html': 'Dennis Ferreira Technical Marketing Developer',
+    'dist/about/index.html': 'Dennis Ferreira About',
+    'dist/experience/index.html': 'Dennis Ferreira Experience',
+    'dist/skills/index.html': 'Dennis Ferreira Skills',
+    'dist/downloads/index.html': 'Dennis Ferreira Downloads',
+    'dist/404.html': 'Page not found',
+  };
+  for (const [file, text] of Object.entries(expected)) {
+    const html = await readFile(file, 'utf8');
+    const h1 = html.match(/<h1[^>]*>(.*?)<\/h1>/s)?.[1] ?? '';
+    assert.equal(h1.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(), text, file);
+  }
 });
 
 test('page content is grouped into sections, starting with the one that holds the h1', async () => {

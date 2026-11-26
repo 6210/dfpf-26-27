@@ -89,7 +89,19 @@ it when it is dropped. Exact package versions live in
   cards flow into one, two or three columns depending on the available width.
 - **CSS scroll-driven animations (`animation-timeline: view()`)**: sections'
   content slides in as it scrolls into view, without JavaScript. Unsupported
-  browsers show the content static.
+  browsers show the content static. The Experience timeline gives each role a
+  named view timeline (`view-timeline`) in one pinned (`position: sticky`)
+  view, to slide its responsibilities sideways one at a time, show only the
+  current role and fill a year axis. The slide and the line follow a
+  scroll-animated `--progress` value through a short CSS transition, which
+  eases them after the scroll.
+- **CSS `@property` and counters**: the Experience timeline's progress, year
+  and years of experience are registered custom properties animated by the
+  scroll; the year and years are shown with `counter()`.
+- **CSS container style queries**: the Experience timeline says "1 Year
+  Experience" rather than "Years" by checking the counted value.
+- **CSS container query units (`cqi`)**: the Experience timeline works out how
+  far the cards slide from the width of the column they cross.
 - **CSS `@starting-style` and transitions**: menu entry animations and the
   light/dark colour fade.
 - **`prefers-color-scheme`, `prefers-reduced-motion`,

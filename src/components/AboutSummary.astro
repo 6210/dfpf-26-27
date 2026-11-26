@@ -5,8 +5,56 @@ const { summary } = await getProfile();
 ---
 
 <section class="about-summary" id="about" aria-labelledby="about-heading">
-  <h2 id="about-heading">About</h2>
-  <p>{summary}</p>
-  <p><a href="/about/">More about me</a></p>
+  <!-- Placeholder until a photo is supplied; replace with an <img> (with alt text) of the same shape. -->
+  <div class="portrait" aria-hidden="true">
+    <span>Photo</span>
+  </div>
+  <div class="about-text">
+    <h2 id="about-heading">About</h2>
+    <p class="lead">{summary}</p>
+    <p><a href="/about/">Full Bio</a></p>
+  </div>
 </section>
 
+<style>
+  /* Photo on the left and text on the right from 768px; the photo sits above the text on phones. */
+  .about-summary {
+    align-content: center;
+    display: grid;
+    gap: var(--row-gap) var(--column-gap);
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+  }
+
+  @media (min-width: 48rem) {
+    .about-summary {
+      align-items: center;
+      grid-template-columns: minmax(0, 0.6fr) minmax(0, 1fr);
+    }
+  }
+
+  .portrait {
+    align-items: center;
+    aspect-ratio: 4 / 5;
+    border: 1px dashed var(--color-accent);
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    color: color-mix(in srgb, currentColor 60%, transparent);
+    display: flex;
+    justify-content: center;
+    inline-size: 100%;
+    max-inline-size: 16rem;
+  }
+
+  @media (min-width: 48rem) {
+    .portrait {
+      max-inline-size: 28rem;
+    }
+  }
+
+  /* Design: larger than the default h2, scaling from 32px on phones to 48px. */
+  h2 {
+    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+    margin-block-start: 0;
+  }
+</style>

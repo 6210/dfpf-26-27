@@ -77,7 +77,10 @@
     let best: HTMLElement | undefined;
     let bestDistance = Infinity;
     for (const target of targets) {
-      const { top, bottom } = target.getBoundingClientRect();
+      const { top, bottom, left, right } = target.getBoundingClientRect();
+      // Skip cards slid out of sight sideways, such as in the Experience timeline.
+      const clip = target.closest('[data-morph-clip]')?.getBoundingClientRect();
+      if (clip && (right <= clip.left + 1 || left >= clip.right - 1)) continue;
       const distance = top > line ? top - line : bottom < line ? line - bottom : 0;
       if (distance < bestDistance) {
         best = target;

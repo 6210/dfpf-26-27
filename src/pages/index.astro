@@ -5,7 +5,7 @@ import PageHero from '../components/PageHero.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getProfile } from '../lib/content';
 
-const { title, headline } = await getProfile();
+const { name, title, headline } = await getProfile();
 ---
 
 <SiteLayout
@@ -16,7 +16,7 @@ const { title, headline } = await getProfile();
     { id: 'about', label: 'About' },
   ]}
 >
-  <PageHero id="intro" title={title} animation="Home animation">
+  <PageHero id="intro" eyebrow={name} title={title} animation="Home animation">
     <p class="lead">{headline}</p>
     <p><a href="/experience/">Explore experience</a></p>
     <CvDownload />

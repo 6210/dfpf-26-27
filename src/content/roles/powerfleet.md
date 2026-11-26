@@ -3,6 +3,9 @@ title: Lead Technical Website Developer
 department: Marketing department
 company: Powerfleet
 companyNote: Joined MiX Telematics, which combined with Powerfleet in 2024.
+merger:
+  from: MiX Telematics
+  on: '2024-04'
 start: '2017-11'
 summary: >-
   Own the technical delivery and day-to-day operation of the marketing websites

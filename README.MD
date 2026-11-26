@@ -168,27 +168,31 @@ against the schema in [src/content.config.ts](src/content.config.ts); a missing
 or misspelled field fails the build.
 
 - **Positioning:** [src/content/profile.json](src/content/profile.json) holds the
-  name (the header logo's link text), the title (the home page `h1`,
+  name (the header logo's link text and the small line above each page's `h1`), the title (the home page `h1`,
   "Technical Marketing Developer"), the headline (the home page lead),
-  the summary (the home page About section, which links to the full About
-  page), and focus areas (website development, CRM integration, and technical
+  the summary (the home page About section: a photo placeholder on the left
+  from 768 px, a larger "About" h2 (32–48 px), the summary at lead size and a
+  "Full Bio" link to the About page; replace the placeholder in
+  `src/components/AboutSummary.astro` with an `<img>` with alt text), and focus areas (website development, CRM integration, and technical
   SEO). The site presents a technical website developer in a marketing
   department, focused on those three areas; design work and design tools are
   left out unless they support them.
 - **Roles:** one Markdown file per role in
   [src/content/roles/](src/content/roles/). Each role lists its areas of
   responsibility, and each area lists the platforms used. The Experience page
-  shows roles newest first; the Skills page lists every platform with the areas
+  shows roles oldest first; the Skills page lists every platform with the areas
   that use it, in the order they first appear. List the most relevant areas and
-  platforms first. The current role (no `end`) is shown in full; past roles
-  follow it in an "Earlier roles" section without a visible heading (each role
-  has its own; the section is labelled for screen readers and the on-page
-  navigation), before the recommendations, so the on-page navigation stays short (`src/components/RoleEntry.astro` renders both).
+  platforms first. The page reads as a timeline
+  (`src/components/Timeline.astro`, one page section): each role is a chapter
+  (`src/components/RoleEntry.astro`), starting with the first role and
+  working up to the current one (no `end`). The current role's summary is shown
+  once, in the hero under the lead, instead of in its chapter. See
+  "Experience timeline" below.
 - **Recommendations:** [src/content/recommendations.json](src/content/recommendations.json)
   holds quotes with the person's name, title, optional company and
   relationship, shown in that order by the reusable
   `src/components/Recommendations.astro` (props: `id`, `heading`, `limit`).
-  It is on the Experience page after the earlier roles, with
+  It is on the Experience page after the timeline, with
   its own "Recommendations" link in the on-page navigation; with no entries it
   renders nothing and the link is left out. Entries with `"placeholder": true`
   get a dashed border and a "Placeholder" label; the current three are
@@ -218,6 +222,9 @@ title: Job title
 department: Marketing department   # optional
 company: Company name
 companyNote: Any rename or merger   # optional
+merger:                             # optional: shown as a branch on the timeline
+  from: Earlier company name
+  on: '2024-04'                     # when it became `company`
 start: '2014-03'                    # 'YYYY' or 'YYYY-MM'
 end: '2017-09'                      # leave out for the current role
 summary: >-
@@ -326,7 +333,14 @@ Each page opens with a hero from `src/components/PageHero.astro`: the h1,
 lead and links on the left, and the page's physics placeholder on the right
 from 1024 px (text about 60% of the width, both centred vertically). Below
 1024 px the placeholder sits under the text. Downloads and the 404 page use the
-same hero without a placeholder. Each one is at least `80svh` tall, with its
+same hero without a placeholder. An optional `eyebrow` adds a smaller line
+above the title inside the h1. Every page except the 404 uses the profile
+name, so headings read, for example, "Dennis Ferreira Technical Marketing
+Developer" or "Dennis Ferreira Experience" for search engines and screen
+readers (a test checks each page). The eyebrow uses the body font at weight 300 (only the
+bold heading font is loaded), in capitals via CSS (the HTML keeps normal
+case), 15–18 px with 0.12em letter spacing and 20–32 px below it. It is coral in dark mode and the text
+colour in light mode (coral on white is too low in contrast for small text). Each one is at least `80svh` tall, with its
 content centred vertically. Paragraphs and list items use a 1.6 line height,
 and headings use 1.2.
 
@@ -342,6 +356,85 @@ cards, recommendations, platforms). Browsers without scroll-driven animations
 without animation. The rule uses longhand `animation-*` properties, because
 the CSS minifier would otherwise fold `view()` into an `animation` shorthand
 that browsers reject.
+
+#### Experience timeline
+
+The roles on the Experience page form one horizontal timeline, oldest first,
+in a single pinned view (`position: sticky`) on screens at least 48rem (768 px)
+wide and 40rem (640 px) tall. Nothing in it moves vertically:
+
+- The role's year, large and in the text colour, with the company name to its
+  right, sits above a year axis across the full width. The year counts up as
+  the role goes by, reaching the next stop's year as the line gets there
+  (a registered `@property --year` integer animated by the scroll and shown
+  with a CSS counter; without support it shows the start year). At the right
+  end of that row, "XX Years Experience" counts up the same way from 0 at the
+  first stop (16 by 2026), saying "Year" at 1 through a container style
+  query; it is shown only with the timeline. The axis has a stop for each role's start year and ends at
+  the current year (taken at build time, so a yearly rebuild keeps it right)
+  while the last role is ongoing. Stops are spaced to scale by year, so
+  longer roles take up more of the line, but every segment gets at least a
+  tenth of it so neighbouring years stay readable on narrow screens. The
+  counted year, the line and any merger branch use the same scale, so they
+  stay in step. The current role's year is bold, stops already
+  reached are filled with the accent colour, and the line fills from the
+  current stop to the next as the role goes by. When the line reaches the
+  end, the last role holds for one more step: the end stop fills and becomes
+  the bold one, and the year above the axis has counted up to the end year.
+  The current stop's dot is 1.5 times larger, and dots grow slightly on hover.
+  A role with a `merger` adds an unlabelled branch: at the merger date
+  (placed by year, so the counted year reaches it at the same moment) a line
+  leaves the axis, drops below it and runs on to the end. Until the line
+  passes that point the heading shows the earlier company name, then it
+  switches to `company` and the branch fills with the accent colour. The
+  branch is drawn on every role's axis (muted before it is reached) so the
+  axis height never changes; it is decorative, and `companyNote` carries the
+  merger for screen readers and the no-JS layout.
+  The stops don't snap: over the last stretch of a role (`--fade`, 12svh of
+  scrolling) the next dot fills and grows as the current one shrinks and its
+  year turns bold, driven by the scroll alone, so the next role's axis takes
+  over exactly where this one left off. The end stop does the same once the
+  last role's line reaches it. The content itself never fades or moves on
+  its own, and the view sits at a fixed distance from the top (not centred)
+  so the year, company and axis stay at the same height in every role.
+  Each stop (dot and year) links to its role, and the end stop to the point
+  where the timeline is complete, with the site's smooth scroll. The axis is
+  a mouse shortcut: it is hidden from screen readers (`aria-hidden`) and its
+  links are out of the tab order (`tabindex="-1"`), since every role repeats
+  it; the dates are in each role's text and the roles are reachable by
+  heading. Only the role showing takes clicks: roles overlap, so the role
+  boxes ignore the pointer and hidden roles are `visibility: hidden`.
+- Below the axis, the left column holds the role's title, department and
+  dates. It,
+  and the year, stay still and change at once to the next role when the
+  previous role's last responsibility has left.
+- The right column shows the role's responsibilities, one card wide, sliding
+  to the left at a steady pace as you scroll, with no pauses: each role starts
+  with its first responsibility in place and ends with its last one in place,
+  and the next role takes over with its own first responsibility in place, so
+  the column is never empty. A role with a single responsibility stays still
+  for a short stretch (30% of the screen height). The cards and the axis
+  line ease after the scroll (a 0.6s ease-out transition) instead of moving
+  in hard steps with each wheel notch, and settle when scrolling stops.
+
+The roles sit in one page section, `Timeline.astro` (`#timeline`), listed once
+in the on-page navigation as "Timeline"; its link lands where the first role
+pins. How it works: each role is its own tall block with a named view timeline
+(`view-timeline: --role`, with `view-timeline-inset: 0` so it ignores the
+header's scroll padding). Consecutive roles overlap by one screen height
+(`margin-block-start: -100svh`), so the next role pins exactly as the previous
+one lets go, and each role's view is only visible during its own turn. The
+scroll animates a registered `--progress` number (0 to 1 through the role) on
+the view; the cards' `translate` and the line's `scale` are calculated from it
+with the role's number of moves (`--moves`) and carry a CSS transition, so
+they glide to each new scroll position. Positions use container query units (`100cqi`, the width of the right
+column), so no JavaScript measures anything. Each role's height grows with its
+responsibilities (`--units` × `--unit`, 40% of the screen height per card). In-page links land where a role pins
+(`scroll-margin-block-start: -6rem` cancels the header space). The area badge
+ignores responsibilities that are out of sight sideways (`data-morph-clip`).
+Phones, shorter windows, reduced motion, print and browsers without
+scroll-driven animations (currently Firefox) show each role with its
+responsibilities in the normal grid instead.
 
 The physics stage in the hero keeps a 4:3 shape at every width (elsewhere it
 would be `clamp(16rem, 50svh, 40rem)` tall). The Experience
@@ -398,8 +491,9 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
 - **On this page** (centred): a scroll spy listing the page's sections. Each
   page passes `sections` (an `id` and short `label` each) to `SiteLayout`; the
   ids must exist on the page, which a page test checks. Labels never name an
-  employer: on Experience the links are "Current role", "Earlier roles" and
-  "Recommendations". As the visitor scrolls,
+  employer: on Experience the whole timeline is a single "Timeline"
+  link, followed by "Recommendations", so other sections can be added
+  around it. As the visitor scrolls,
   the section whose top has reached the area below the header is marked with
   `aria-current="location"` and full-strength text (other links are slightly
   muted), and a single gradient underline slides across to it. Pages
@@ -663,6 +757,11 @@ the layout, and it stays in place between pages.
   `stiffness`, `damping` and `glowEase` at the top of the script (keep
   `spacing` equal to the CSS `--dot-spacing`, and `faint` to the share in
   `--dot-faint`), or the opacities in the `color` rule.
+- The dots behind the text are softer: a left-to-right `mask-image` on the
+  grid keeps them at 40% strength across the left quarter of the screen,
+  rising to full strength at 55%. It only changes the dots' opacity, so there
+  is no coloured layer and it works in both themes. Change the percentages in
+  the `.dot-grid` `mask-image` to tune it.
 - On large screens with a mouse the header has no background, so the grid
   shows behind it; on iPads and phones the header bar covers it.
 
@@ -675,8 +774,7 @@ preferred across the site over solid ones. The icon paths are copied into
 [src/lib/area-icons.ts](src/lib/area-icons.ts), which also defines the list of
 accents used by the content schema, so a new accent needs an icon.
 
-- `AreaIcon.astro` draws an area's icon. Experience shows it beside each area
-  title; Skills shows the icons of every area a platform is used in (for
+- `AreaIcon.astro` draws an area's icon. Skills shows the icons of every area a platform is used in (for
   example Google Tag Manager gets the Analytics icon).
 - `AreaBadge.astro` is a small badge fixed to the bottom right (with the area
   name from 768 px). It follows the area in view: as you scroll or hover an

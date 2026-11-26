@@ -3,12 +3,34 @@ import CvDownload from '../components/CvDownload.astro';
 import PageHero from '../components/PageHero.astro';
 import Recommendations from '../components/Recommendations.astro';
 import RoleEntry from '../components/RoleEntry.astro';
+import Timeline from '../components/Timeline.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
-import { getRecommendations, getRoles } from '../lib/content';
+import { getProfile, getRecommendations, getRoles } from '../lib/content';
+
+const { name } = await getProfile();
 
 const roles = await getRoles();
-const currentRoles = roles.filter((role) => !role.data.end);
-const earlierRoles = roles.filter((role) => role.data.end);
+// Oldest first: the timeline starts with the first role and works up to today.
+const timeline = [...roles].reverse();
+// The year axis: each role's start year, then where the last role ends (the current year, as of the
+// build, while it is ongoing).
+const lastEnd = timeline.at(-1)?.data.end;
+const endYear = lastEnd ? lastEnd.slice(0, 4) : String(new Date().getFullYear());
+// Each stop links to its role; the end stop links to where the timeline finishes.
+const axis = [
+  ...timeline.map((role) => ({ label: role.data.start.slice(0, 4), href: `#role-${role.id}` })),
+  { label: endYear, href: '#timeline-end' },
+];
+// A company merger in the timeline shows as a branch leaving the axis, placed by year so the counted
+// year above the axis reaches it at the same moment.
+const mergerIndex = timeline.findIndex((role) => role.data.merger);
+const mergerRole = timeline[mergerIndex];
+const branch = mergerRole?.data.merger && {
+  stop: mergerIndex,
+  year: Number(mergerRole.data.merger.on.slice(0, 4)),
+};
+// The current role's summary introduces the page in the hero.
+const currentRole = roles.find((role) => !role.data.end);
 const hasRecommendations = (await getRecommendations()).length > 0;
 ---
 
@@ -16,34 +38,34 @@ const hasRecommendations = (await getRecommendations()).length > 0;
   title="Experience | Professional portfolio"
   description="Roles, responsibilities, recommendations, and the platforms used in each area of work."
   sections={[
-    // Nav labels never name an employer.
-    ...currentRoles.map((role) => ({ id: `role-${role.id}`, label: 'Current role' })),
-    ...(earlierRoles.length > 0 ? [{ id: 'earlier-roles', label: 'Earlier roles' }] : []),
+    // The whole timeline is one stop in the on-page navigation.
+    { id: 'timeline', label: 'Timeline' },
     ...(hasRecommendations ? [{ id: 'recommendations', label: 'Recommendations' }] : []),
   ]}
 >
-  <PageHero title="Experience" animation="Experience animation">
+  <PageHero eyebrow={name} title="Experience" animation="Experience animation">
     <p class="lead">
       I take projects from requirements and implementation through testing, release, monitoring, and documentation.
     </p>
+    {currentRole && <p>{currentRole.data.summary}</p>}
     <CvDownload />
   </PageHero>
-  {currentRoles.map((role) => <RoleEntry role={role} />)}
-  {
-    earlierRoles.length > 0 && (
-      // No visible heading: each role has its own, and the label names the region for the on-page navigation.
-      <section class="earlier-roles" id="earlier-roles" aria-label="Earlier roles">
-        {earlierRoles.map((role) => (
-          <RoleEntry role={role} />
-        ))}
-      </section>
-    )
-  }
+  <Timeline>
+    {
+      timeline.map((role, index) => (
+        <RoleEntry
+          role={role}
+          level={3}
+          showSummary={role !== currentRole}
+          first={index === 0}
+          last={index === timeline.length - 1}
+          axis={axis}
+          branch={branch || undefined}
+          stop={index}
+        />
+      ))
+    }
+  </Timeline>
   <Recommendations />
 </SiteLayout>
 
-<style>
-  .earlier-roles {
-    gap: var(--section-space);
-  }
-</style>

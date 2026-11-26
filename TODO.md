@@ -22,11 +22,16 @@ The site is still in progress; checked items are done.
   export: start month (Nov 2017), CMS, performance and semantic SEO wording,
   and missing technical platforms (Mailchimp, Campaign Monitor, Search
   Console, structured data, Hotjar, UIkit, PHP). Design tools left out.
-- [x] Add the technical roles from the earlier CV under "Earlier roles"
-  (Freelance, I3 Zone Development, RPS Media, Urban Lava Advertising); the
-  Royal Caribbean photography role is left out.
+- [x] Add the technical roles from the earlier CV (I3 Zone Development, RPS
+  Media, Urban Lava Advertising); the Royal Caribbean photography role and the
+  freelance role are left out.
+- [x] Show the Experience roles as a timeline, from the first role up to
+  today, with each role pinned while its areas slide sideways.
+- [ ] Once the Experience timeline is refined, turn it into a lighter,
+  reusable Timeline component (any content, not only roles) for other
+  sections of the site.
 - [ ] Confirm or correct the earlier job titles; the CV only gives employers,
-  so "Freelance Web Developer", "Front-end Developer" and "Web Developer" are
+  so "Front-end Developer" and "Web Developer" are
   descriptive placeholders.
 - [ ] Replace the placeholder recommendations in
   `src/content/recommendations.json` with real ones (the full LinkedIn data
@@ -81,6 +86,10 @@ The site is still in progress; checked items are done.
 - [ ] Replace placeholders with approved, useful content and page-specific
   titles, descriptions, and headings.
 - [ ] Confirm the production domain and update `astro.config.mjs` if it changes.
+- [ ] Review the browser tab titles: the home page uses "Dennis Ferreira |
+  Technical Marketing Developer", but the other pages still end in
+  "| Professional portfolio" (for example "About | Professional portfolio").
+  Consider "About | Dennis Ferreira" and so on.
 - [ ] Once content is approved, remove the temporary `noindex`, create a sitemap
   containing only approved indexable pages, and review robots guidance.
 - [ ] Verify deployed direct URLs, canonical links, and missing-page HTTP

@@ -2,6 +2,9 @@
 import CvDownload from '../components/CvDownload.astro';
 import PageHero from '../components/PageHero.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { getProfile } from '../lib/content';
+
+const { name } = await getProfile();
 ---
 
 <SiteLayout
@@ -11,14 +14,14 @@ import SiteLayout from '../layouts/SiteLayout.astro';
     { id: 'about', label: 'About' },
   ]}
 >
-  <PageHero id="about" title="About" animation="About animation">
+  <PageHero id="about" eyebrow={name} title="About" animation="About animation">
     <p class="lead">
       I own the technical delivery and day-to-day operation of Powerfleet's marketing websites and digital
       demand-generation systems, from requirements and implementation through testing, release, monitoring, and
       documentation.
     </p>
     <p>
-      I have built for the web since 2010: PHP and Joomla sites at agencies, front-end interfaces for enterprise
+      I have built for the web since 2010: CMS sites at agencies, front-end interfaces for enterprise
       applications at I3 Zone Development, and client websites as a freelancer. Today I focus on website development, CRM
       and marketing automation integration, and technical SEO, with semantic markup, performance, and measurement built in
       from the start.

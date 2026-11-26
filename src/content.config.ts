@@ -15,6 +15,8 @@ const roles = defineCollection({
     department: z.string().optional(),
     company: z.string(),
     companyNote: z.string().optional(),
+    // When the company joined another one: its earlier name, and when it became `company`.
+    merger: z.object({ from: z.string(), on: yearMonth }).optional(),
     start: yearMonth,
     // Leave out for the current role.
     end: yearMonth.optional(),

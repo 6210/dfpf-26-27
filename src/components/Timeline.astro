@@ -1,0 +1,46 @@
+---
+/*
+ * Timeline: one page section holding the timeline's stops (RoleEntry for now), listed once in the
+ * on-page navigation. The stops pin and slide on their own (see RoleEntry.astro); this section only
+ * stacks them and gives the feature its name.
+ */
+interface Props {
+  id?: string;
+  label?: string;
+}
+
+const { id = 'timeline', label = 'Timeline' } = Astro.props;
+---
+
+<section class="timeline" id={id} aria-labelledby={`${id}-heading`}>
+  <h2 class="timeline-heading" id={`${id}-heading`}>{label}</h2>
+  <slot />
+</section>
+
+<style>
+  .timeline {
+    gap: var(--section-space);
+  }
+
+  /* Named for screen readers and the outline; the stops carry the visible headings. */
+  .timeline-heading {
+    block-size: 1px;
+    clip-path: inset(50%);
+    inline-size: 1px;
+    margin: 0;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  @supports (animation-timeline: view()) {
+    @media screen and (min-width: 48rem) and (min-height: 40rem) and (prefers-reduced-motion: no-preference) {
+      .timeline {
+        display: block;
+        padding-block: 0;
+        /* The in-page link lands where the first stop pins, not short of it under the header space. */
+        scroll-margin-block-start: -6rem;
+      }
+    }
+  }
+</style>

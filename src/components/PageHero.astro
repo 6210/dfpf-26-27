@@ -3,17 +3,23 @@ import PhysicsPlaceholder from './PhysicsPlaceholder.astro';
 
 interface Props {
   title: string;
+  /** Smaller line shown above the title, inside the h1 so search engines read both as one heading. */
+  eyebrow?: string;
   id?: string;
   /** Label for the animation shown beside the text; no animation when omitted. */
   animation?: string;
 }
 
-const { title, id, animation } = Astro.props;
+const { title, eyebrow, id, animation } = Astro.props;
 ---
 
 <section class="hero" id={id}>
   <div class="hero-text">
-    <h1>{title}</h1>
+    <h1>
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      {eyebrow && ' '}
+      {title}
+    </h1>
     <slot />
   </div>
   {animation && <PhysicsPlaceholder label={animation} />}
@@ -32,6 +38,22 @@ const { title, id, animation } = Astro.props;
     justify-content: stretch;
     --physics-height: auto;
     --physics-ratio: 4 / 3;
+  }
+
+  /*
+   * Accent in dark mode; the text colour in light mode, where coral on white is too faint for small text.
+   * Uses the body font: only the bold weight of the heading font is loaded.
+   */
+  .eyebrow {
+    color: var(--color-link);
+    display: block;
+    font-family: system-ui, sans-serif;
+    font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.125rem);
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    line-height: 1.3;
+    margin-block-end: clamp(1.25rem, 2vw, 2rem);
+    text-transform: uppercase;
   }
 
   .hero-text > :first-child {

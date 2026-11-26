@@ -4,7 +4,7 @@ import PageHero from '../components/PageHero.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getPlatforms, getProfile } from '../lib/content';
 
-const { focusAreas } = await getProfile();
+const { name, focusAreas } = await getProfile();
 const platforms = await getPlatforms();
 ---
 
@@ -16,7 +16,7 @@ const platforms = await getPlatforms();
     { id: 'platforms', label: 'Platforms' },
   ]}
 >
-  <PageHero title="Skills" animation="Skills animation">
+  <PageHero eyebrow={name} title="Skills" animation="Skills animation">
     <p class="lead">
       My work connects the website platform, campaign experiences, marketing automation, analytics, regional content,
       and lead-conversion workflows.
