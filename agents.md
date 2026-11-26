@@ -17,7 +17,9 @@ this project, and remove entries that are no longer used.
 Keep [flow.md](flow.md) current: when a page, component, or content source is
 added, removed, or rewired, update its Mermaid diagrams in the same change.
 
-While the site is private (behind Cloudflare Access) and no branching strategy
-exists, commit and push finished, checked changes straight to `main` without
-asking first, then confirm the deployment succeeded. Stop doing this once the
-site is public or a branching strategy is agreed.
+Deploys are paused: do not commit or push until the owner asks to make
+changes live. Work and test locally with the dev server (see README "Local
+development"), and leave changes uncommitted. When the owner asks to go live,
+run `npm run check` and `npm run quality` against a production preview, then
+commit and push to `main` and confirm the deployment succeeded. Revisit this
+once the site is public or a branching strategy is agreed.

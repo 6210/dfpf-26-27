@@ -261,15 +261,39 @@ Dotted lines are manual editing steps; solid lines are automated. For a push to
 renders on GitHub and in Markdown viewers with Mermaid support; it does not add
 a library or runtime request to the website.
 
-Use Node.js 22.23.4 or newer on a supported even-numbered release, then run:
+### Local development
+
+Use Node.js 22.23.4 or newer on a supported even-numbered release (the version
+is pinned in [.node-version](.node-version)). On this Mac, Homebrew's `node@22`
+is linked as the default `node`; check with `node -v`. Then run:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Run `npm run build` to generate the static site in `dist/`, and
-`npm run preview` to preview the build locally.
+The dev server starts in about a second at <http://localhost:4321/> and
+reloads the page as soon as a file is saved, with no build, commit, or deploy.
+Astro's dev toolbar appears at the bottom of the page in dev mode only; hide it
+from its Settings button if it gets in the way.
+
+| Command | Use it to |
+|---|---|
+| `npm run dev` | Work locally with live reload, on this computer only. |
+| `npm run dev:lan` | Same, but also reachable from a phone or iPad on the same Wi-Fi at the Network address it prints (for example `http://192.168.0.102:4321/`). Use it on trusted networks only. |
+| `npm run check` | Build the production site into `dist/` and run the page tests. |
+| `npm run preview` | Serve the production build from `dist/` at <http://localhost:4321/>. |
+| `npm run quality` | Run Lighthouse against the production build (needs Chrome). |
+
+Dev mode does not minify CSS or bundle scripts the way the production build
+does, and some issues only show up after minifying (the scroll-reveal
+`animation` shorthand bug was one). Before making changes live, run
+`npm run check`, look at the result with `npm run preview`, and run
+`npm run quality`.
+
+Changes are tested locally and only committed and pushed when they are ready to
+go live; every push to `main` runs the CI checks and deploys, which takes
+several minutes.
 
 ### Layout and breakpoints
 
