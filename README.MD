@@ -111,12 +111,12 @@ is still a placeholder.
 ├── TODO.md                   Product and UI tasks
 ├── inspiration.md, stack.md  Design and technology references
 ├── astro.config.mjs          Production URL and URL format
-├── src/content.config.ts     Content schema (roles and profile)
-├── src/content/              Website content: profile and one file per role
+├── src/content.config.ts     Content schema (roles, profile and recommendations)
+├── src/content/              Website content: profile, one file per role, recommendations
 ├── src/lib/                  Content helpers (sorting, dates, platforms)
 ├── src/pages/                Home, about, experience, skills, downloads, and 404 pages
 ├── src/layouts/              Shared page structure and client navigation
-├── src/components/           Header, navigation, Get in touch, footer, CV download, physics placeholder
+├── src/components/           Header, navigation, roles, recommendations, Get in touch, footer, CV download, physics placeholder
 ├── public/                   Files served as-is (third-party license notices)
 ├── tests/                    Generated-page checks
 ├── .github/workflows/        Quality checks and deployment
@@ -170,14 +170,31 @@ or misspelled field fails the build.
 - **Positioning:** [src/content/profile.json](src/content/profile.json) holds the
   name (the header and the home page `h1`), the headline (the home page lead),
   the summary (the home page About section, which links to the full About
-  page), and focus areas (SEO, CRM integration, and campaign technology). The site presents a marketing-department technical lead, not a
-  general developer role.
+  page), and focus areas (website development, CRM integration, and technical
+  SEO). The site presents a technical website developer in a marketing
+  department, focused on those three areas; design work and design tools are
+  left out unless they support them.
 - **Roles:** one Markdown file per role in
   [src/content/roles/](src/content/roles/). Each role lists its areas of
   responsibility, and each area lists the platforms used. The Experience page
   shows roles newest first; the Skills page lists every platform with the areas
   that use it, in the order they first appear. List the most relevant areas and
-  platforms first.
+  platforms first. The current role (no `end`) is shown in full; past roles
+  are listed under "Earlier roles", after the recommendations, so the on-page
+  navigation stays short (`src/components/RoleEntry.astro` renders both).
+- **Recommendations:** [src/content/recommendations.json](src/content/recommendations.json)
+  holds quotes with the person's name, title, optional company and
+  relationship, shown in that order by the reusable
+  `src/components/Recommendations.astro` (props: `id`, `heading`, `limit`).
+  It is on the Experience page between the current and earlier roles, with
+  its own "Recommendations" link in the on-page navigation; with no entries it
+  renders nothing and the link is left out. Entries with `"placeholder": true`
+  get a dashed border and a "Placeholder" label; the current three are
+  placeholders until real recommendations are added.
+- **Sources:** the content was last balanced (2026-11-26) between the earlier
+  CV and the LinkedIn basic profile export, both kept in the git-ignored
+  `documents/` folder. Personal details from the CV (ID number, date of birth,
+  home address) are never published.
 - **Contact:** `contact.email` and `contact.phone` in the profile feed the
   "Get in touch" section (see below). Update them there, for example when the
   site's own domain email is ready.
@@ -312,8 +329,8 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
 - **On this page** (centred): a scroll spy listing the page's sections. Each
   page passes `sections` (an `id` and short `label` each) to `SiteLayout`; the
   ids must exist on the page, which a page test checks. Labels never name an
-  employer: on Experience the current role is "Current role" and past roles
-  use their job title. As the visitor scrolls,
+  employer: on Experience the links are "Current role", "Recommendations" and
+  "Earlier roles". As the visitor scrolls,
   the section whose top has reached the area below the header is marked with
   `aria-current="location"` and full-strength text (other links are slightly
   muted), and a single gradient underline slides across to it. Pages

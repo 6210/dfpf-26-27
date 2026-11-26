@@ -32,7 +32,8 @@ it when it is dropped. Exact package versions live in
     touch, CV downloads).
   - Content collections (`astro:content` with the `glob` and `file` loaders)
     and Zod schemas (`astro/zod`). Roles come from Markdown in
-    `src/content/roles/` and profile details from `src/content/profile.json`,
+    `src/content/roles/`, profile details from `src/content/profile.json` and
+    recommendations from `src/content/recommendations.json`,
     so copy is edited in files rather than in templates.
   - The fonts API (`astro:assets` `Font`), which self-hosts and preloads the
     heading font.
@@ -41,8 +42,8 @@ it when it is dropped. Exact package versions live in
     in place.
 - **[TypeScript](https://www.typescriptlang.org/)**: types for component
   scripts, the content config, and helpers in `src/lib/`.
-- **[Markdown](https://commonmark.org/) and JSON**: content files for roles and
-  profile data.
+- **[Markdown](https://commonmark.org/) and JSON**: content files for roles,
+  profile data and recommendations.
 
 ## Visitor-facing libraries and assets
 

@@ -1,0 +1,112 @@
+---
+import { getRecommendations } from '../lib/content';
+
+interface Props {
+  /** Section id, also used by the on-page navigation. */
+  id?: string;
+  heading?: string;
+  /** Show only the first entries, for example on a summary page. */
+  limit?: number;
+}
+
+const { id = 'recommendations', heading = 'Recommendations', limit } = Astro.props;
+const recommendations = (await getRecommendations()).slice(0, limit);
+---
+
+{
+  recommendations.length > 0 && (
+    <section class="recommendations" id={id} aria-labelledby={`${id}-heading`}>
+      <h2 id={`${id}-heading`}>{heading}</h2>
+      <ul>
+        {recommendations.map(({ name, title, company, relationship, quote, placeholder }) => (
+          <li class:list={{ placeholder }}>
+            <figure>
+              {placeholder && <p class="placeholder-label">Placeholder</p>}
+              <blockquote>
+                <p>{quote}</p>
+              </blockquote>
+              <figcaption>
+                <span class="name">{name}</span>
+                <span>{[title, company].filter(Boolean).join(', ')}</span>
+                {relationship && <span>{relationship}</span>}
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .recommendations {
+    margin-block: 3rem;
+  }
+
+  ul {
+    display: grid;
+    gap: 1.5rem 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  figure {
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+    margin: 0;
+    padding: 1.25rem;
+  }
+
+  .placeholder figure {
+    border-style: dashed;
+  }
+
+  .placeholder-label {
+    align-self: start;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0.1rem 0.6rem;
+    text-transform: uppercase;
+  }
+
+  blockquote {
+    flex: 1;
+    margin: 0;
+  }
+
+  blockquote p {
+    margin: 0;
+  }
+
+  blockquote p::before {
+    content: '\201C';
+  }
+
+  blockquote p::after {
+    content: '\201D';
+  }
+
+  figcaption {
+    display: grid;
+    font-size: 0.9rem;
+  }
+
+  .name {
+    font-weight: 700;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    figure {
+      transition: border-color var(--theme-fade) ease;
+    }
+  }
+</style>

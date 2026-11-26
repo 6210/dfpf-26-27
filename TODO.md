@@ -18,11 +18,24 @@ The site is still in progress; checked items are done.
 
 - [x] Structure career content as CV entries in `src/content/` (profile and
   one file per role), with platforms per area of responsibility.
-- [ ] Review the current role's areas, wording, and platforms; add any missing
-  platforms and the start month.
-- [ ] Add the roles from the earlier CV, then update them for the current
-  market.
-- [ ] Write the About page content.
+- [x] Review the current role against the earlier CV and the LinkedIn profile
+  export: start month (Nov 2017), CMS, performance and semantic SEO wording,
+  and missing technical platforms (Mailchimp, Campaign Monitor, Search
+  Console, structured data, Hotjar, UIkit, PHP). Design tools left out.
+- [x] Add the technical roles from the earlier CV under "Earlier roles"
+  (Freelance, I3 Zone Development, RPS Media, Urban Lava Advertising); the
+  Royal Caribbean photography role is left out.
+- [ ] Confirm or correct the earlier job titles; the CV only gives employers,
+  so "Freelance Web Developer", "Front-end Developer" and "Web Developer" are
+  descriptive placeholders.
+- [ ] Replace the placeholder recommendations in
+  `src/content/recommendations.json` with real ones (the full LinkedIn data
+  export has `Recommendations_Received.csv`; ask each person before
+  publishing their name and words), then remove `"placeholder": true`.
+- [ ] Compare against the full LinkedIn export (positions and skills) when it
+  arrives; the basic export only had the headline and summary.
+- [ ] Write the full About page content (a short background paragraph is in
+  place).
 - [ ] Add the updated CV to `public/cv/` as `dennis-ferreira-cv.pdf` and
   `dennis-ferreira-cv.docx` (or change the `cv` list in the profile) so the
   Downloads page links to them.

@@ -1,6 +1,7 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import recommendationsFile from '../content/recommendations.json';
 import type { Accent } from './area-icons';
 
 export type Role = CollectionEntry<'roles'>;
@@ -23,6 +24,13 @@ export async function getProfile() {
   const entry = await getEntry('profile', 'profile');
   if (!entry) throw new Error('src/content/profile.json must contain an entry with id "profile".');
   return entry.data;
+}
+
+/** Recommendations in the order they appear in src/content/recommendations.json (the collection itself is unordered). */
+export async function getRecommendations() {
+  const order = recommendationsFile.map(({ id }) => id);
+  const entries = await getCollection('recommendations');
+  return entries.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id)).map((entry) => entry.data);
 }
 
 export interface PlatformUsage {

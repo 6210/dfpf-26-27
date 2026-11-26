@@ -3,11 +3,13 @@ title: Lead Technical Website Developer
 department: Marketing department
 company: Powerfleet
 companyNote: Joined MiX Telematics, which combined with Powerfleet in 2024.
-start: '2017'
+start: '2017-11'
 summary: >-
   Own the technical delivery and day-to-day operation of the marketing websites
   and digital demand-generation systems, from requirements and implementation
-  through testing, release, monitoring and documentation.
+  through testing, release, monitoring and documentation. Build responsive,
+  semantic pages on the content management system with performance and
+  technical SEO checked at every step.
 areas:
   - title: Campaign Experiences and Lead Generation
     accent: campaigns
@@ -27,30 +29,39 @@ areas:
       Maintain integrations that carry approved campaign and session context
       across pages and form submissions, aligned with existing CRM and
       marketing automation fields, with appropriate submission safeguards.
+      Build and test HTML email campaigns for the marketing automation and
+      email platforms.
     platforms:
       - Salesforce Marketing Cloud Account Engagement (Pardot)
       - Salesforce CRM
       - Google reCAPTCHA
+      - Mailchimp
+      - Campaign Monitor
   - title: Regional Content, SEO, and Brand Transition
     accent: seo
     summary: >-
       Support localized content and market-specific behavior, maintain
       language and legal-content structures, and plan evidence-based domain
-      redirects and technical SEO checks for migrations.
+      redirects and technical SEO checks for migrations. Add structured data
+      and monitor indexing and search performance.
     platforms:
       - Joomla
+      - Google Search Console
+      - Schema.org structured data
       - Vimeo
   - title: Analytics and Advertising Measurement
     accent: analytics
     summary: >-
       Implement and verify tag management, analytics and advertising
       conversion tracking, investigate reporting discrepancies, and prepare
-      validated CRM conversion data for platform imports.
+      validated CRM conversion data for platform imports. Use behaviour
+      analytics to find and fix usability problems on key pages.
     platforms:
       - Google Tag Manager
       - Google Analytics 4
       - Google Ads
       - Salesforce CRM
+      - Hotjar
   - title: Website and Platform Operations
     accent: operations
     summary: >-
@@ -60,9 +71,11 @@ areas:
     platforms:
       - Joomla
       - YOOtheme Pro
+      - UIkit
       - HTML
       - CSS
       - JavaScript
+      - PHP
   - title: Documentation and Operational Ownership
     accent: documentation
     summary: >-

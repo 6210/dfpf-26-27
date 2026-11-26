@@ -58,4 +58,17 @@ const profile = defineCollection({
   }),
 });
 
-export const collections = { roles, profile };
+// Shown by the Recommendations component. Entries marked as placeholders are labelled on the page.
+const recommendations = defineCollection({
+  loader: file('./src/content/recommendations.json'),
+  schema: z.object({
+    name: z.string(),
+    title: z.string(),
+    company: z.string().optional(),
+    relationship: z.string().optional(),
+    quote: z.string(),
+    placeholder: z.boolean().default(false),
+  }),
+});
+
+export const collections = { roles, profile, recommendations };

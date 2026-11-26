@@ -85,8 +85,8 @@ test('every responsibility accent on the experience page has a colour defined', 
   const cssFiles = (await readdir('dist/_astro')).filter((file) => file.endsWith('.css'));
   const css = [html, ...(await Promise.all(cssFiles.map((file) => readFile(`dist/_astro/${file}`, 'utf8'))))].join('\n');
 
-  assert.equal(accents.length, 6);
-  for (const accent of accents) {
+  assert.equal(new Set(accents).size, 6);
+  for (const accent of new Set(accents)) {
     assert.match(css, new RegExp(`\\[data-accent=["']?${accent}["']?\\]\\s*\\{\\s*--color-accent:\\s*var\\(--color-accent-${accent}\\)`), accent);
     assert.match(css, new RegExp(`--color-accent-${accent}:\\s*light-dark\\(`), accent);
   }
@@ -96,7 +96,9 @@ test('experience and skills pages are built from the role content, including pla
   const experience = (await readFile('dist/experience/index.html', 'utf8')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   const skills = (await readFile('dist/skills/index.html', 'utf8')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 
-  assert.match(experience, /Lead Technical Website Developer Marketing department, Powerfleet · 2017 – Present/);
+  assert.match(experience, /Lead Technical Website Developer Marketing department, Powerfleet · Nov 2017 – Present/);
+  assert.match(experience, /Earlier roles Freelance Web Developer Self-employed · Mar 2013 – 2019/);
+  assert.match(experience, /Front-end Developer I3 Zone Development · Nov 2013 – Nov 2017/);
   assert.match(experience, /Platforms: Salesforce Marketing Cloud Account Engagement \(Pardot\), Salesforce CRM, Google reCAPTCHA/);
   assert.match(skills, /Salesforce Marketing Cloud Account Engagement \(Pardot\) Campaign Experiences and Lead Generation; Marketing Automation and CRM Data Capture/);
   assert.doesNotMatch(experience + skills, /Privacy, Security, and Reliability/);
@@ -158,4 +160,14 @@ test('experience areas and skills platforms share area icons and morph targets',
   for (const html of [experience, skills]) {
     assert.match(html, /<div[^>]*class="area-badge"[^>]*data-area-badge hidden/, 'the badge is hidden until its script runs');
   }
+});
+
+test('recommendations show on the experience page, with placeholder entries labelled', async () => {
+  const recommendations = JSON.parse(await readFile('src/content/recommendations.json', 'utf8'));
+  const html = await readFile('dist/experience/index.html', 'utf8');
+  const section = html.match(/<section[^>]*id="recommendations"[^>]*>(.*?)<\/section>/s)?.[1] ?? '';
+
+  assert.equal([...section.matchAll(/<blockquote/g)].length, recommendations.length);
+  assert.equal([...section.matchAll(/>Placeholder<\/p>/g)].length, recommendations.filter((entry) => entry.placeholder).length);
+  assert.match(html, /<a[^>]*href="#recommendations"/);
 });

@@ -57,15 +57,18 @@ flowchart TD
         CvDownload["CvDownload.astro"]
         AboutSummary["AboutSummary.astro<br/>home About section"]
         Physics["PhysicsPlaceholder.astro<br/>(Matter.js, lazy-loaded)"]
+        RoleEntry["RoleEntry.astro<br/>one role and its areas"]
+        Recommendations["Recommendations.astro<br/>quotes, placeholders labelled"]
         AreaIcon["AreaIcon.astro<br/>area icon in its colour"]
         AreaBadge["AreaBadge.astro<br/>morphing area badge<br/>(flubber, lazy-loaded)"]
     end
 
     subgraph Content["Content"]
-        lib["src/lib/content.ts<br/>getProfile, getRoles,<br/>getPlatforms, getCvFiles"]
+        lib["src/lib/content.ts<br/>getProfile, getRoles, getPlatforms,<br/>getRecommendations, getCvFiles"]
         icons["src/lib/area-icons.ts<br/>accents and Phosphor icon paths"]
         profile[("src/content/profile.json")]
         roles[("src/content/roles/*.md")]
+        recs[("src/content/recommendations.json")]
         cvfiles[("CV files in public/")]
     end
 
@@ -77,16 +80,18 @@ flowchart TD
     index & about & experience --> CvDownload
     index --> AboutSummary
     index & about & experience & skills --> Physics
-    experience & skills --> AreaIcon
+    experience --> RoleEntry & Recommendations
+    RoleEntry & skills --> AreaIcon
     AreaIcon & AreaBadge -. "icon paths" .-> icons
     experience & skills -. "data-morph targets" .-> AreaBadge
 
     index & skills & SiteHeader & GetInTouch & AboutSummary -. "getProfile" .-> lib
     skills -. "getPlatforms" .-> lib
     experience -. "getRoles" .-> lib
+    experience & Recommendations -. "getRecommendations" .-> lib
     downloads & CvDownload -. "getCvFiles" .-> lib
 
-    lib --> profile & roles
+    lib --> profile & roles & recs
     lib -. "checked at build" .-> cvfiles
 ```
 

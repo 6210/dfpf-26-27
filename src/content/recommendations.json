@@ -1,0 +1,29 @@
+[
+  {
+    "id": "placeholder-marketing-manager",
+    "name": "Placeholder name",
+    "title": "Marketing manager",
+    "company": "Company name",
+    "relationship": "Managed Dennis directly",
+    "quote": "Placeholder text. Replace with a real recommendation, for example from the LinkedIn data export (Recommendations_Received.csv).",
+    "placeholder": true
+  },
+  {
+    "id": "placeholder-sales-operations",
+    "name": "Placeholder name",
+    "title": "Sales operations or CRM lead",
+    "company": "Company name",
+    "relationship": "Worked with Dennis on CRM integration",
+    "quote": "Placeholder text. A recommendation about CRM integration, lead capture or campaign delivery would fit here.",
+    "placeholder": true
+  },
+  {
+    "id": "placeholder-agency-partner",
+    "name": "Placeholder name",
+    "title": "SEO or digital agency partner",
+    "company": "Company name",
+    "relationship": "Worked with Dennis as an external partner",
+    "quote": "Placeholder text. A recommendation about technical SEO, analytics or website delivery would fit here.",
+    "placeholder": true
+  }
+]
