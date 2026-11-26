@@ -116,8 +116,9 @@ it when it is dropped. Exact package versions live in
   navigation, content).
 - **[Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci)**
   (`@lhci/cli`, [lighthouserc.json](lighthouserc.json)): scores every built
-  page and fails the build below 90 for performance or accessibility, or if a
-  page ships more than 100 KiB of script.
+  page three times and fails the build if the median is below 90 for
+  performance or accessibility, or if a page ships more than 100 KiB of script.
+  The median smooths out one-off slow runs on the shared CI machines.
 
 ## Documentation
 

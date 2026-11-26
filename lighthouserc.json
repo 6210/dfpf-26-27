@@ -4,7 +4,7 @@
       "staticDistDir": "./dist",
       "staticDirFileDiscoveryDepth": 100,
       "maxAutodiscoverUrls": 0,
-      "numberOfRuns": 1,
+      "numberOfRuns": 3,
       "settings": {
         "onlyCategories": ["performance", "accessibility"]
       }
