@@ -103,9 +103,12 @@ The site is still in progress; checked items are done.
 ## Colour and icon design
 
 - [x] Add draft accent colours for the Core Responsibilities sections, readable
-  in both themes (see README "Highlight colours (draft)").
-- [ ] Decide the final palette; update the accent properties and recheck
-  contrast.
+  in both themes.
+- [x] Replace the per-area colours and gradient with one accent based on
+  Pantone 13-0647 TCX Illuminating, with a darker shade of the same hue in
+  light mode for contrast (see README "Accent colour").
+- [ ] Check the accent on real screens in both themes, and decide whether
+  light mode should also use the Pantone yellow as a fill behind dark text.
 - [x] Test icons per area (Phosphor "fill") on Experience and Skills, with a
   badge that morphs between them (flubber) on scroll, hover, and page change.
 - [ ] Choose the final icons for each area and decide whether to keep the

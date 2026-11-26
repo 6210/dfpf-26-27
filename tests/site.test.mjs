@@ -83,16 +83,18 @@ test('the generated not-found page is not presented as canonical content', async
   assert.doesNotMatch(html, /rel="canonical"/);
 });
 
-test('every responsibility accent on the experience page has a colour defined', async () => {
+test('every responsibility area has an accent key, and the site uses one accent colour', async () => {
   const html = await readFile('dist/experience/index.html', 'utf8');
   const accents = [...html.matchAll(/<li[^>]*data-accent="([a-z]+)"/g)].map((match) => match[1]);
   const cssFiles = (await readdir('dist/_astro')).filter((file) => file.endsWith('.css'));
   const css = [html, ...(await Promise.all(cssFiles.map((file) => readFile(`dist/_astro/${file}`, 'utf8'))))].join('\n');
 
   assert.equal(new Set(accents).size, 6);
+  // Pantone 13-0647 TCX in dark mode, and a darker shade of the same hue in light mode for contrast.
+  assert.match(css, /--color-accent:\s*light-dark\(#84740b,\s*var\(--color-accent-pantone\)\)/i);
+  assert.match(css, /--color-accent-pantone:\s*#f5df4d/i);
   for (const accent of new Set(accents)) {
-    assert.match(css, new RegExp(`\\[data-accent=["']?${accent}["']?\\]\\s*\\{\\s*--color-accent:\\s*var\\(--color-accent-${accent}\\)`), accent);
-    assert.match(css, new RegExp(`--color-accent-${accent}:\\s*light-dark\\(`), accent);
+    assert.doesNotMatch(css, new RegExp(`--color-accent-${accent}\\b`), `${accent} has no colour of its own`);
   }
 });
 

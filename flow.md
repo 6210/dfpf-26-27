@@ -60,7 +60,7 @@ flowchart TD
         Physics["PhysicsPlaceholder.astro<br/>(Matter.js, lazy-loaded)"]
         RoleEntry["RoleEntry.astro<br/>one role and its areas"]
         Recommendations["Recommendations.astro<br/>quotes, placeholders labelled"]
-        AreaIcon["AreaIcon.astro<br/>area icon in its colour"]
+        AreaIcon["AreaIcon.astro<br/>area icon in the accent colour"]
         AreaBadge["AreaBadge.astro<br/>morphing area badge<br/>(flubber, lazy-loaded)"]
     end
 

@@ -348,7 +348,7 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
 `src/components/SiteHeader.astro` holds, from left to right:
 
 - **Name**: "Dennis Ferreira" (the `name` field in `src/content/profile.json`)
-  in the heading font at a small size, filled with the accent gradient. It
+  in the heading font at a small size, in the accent colour. It
   links home, except on the home page.
 - **On this page** (centred): a scroll spy listing the page's sections. Each
   page passes `sections` (an `id` and short `label` each) to `SiteLayout`; the
@@ -367,7 +367,7 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   phones keep the header links): the same links in a column fixed at the
   centre right of the screen. Each one is a dot on a short line that runs to
   the screen edge. For the current section the line stretches out (with the
-  accent gradient) and its label slides in to the left of the dot; leaving
+  accent colour) and its label slides in to the left of the dot; leaving
   sections retract the same way. Hovering or focusing any dot shows its label,
   and every dot is a link with the same smooth scroll as the header links.
   The rail is a separate `<nav data-rail>` after the `<header>`, because the
@@ -430,11 +430,9 @@ and the `page-fade-*` keyframes sit in its global styles. Links to sections on
 the same page do not fade; they smooth-scroll as above. Visitors who prefer
 reduced motion get an instant swap.
 
-`--gradient-accents` in `SiteLayout.astro` blends all six highlight colours
-(see below) into one gradient. It is the site's signature colour, used for the
-name and the current-section underline on every page; it follows the theme
-because each accent does. In forced-colours mode the name falls back to the
-system text colour.
+The accent colour (see "Accent colour" below) is used for the name, links, the
+current-section underline, the reading-progress line and the section rail. In
+forced-colours mode these fall back to system colours.
 
 Header checks (2026-11-24, local, not yet deployed): build, page tests, and
 Lighthouse passed on every page (performance 100, accessibility 100,
@@ -551,59 +549,47 @@ client navigation, dark mode, and a 360 px width. The footer and About page
 were deployed in
 [this workflow run](https://github.com/6210/dfpf-26-27/actions/runs/45363526471).
 
-### Highlight colours (draft)
+### Accent colour
 
-Draft accent colours for the Core Responsibilities sections, chosen from common
-colour associations. They may change once the final palette is decided. Each
-colour is a CSS custom property in
-[src/layouts/SiteLayout.astro](src/layouts/SiteLayout.astro) (for example
-`--color-accent-campaigns`). Add `data-accent="campaigns"` to an element to set
-its `--color-accent`; the Experience page uses this for the coloured marker
-beside each responsibility. Colour meanings vary by culture and context, so
-each highlight should also have a heading, icon, or label; colour must not be
-the only cue. "Privacy, Security, and Reliability" is intentionally not shown
-on the site.
+The site uses one accent colour, based on
+[Pantone 13-0647 TCX Illuminating](https://www.pantone.com/color-finder/13-0647-tcx)
+(`#f5df4d`). It replaced six per-area colours and a multicolour gradient, which
+were too distracting. The tokens are in
+[src/layouts/SiteLayout.astro](src/layouts/SiteLayout.astro):
 
-| Section | Accent name | Colour | Light theme | Dark theme | Why |
-|---|---|---|---|---|---|
-| Website and Platform Operations | `operations` | Blue | `#1d4ed8` | `#93c5fd` | Trust, stability, reliability |
-| Campaign Experiences and Lead Generation | `campaigns` | Orange | `#c2410c` | `#fdba74` | Energy, enthusiasm, calls to action |
-| Marketing Automation and CRM Data Capture | `automation` | Teal | `#0f766e` | `#5eead4` | Flow, clarity, technology |
-| Analytics and Advertising Measurement | `analytics` | Purple | `#7e22ce` | `#d8b4fe` | Insight, analysis, imagination |
-| Regional Content, SEO, and Brand Transition | `seo` | Green | `#15803d` | `#86efac` | Growth, reach, organic search |
-| Documentation and Operational Ownership | `documentation` | Amber | `#a16207` | `#fde047` | Clarity, attention, guidance |
+- `--color-accent-pantone: #f5df4d`, the Pantone colour itself.
+- `--color-accent: light-dark(#84740b, #f5df4d)`, the colour used for text,
+  links, lines and icons.
+- `--color-link` points at `--color-accent`.
 
-Every colour meets WCAG AA contrast for normal text (at least 4.5:1): light
-values range from 4.92:1 to 6.98:1 on `#ffffff`, and dark values from 10.39:1
-to 14.21:1 on `#121212`. Website and Platform Operations is close to the link
-colour, so it should be used for highlights such as borders and icons rather
-than for text that could be mistaken for a link.
+| Theme | Accent | Background | Contrast | WCAG AA (4.5:1 text, 3:1 UI) |
+|---|---|---|---|---|
+| Dark | `#f5df4d` (Pantone) | `#121212` | 13.9:1 | Passes |
+| Light | `#f5df4d` (Pantone) | `#ffffff` | 1.35:1 | Fails, so not used for text or lines |
+| Light | `#84740b` (same hue, darker) | `#ffffff` | 4.7:1 | Passes |
 
-Sources:
-[Verywell Mind, colour psychology](https://www.verywellmind.com/color-psychology-2795824)
-and [Interaction Design Foundation, colour in UX](https://ixdf.org/literature/topics/color).
+Dark text (`#1a1a1a`) on the Pantone yellow is 12.9:1, so the yellow can also
+be used as a fill behind dark text in either theme.
 
-Checks (2026-11-24; live since [this workflow run](https://github.com/6210/dfpf-26-27/actions/runs/45385071984)): build, page tests, and Lighthouse
-passed on every page (performance 100, accessibility 100, no layout shift). In
-Chrome at 360 px, all six markers showed the expected colour in both themes,
-with no horizontal scrolling.
+Areas of work still carry a `data-accent` key (for example `campaigns`), but it
+now only chooses the area's icon; every area uses the same colour. Areas are
+told apart by their headings and icons, never by colour.
 
 ### Area icons and morphing badge (test)
 
-An interactivity test that links Skills to Experience by icon and colour. Each
+An interactivity test that links Skills to Experience by icon. Each
 area of work has an icon from [Phosphor Icons](https://phosphoricons.com)
-("fill" weight, MIT) in its accent colour. The icon paths are copied into
+("fill" weight, MIT) in the accent colour. The icon paths are copied into
 [src/lib/area-icons.ts](src/lib/area-icons.ts), which also defines the list of
 accents used by the content schema, so a new accent needs an icon.
 
 - `AreaIcon.astro` draws an area's icon. Experience shows it beside each area
   title; Skills shows the icons of every area a platform is used in (for
-  example Google Tag Manager gets the purple Analytics icon).
+  example Google Tag Manager gets the Analytics icon).
 - `AreaBadge.astro` is a small badge fixed to the bottom right (with the area
   name from 768 px). It follows the area in view: as you scroll or hover an
   area card (Experience) or a platform (Skills), the icon morphs into the next
-  area's icon with [flubber](https://github.com/veltman/flubber) and the
-  colour fades across. The badge persists across page changes, so moving
+  area's icon with [flubber](https://github.com/veltman/flubber). The badge persists across page changes, so moving
   between Experience and Skills morphs it too. It hides on pages with no areas.
 - Targets are any element in `<main>` with `data-morph="<accent>"` and
   `data-morph-label="<area title>"`.
@@ -632,7 +618,7 @@ animated icons. For now it drops simple shapes that react to the visitor:
 To keep pages fast, Matter.js (about 26 KiB compressed) is loaded only when a
 placeholder is near the screen, and once per visit. The animation pauses when
 it is off screen and is cleaned up between pages. At most 40 shapes exist at a
-time. Shapes use the theme's link color, so they fade with the theme. Visitors
+time. Shapes use the accent colour, so they fade with the theme. Visitors
 who prefer reduced motion see a still placeholder and Matter.js is not loaded.
 Without JavaScript, the empty placeholder area is shown.
 

@@ -55,8 +55,8 @@ it when it is dropped. Exact package versions live in
 - **[flubber](https://github.com/veltman/flubber)** (MIT): smoothly morphs one
   SVG shape into another. Morphs the floating area badge (`AreaBadge.astro`)
   from one area icon to the next as visitors scroll, hover, or change page, so
-  Skills and Experience share one visual (for example Google Tag Manager in the
-  Analytics colour). Loaded on demand for the first animated morph; visitors
+  Skills and Experience share one visual (for example Google Tag Manager with
+  the Analytics icon). Loaded on demand for the first animated morph; visitors
   who prefer reduced motion get an instant swap.
 - **[Phosphor Icons](https://phosphoricons.com)** ("fill" weight, MIT): one
   icon per area of work (gear, megaphone, flow arrow, chart, magnifying glass,
