@@ -1,8 +1,8 @@
 ---
 /*
- * Theme toggle icon adapted from the "Simple" toggle by Alfie Jones (https://toggles.dev, MIT).
- * A circle (light theme) is cut into a crescent moon (dark theme) by sliding a clip-path cut-out
- * across it. The head script's click handler for [data-theme-toggle] does the switching; this
+ * Theme toggle icon adapted from the "Simple" toggle by Alfie Jones (https://toggles.dev, MIT), drawn as
+ * outlines. A circle (light theme) is cut into a crescent moon (dark theme) by sliding a clip-path cut-out
+ * across it; a second circle, kept inside the first, draws the cut-out's inner edge. The head script's click handler for [data-theme-toggle] does the switching; this
  * component only draws the button, and its CSS follows :root[data-theme].
  */
 interface Props {
@@ -15,15 +15,20 @@ interface Props {
 
 const { id, class: className, showLabel = false } = Astro.props;
 const clipId = `${id}-cutout`;
+const discId = `${id}-disc`;
 ---
 
 <button type="button" class:list={['theme-toggle', className]} data-theme-toggle>
-  <svg aria-hidden="true" viewBox="0 0 32 32" fill="currentColor">
+  <svg aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2">
     <clipPath id={clipId}>
       <path d="M0-5h55v37h-55zm32 12a1 1 0 0025 0 1 1 0 00-25 0"></path>
     </clipPath>
-    <g clip-path={`url(#${clipId})`}>
+    <clipPath id={discId}>
       <circle cx="16" cy="16" r="15"></circle>
+    </clipPath>
+    <circle cx="16" cy="16" r="14" clip-path={`url(#${clipId})`}></circle>
+    <g clip-path={`url(#${discId})`}>
+      <circle class="cut" cx="44.5" cy="7" r="12.5"></circle>
     </g>
   </svg>
   <span class:list={['theme-toggle-label', { 'theme-toggle-hint': !showLabel }]}>
@@ -51,6 +56,11 @@ const clipId = `${id}-cutout`;
     d: path('M-18-1h55v37h-55zm32 12a1 1 0 0025 0 1 1 0 00-25 0');
   }
 
+  /* The cut-out's edge moves the same distance as the cut-out. */
+  :root[data-theme='dark'] .cut {
+    transform: translate(-18px, 4px);
+  }
+
   /* Browsers that cannot set an SVG path with CSS move the same cut-out instead. */
   @supports not (d: path('M0 0')) {
     :root[data-theme='dark'] path {
@@ -59,10 +69,12 @@ const clipId = `${id}-cutout`;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    path {
+    path,
+    .cut {
       transition:
         d 1s cubic-bezier(0, 0, 0.15, 1.25),
-        translate 1s cubic-bezier(0, 0, 0.15, 1.25);
+        translate 1s cubic-bezier(0, 0, 0.15, 1.25),
+        transform 1s cubic-bezier(0, 0, 0.15, 1.25);
     }
   }
 

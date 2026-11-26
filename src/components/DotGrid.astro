@@ -1,0 +1,241 @@
+---
+// Fixed dot grid behind the whole site. The canvas's own CSS background draws a static grid, which is all
+// visitors see without JavaScript, on touch screens, or with reduced motion. With a mouse, the script takes over
+// and draws the same grid on the canvas, with dots near the cursor springing away from it and settling back.
+---
+
+<canvas class="dot-grid" data-dot-grid aria-hidden="true" transition:persist="dot-grid"></canvas>
+
+<script>
+  // Keep in step with --dot-spacing and --dot-size in the styles below.
+  const spacing = 18;
+  const dotRadius = 1;
+  // Dots within this distance of the cursor move, pushed up to `push` pixels away.
+  const reach = 110;
+  const push = 20;
+  // Dots within this distance brighten, from faint (the share of the full colour in --dot-faint) to full strength.
+  const glowReach = 200;
+  const faint = 0.3;
+  // Spring stiffness and damping: lower damping gives a little more bounce as dots settle.
+  const stiffness = 0.12;
+  const damping = 0.72;
+  // How quickly dots brighten and fade back, per frame.
+  const glowEase = 0.12;
+
+  type Dot = { x: number; y: number; ox: number; oy: number; vx: number; vy: number; glow: number };
+
+  const pointerQuery = matchMedia('(hover: hover) and (pointer: fine)');
+  const motionQuery = matchMedia('(prefers-reduced-motion: no-preference)');
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-dot-grid]');
+  const context = canvas?.getContext('2d');
+
+  if (canvas && context) {
+    const active = new Map<string, Dot>();
+    let pointer: { x: number; y: number } | undefined;
+    let pattern: CanvasPattern | null = null;
+    let dpr = 1;
+    let frame = 0;
+    let fading = false;
+    let live = false;
+
+    const makePattern = () => {
+      const tile = document.createElement('canvas');
+      tile.width = tile.height = spacing * dpr;
+      const tileContext = tile.getContext('2d');
+      if (!tileContext) return;
+      tileContext.fillStyle = getComputedStyle(canvas).color;
+      tileContext.globalAlpha = faint;
+      tileContext.beginPath();
+      tileContext.arc((spacing / 2) * dpr, (spacing / 2) * dpr, dotRadius * dpr, 0, Math.PI * 2);
+      tileContext.fill();
+      pattern = context.createPattern(tile, 'repeat');
+    };
+
+    const resize = () => {
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = Math.round(innerWidth * dpr);
+      canvas.height = Math.round(innerHeight * dpr);
+      makePattern();
+      request();
+    };
+
+    // Adds the dots around the cursor to the active set, with the offset and brightness each one moves towards.
+    const targets = () => {
+      const goals = new Map<string, [number, number, number]>();
+      if (!pointer) return goals;
+      const first = (value: number) => Math.floor((value - glowReach) / spacing);
+      for (let column = first(pointer.x); column * spacing <= pointer.x + glowReach; column += 1) {
+        for (let row = first(pointer.y); row * spacing <= pointer.y + glowReach; row += 1) {
+          const x = column * spacing + spacing / 2;
+          const y = row * spacing + spacing / 2;
+          const dx = x - pointer.x;
+          const dy = y - pointer.y;
+          const distance = Math.hypot(dx, dy);
+          if (distance >= glowReach) continue;
+          const glow = 1 - distance / glowReach;
+          const strength = distance < reach ? (1 - distance / reach) ** 2 * push : 0;
+          const key = `${column},${row}`;
+          if (!active.has(key)) active.set(key, { x, y, ox: 0, oy: 0, vx: 0, vy: 0, glow: 0 });
+          // A dot exactly under the cursor has no direction, so it moves straight up.
+          goals.set(
+            key,
+            distance === 0
+              ? [0, -strength, glow]
+              : [(dx / distance) * strength, (dy / distance) * strength, glow],
+          );
+        }
+      }
+      return goals;
+    };
+
+    const draw = () => {
+      frame = 0;
+      if (fading) makePattern();
+
+      const goals = targets();
+      for (const [key, dot] of active) {
+        const [gx, gy, glow] = goals.get(key) ?? [0, 0, 0];
+        dot.vx = (dot.vx + (gx - dot.ox) * stiffness) * damping;
+        dot.vy = (dot.vy + (gy - dot.oy) * stiffness) * damping;
+        dot.ox += dot.vx;
+        dot.oy += dot.vy;
+        dot.glow += (glow - dot.glow) * glowEase;
+        const settled =
+          Math.abs(dot.ox) + Math.abs(dot.oy) + Math.abs(dot.vx) + Math.abs(dot.vy) < 0.05 && dot.glow < 0.01;
+        if (settled && !goals.has(key)) active.delete(key);
+      }
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      if (pattern) {
+        context.fillStyle = pattern;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      // Erase the moved dots from the grid first, then draw them at their new places, so a dot drawn
+      // early is never erased by its neighbour's clear.
+      const size = (dotRadius + 1) * 2 * dpr;
+      for (const dot of active.values()) {
+        context.clearRect(dot.x * dpr - size / 2, dot.y * dpr - size / 2, size, size);
+      }
+      context.fillStyle = getComputedStyle(canvas).color;
+      for (const dot of active.values()) {
+        context.globalAlpha = faint + (1 - faint) * dot.glow;
+        context.beginPath();
+        context.arc((dot.x + dot.ox) * dpr, (dot.y + dot.oy) * dpr, dotRadius * dpr, 0, Math.PI * 2);
+        context.fill();
+      }
+      context.globalAlpha = 1;
+
+      if (active.size > 0 || fading) request();
+    };
+
+    function request() {
+      if (live && !frame) frame = requestAnimationFrame(draw);
+    }
+
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse') return;
+      pointer = { x: event.clientX, y: event.clientY };
+      request();
+    };
+
+    const onLeave = () => {
+      pointer = undefined;
+      request();
+    };
+
+    /*
+     * The canvas colour fades whenever the theme changes, including just after the first load, when the saved theme
+     * is applied. Redraw on every frame of that fade and once more at its end, so the grid always ends up in the
+     * final colour rather than whatever it was when the script started.
+     */
+    const onFadeStart = () => {
+      fading = true;
+      request();
+    };
+
+    const onFadeEnd = () => {
+      fading = false;
+      makePattern();
+      request();
+    };
+
+    const update = () => {
+      const shouldRun = pointerQuery.matches && motionQuery.matches;
+      if (shouldRun === live) return;
+      live = shouldRun;
+      canvas.toggleAttribute('data-live', live);
+      if (live) {
+        addEventListener('resize', resize);
+        addEventListener('pointermove', onMove, { passive: true });
+        document.documentElement.addEventListener('pointerleave', onLeave);
+        canvas.addEventListener('transitionrun', onFadeStart);
+        canvas.addEventListener('transitionend', onFadeEnd);
+        canvas.addEventListener('transitioncancel', onFadeEnd);
+        resize();
+      } else {
+        removeEventListener('resize', resize);
+        removeEventListener('pointermove', onMove);
+        document.documentElement.removeEventListener('pointerleave', onLeave);
+        canvas.removeEventListener('transitionrun', onFadeStart);
+        canvas.removeEventListener('transitionend', onFadeEnd);
+        canvas.removeEventListener('transitioncancel', onFadeEnd);
+        fading = false;
+        cancelAnimationFrame(frame);
+        frame = 0;
+        active.clear();
+        pointer = undefined;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    };
+
+    pointerQuery.addEventListener('change', update);
+    motionQuery.addEventListener('change', update);
+    update();
+  }
+</script>
+
+<style>
+  .dot-grid {
+    --dot-spacing: 18px;
+    --dot-size: 1px;
+    /* Dots away from the cursor (and the whole grid without one) are drawn at 30% of the full colour. */
+    --dot-faint: color-mix(in srgb, currentColor 30%, transparent);
+
+    background-image: radial-gradient(
+      circle at center,
+      var(--dot-faint) var(--dot-size),
+      transparent calc(var(--dot-size) + 0.5px)
+    );
+    background-size: var(--dot-spacing) var(--dot-spacing);
+    block-size: 100%;
+    /*
+     * Full strength, used only for the dots nearest the cursor; the rest of the grid is drawn at --dot-faint.
+     * Stronger on white, where small dots read much fainter.
+     */
+    color: light-dark(
+      color-mix(in srgb, var(--color-text) 50%, transparent),
+      color-mix(in srgb, var(--color-text) 32%, transparent)
+    );
+    inline-size: 100%;
+    inset: 0;
+    pointer-events: none;
+    position: fixed;
+    z-index: -1;
+  }
+
+  .dot-grid[data-live] {
+    background-image: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dot-grid {
+      transition: color var(--theme-fade) ease;
+    }
+  }
+
+  @media (forced-colors: active), print {
+    .dot-grid {
+      display: none;
+    }
+  }
+</style>

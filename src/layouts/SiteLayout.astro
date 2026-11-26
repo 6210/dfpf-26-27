@@ -4,6 +4,7 @@ import { ClientRouter } from 'astro:transitions';
 import GetInTouch from '../components/GetInTouch.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import AreaBadge from '../components/AreaBadge.astro';
+import DotGrid from '../components/DotGrid.astro';
 import SiteHeader, { type Section } from '../components/SiteHeader.astro';
 import type { TransitionDirectionalAnimations } from 'astro';
 
@@ -114,6 +115,7 @@ const pageFade: TransitionDirectionalAnimations = {
   <body>
     <div class="theme-status" data-theme-status popover="manual" aria-hidden="true"></div>
     <p class="theme-announce" role="status" data-theme-announce></p>
+    <DotGrid />
     <AreaBadge />
     <SiteHeader sections={sections.length > 0 ? [...sections, { id: 'contact', label: 'Contact' }] : sections} />
     <div class="page" transition:name="page" transition:animate={pageFade}>

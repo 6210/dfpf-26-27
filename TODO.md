@@ -102,6 +102,14 @@ The site is still in progress; checked items are done.
 
 ## Colour and icon design
 
+- [x] Add a faint fixed dot grid behind every page whose dots move away from
+  the cursor (see README "Dot grid background").
+- [ ] Decide on the grid's final density and strength (18px apart, faint
+  away from the cursor and brighter near it).
+- [x] Remove the header background on large screens with a mouse, and keep the
+  theme toggle and menu button fixed there while the name hides on scroll.
+- [ ] Decide how the header should behave on iPads and phones.
+
 - [x] Add draft accent colours for the Core Responsibilities sections, readable
   in both themes.
 - [x] Replace the per-area colours and gradient with one accent based on
@@ -111,7 +119,7 @@ The site is still in progress; checked items are done.
   themes; light-mode link text uses the text colour with a coral underline.
 - [ ] Check the coral on real screens in both themes; coral lines and icons on
   white are 2.8:1, so decide whether any need a darker edge or a fill.
-- [x] Test icons per area (Phosphor "fill") on Experience and Skills, with a
+- [x] Test icons per area (Phosphor "regular" outlines, replacing "fill") on Experience and Skills, with a
   badge that morphs between them (flubber) on scroll, hover, and page change.
 - [ ] Choose the final icons for each area and decide whether to keep the
   floating badge or move the morph into the hero graphic.

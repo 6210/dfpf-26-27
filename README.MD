@@ -423,12 +423,18 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   open.
 
 The header is sticky: it slides out of view while scrolling down and returns on
-any scroll up. It stays visible while it has keyboard focus or the menu is open,
+any scroll up. On large screens with a mouse or trackpad (the same breakpoint as
+the section rail) it has no background, so the page and dot grid show behind
+it; the theme toggle and menu button stay fixed in the top-right corner, and
+only the name slides away on scroll down. Clicks on the empty
+part of the header reach the page below. iPads and phones keep the solid bar
+that slides away as a whole. It stays visible while it has keyboard focus or the menu is open,
 and slides without animation for visitors who prefer reduced motion. Without
 JavaScript it simply stays at the top and the section links are ordinary
 in-page links. `scroll-padding-top` keeps linked sections clear of the header.
-A thin gradient bar along the bottom of the header shows how far down the page
-the visitor has read.
+A thin coral line fixed along the very top of the screen shows how far down the
+page the visitor has read. It sits outside the header, so it stays visible on
+every page and screen size even while the header is hidden.
 
 **Smooth scrolling.** Clicking any link to a section on the same page (in the
 header or anywhere in the content) glides there with a gentle ease-in-out
@@ -454,7 +460,7 @@ and the `page-fade-*` keyframes sit in its global styles. Links to sections on
 the same page do not fade; they smooth-scroll as above. Visitors who prefer
 reduced motion get an instant swap.
 
-The accent colour (see "Accent colour" below) is used for the name, links, the
+The accent colour (see "Accent colour" below) is used for links, the
 current-section underline, the reading-progress line and the section rail. In
 forced-colours mode these fall back to system colours.
 
@@ -527,8 +533,9 @@ Deployed 2026-11-24 via the
 The site starts in the visitor's system light or dark preference. The theme
 button (`src/components/ThemeToggle.astro`; in the header from 1024px wide, at
 the bottom of the menu on phones and tablets) shows an animated icon adapted
-from the toggles.dev "Simple" toggle (MIT): a full circle in the light theme
-that a sliding cut-out turns into a crescent moon in the dark theme. It is an
+from the toggles.dev "Simple" toggle (MIT), drawn as outlines: a circle in the
+light theme that a sliding cut-out turns into an outlined crescent moon in the
+dark theme. It is an
 inline SVG animated with CSS only (1 s, off for reduced motion), with a
 static fallback in browsers that cannot animate SVG paths with CSS. In the
 header it is icon-only, with a small hint ("Switch to dark mode") that appears
@@ -584,9 +591,9 @@ per-area colours and a multicolour gradient. The tokens are in
 - `--color-accent: #ee7869`, used for lines, dots, icons, underlines and the
   physics test shapes, in both themes.
 - `--color-link: light-dark(var(--color-text), var(--color-accent))`. Links
-  and the site name are coral text in dark mode; in light mode they use the
-  normal text colour with a coral underline, because coral text on white is
-  too faint.
+  are coral text in dark mode; in light mode they use the normal text colour
+  with a coral underline, because coral text on white is too faint. The site
+  name in the header always uses the text colour (near-white in dark mode).
 
 | Theme | Use | Background | Contrast | WCAG AA (4.5:1 text, 3:1 UI) |
 |---|---|---|---|---|
@@ -601,11 +608,45 @@ Areas of work still carry a `data-accent` key (for example `campaigns`), but it
 now only chooses the area's icon; every area uses the same colour. Areas are
 told apart by their headings and icons, never by colour.
 
+### Dot grid background
+
+A faint dot grid sits behind every page, fixed to the screen so the content
+scrolls over it. With a mouse or trackpad, the dots near the cursor brighten
+like a soft spotlight and spring away from it, then settle back and fade with a
+slight bounce once it moves on. It's in
+[src/components/DotGrid.astro](src/components/DotGrid.astro) and added once in
+the layout, and it stays in place between pages.
+
+- Dots are 2px across and 18px apart. Away from the cursor, and everywhere on
+  first load, they are faint: 30% of the full dot colour, so they read as
+  texture and do not distract.
+- The full dot colour, used only near the cursor, is the text colour at 32%
+  opacity in dark mode and 50% in light mode (small dots read fainter on
+  white).
+- Dots within 200px of the cursor brighten towards the full colour, the
+  nearest most. Dots within 110px are also pushed away, up to 20px each.
+- Without JavaScript, on touch screens (no cursor), and with reduced motion,
+  the same faint grid is drawn by CSS and does not move or brighten. It is
+  hidden in forced-colours mode and when printing.
+- With a cursor, a canvas draws the grid. Only the dots near the cursor are
+  redrawn, and it stops redrawing once they have settled, so it costs nothing
+  while the mouse is still.
+- The grid redraws whenever its colour fades (a theme change, or the saved
+  theme being applied just after the page loads), so it always ends in the
+  right colour.
+- To tune it, change `spacing`, `reach`, `push`, `glowReach`, `faint`,
+  `stiffness`, `damping` and `glowEase` at the top of the script (keep
+  `spacing` equal to the CSS `--dot-spacing`, and `faint` to the share in
+  `--dot-faint`), or the opacities in the `color` rule.
+- On large screens with a mouse the header has no background, so the grid
+  shows behind it; on iPads and phones the header bar covers it.
+
 ### Area icons and morphing badge (test)
 
 An interactivity test that links Skills to Experience by icon. Each
 area of work has an icon from [Phosphor Icons](https://phosphoricons.com)
-("fill" weight, MIT) in the accent colour. The icon paths are copied into
+("regular" outline weight, MIT) in the accent colour. Outline icons are
+preferred across the site over solid ones. The icon paths are copied into
 [src/lib/area-icons.ts](src/lib/area-icons.ts), which also defines the list of
 accents used by the content schema, so a new accent needs an icon.
 

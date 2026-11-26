@@ -57,9 +57,10 @@ const isHome = Astro.url.pathname === '/';
     <!-- Small screens only: the header has no room for the theme toggle, so it sits below the links. -->
     <ThemeToggle id="menu-theme" class="menu-theme" showLabel />
   </div>
-
-  <span class="progress" aria-hidden="true" data-progress></span>
 </header>
+
+<!-- Outside the header so it stays fixed at the top of the screen while the header slides away. -->
+<span class="progress" aria-hidden="true" data-progress></span>
 
 {
   /* Large screens with a mouse or trackpad: the on-page links move to a rail fixed on the right. It sits outside
@@ -103,8 +104,34 @@ const isHome = Astro.url.pathname === '/';
     transform: translateY(-100%);
   }
 
+  /*
+   * Large screens with a mouse or trackpad: no header bar. The page and dot grid show behind it, the theme toggle
+   * and menu button stay fixed in place, and on scroll down only the name slides away. The
+   * header itself lets clicks through to the page; only its contents take them.
+   */
+  @media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
+    .site-header {
+      background: none;
+      pointer-events: none;
+    }
+
+    .site-header > * {
+      pointer-events: auto;
+    }
+
+    .site-header[data-hidden] {
+      transform: none;
+    }
+
+    .site-header[data-hidden] .site-name {
+      opacity: 0;
+      pointer-events: none;
+      translate: 0 -150%;
+    }
+  }
+
   .site-name {
-    color: var(--color-link);
+    color: var(--color-text);
     font-family: var(--font-heading);
     font-size: 1.25rem;
     font-weight: 700;
@@ -241,11 +268,12 @@ const isHome = Astro.url.pathname === '/';
   .progress {
     background: var(--color-accent);
     block-size: 2px;
-    inset: auto 0 0;
+    inset: 0 0 auto;
     pointer-events: none;
-    position: absolute;
+    position: fixed;
     transform: scaleX(var(--progress, 0));
     transform-origin: left;
+    z-index: 11;
   }
 
   .actions {
@@ -434,6 +462,13 @@ const isHome = Astro.url.pathname === '/';
         transform 0.3s ease;
     }
 
+    .site-name {
+      transition:
+        color var(--theme-fade) ease,
+        opacity 0.3s ease,
+        translate 0.3s ease;
+    }
+
     .spy a {
       transition: color 0.3s ease;
     }
@@ -593,7 +628,11 @@ const isHome = Astro.url.pathname === '/';
   document.addEventListener('astro:page-load', () => {
     const header = document.querySelector<HTMLElement>('[data-site-header]');
     if (header) {
-      cleanups.push(autoHide(header), readingProgress(header), fullScreenMenu(header));
+      cleanups.push(autoHide(header), fullScreenMenu(header));
+    }
+    const progressBar = document.querySelector<HTMLElement>('[data-progress]');
+    if (progressBar) {
+      cleanups.push(readingProgress(progressBar));
     }
     for (const spy of document.querySelectorAll<HTMLElement>('[data-spy]')) {
       cleanups.push(scrollSpy(spy));
@@ -780,12 +819,12 @@ const isHome = Astro.url.pathname === '/';
     };
   }
 
-  /** Fills the line along the bottom of the header as the visitor reads down the page. */
-  function readingProgress(header: HTMLElement): () => void {
+  /** Fills the line fixed along the top of the screen as the visitor reads down the page. */
+  function readingProgress(bar: HTMLElement): () => void {
     return onScrollFrame(() => {
       const scrollable = document.documentElement.scrollHeight - innerHeight;
       const progress = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
-      header.style.setProperty('--progress', progress.toFixed(4));
+      bar.style.setProperty('--progress', progress.toFixed(4));
     });
   }
 

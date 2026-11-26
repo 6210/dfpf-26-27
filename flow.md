@@ -62,6 +62,7 @@ flowchart TD
         Recommendations["Recommendations.astro<br/>quotes, placeholders labelled"]
         AreaIcon["AreaIcon.astro<br/>area icon in the accent colour"]
         AreaBadge["AreaBadge.astro<br/>morphing area badge<br/>(flubber, lazy-loaded)"]
+        DotGrid["DotGrid.astro<br/>fixed dot grid that<br/>moves away from the cursor"]
     end
 
     subgraph Content["Content"]
@@ -74,7 +75,7 @@ flowchart TD
     end
 
     index & about & experience & skills & downloads & notfound --> SiteLayout
-    SiteLayout --> SiteHeader & GetInTouch & SiteFooter & AreaBadge
+    SiteLayout --> SiteHeader & GetInTouch & SiteFooter & AreaBadge & DotGrid
     SiteHeader & SiteFooter --> SiteNav
     SiteHeader --> ThemeToggle
 

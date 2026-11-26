@@ -58,7 +58,7 @@ it when it is dropped. Exact package versions live in
   Skills and Experience share one visual (for example Google Tag Manager with
   the Analytics icon). Loaded on demand for the first animated morph; visitors
   who prefer reduced motion get an instant swap.
-- **[Phosphor Icons](https://phosphoricons.com)** ("fill" weight, MIT): one
+- **[Phosphor Icons](https://phosphoricons.com)** ("regular" outline weight, MIT): one
   icon per area of work (gear, megaphone, flow arrow, chart, magnifying glass,
   document), copied as SVG paths into `src/lib/area-icons.ts` rather than
   installed, and shown beside areas on Experience and platforms on Skills.
@@ -80,7 +80,7 @@ it when it is dropped. Exact package versions live in
 - **View Transitions API**: the browser feature that Astro's view transitions
   use for page-to-page animation.
 - **SVG `clipPath` and the CSS `d` property**: morph the theme toggle icon
-  between a circle and a crescent.
+  between an outlined circle and an outlined crescent.
 - **CSS `backdrop-filter`**: blurs the page behind the open menu.
 - **CSS `clamp()`, `max()` and `svh` units**: the fluid layout. The page
   gutter, page width and physics stage height grow smoothly with the screen
