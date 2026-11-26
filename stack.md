@@ -87,6 +87,9 @@ it when it is dropped. Exact package versions live in
   between a few breakpoints (see "Layout and breakpoints" in the README).
 - **CSS grid `auto-fill` with `minmax()`**: the Experience responsibility
   cards flow into one, two or three columns depending on the available width.
+- **CSS scroll-driven animations (`animation-timeline: view()`)**: sections'
+  content slides in as it scrolls into view, without JavaScript. Unsupported
+  browsers show the content static.
 - **CSS `@starting-style` and transitions**: menu entry animations and the
   light/dark colour fade.
 - **`prefers-color-scheme`, `prefers-reduced-motion`,

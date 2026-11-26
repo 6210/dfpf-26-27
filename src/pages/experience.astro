@@ -23,11 +23,13 @@ const hasRecommendations = (await getRecommendations()).length > 0;
     { id: 'interactive', label: 'Interactive' },
   ]}
 >
-  <h1>Experience</h1>
-  <p class="lead">
-    I take projects from requirements and implementation through testing, release, monitoring, and documentation.
-  </p>
-  <CvDownload />
+  <section>
+    <h1>Experience</h1>
+    <p class="lead">
+      I take projects from requirements and implementation through testing, release, monitoring, and documentation.
+    </p>
+    <CvDownload />
+  </section>
   {currentRoles.map((role) => <RoleEntry role={role} />)}
   <Recommendations />
   {
@@ -45,6 +47,6 @@ const hasRecommendations = (await getRecommendations()).length > 0;
 
 <style>
   .earlier-roles {
-    margin-block: 3rem;
+    gap: var(--section-space);
   }
 </style>

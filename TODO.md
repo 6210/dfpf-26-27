@@ -51,6 +51,10 @@ The site is still in progress; checked items are done.
   keyboard, and respect reduced-motion preferences.
 - [ ] Build on Astro's static pages and client router; check navigation
   accessibility and the JavaScript budget as interactions are added.
+- [ ] Design the side element for the 150 px space reserved on the right of
+  `main` from 1024 px (`--aside-space`).
+- [ ] Check the scroll reveal and 80svh sections on a real phone, and decide
+  whether short sections (for example Downloads) should stay that tall.
 - [ ] Add a self-hosted favicon; browsers currently request `/favicon.ico` and
   receive a 404.
 

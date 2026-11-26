@@ -17,45 +17,52 @@ const platforms = await getPlatforms();
     { id: 'interactive', label: 'Interactive' },
   ]}
 >
-  <h1>Skills</h1>
-  <p class="lead">
-    My work connects the website platform, campaign experiences, marketing automation, analytics, regional content,
-    and lead-conversion workflows.
-  </p>
-  <h2 id="focus-areas">Focus areas</h2>
-  <ul>
-    {focusAreas.map((area) => <li>{area}</li>)}
-  </ul>
-  <h2 id="platforms">Platforms</h2>
-  <dl class="platforms">
-    {
-      platforms.map(({ name, uses }) => {
-        const areas = [...new Map(uses.map((use) => [use.area, use])).values()];
-        const accents = [...new Set(areas.flatMap(({ accent }) => (accent ? [accent] : [])))];
-        const first = areas.find(({ accent }) => accent);
-        return (
-          <div data-morph={first?.accent} data-morph-label={first?.area}>
-            <dt>
-              {name}
-              <span class="area-icons">
-                {accents.map((accent) => (
-                  <AreaIcon accent={accent} />
-                ))}
-              </span>
-            </dt>
-            <dd>{areas.map(({ area }) => area).join('; ')}</dd>
-          </div>
-        );
-      })
-    }
-  </dl>
+  <section>
+    <h1>Skills</h1>
+    <p class="lead">
+      My work connects the website platform, campaign experiences, marketing automation, analytics, regional content,
+      and lead-conversion workflows.
+    </p>
+  </section>
+  <section id="focus-areas">
+    <h2>Focus areas</h2>
+    <ul>
+      {focusAreas.map((area) => <li>{area}</li>)}
+    </ul>
+  </section>
+  <section id="platforms">
+    <h2>Platforms</h2>
+    <dl class="platforms">
+      {
+        platforms.map(({ name, uses }) => {
+          const areas = [...new Map(uses.map((use) => [use.area, use])).values()];
+          const accents = [...new Set(areas.flatMap(({ accent }) => (accent ? [accent] : [])))];
+          const first = areas.find(({ accent }) => accent);
+          return (
+            <div class="reveal" data-morph={first?.accent} data-morph-label={first?.area}>
+              <dt>
+                {name}
+                <span class="area-icons">
+                  {accents.map((accent) => (
+                    <AreaIcon accent={accent} />
+                  ))}
+                </span>
+              </dt>
+              <dd>{areas.map(({ area }) => area).join('; ')}</dd>
+            </div>
+          );
+        })
+      }
+    </dl>
+  </section>
   <PhysicsPlaceholder id="interactive" label="Skills animation" />
 </SiteLayout>
 
 <style>
   .platforms {
     display: grid;
-    gap: 0.75rem;
+    gap: var(--row-gap) var(--column-gap);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
   }
 
   .platforms dt {

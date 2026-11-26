@@ -17,10 +17,12 @@ const { name, headline } = await getProfile();
     { id: 'interactive', label: 'Interactive' },
   ]}
 >
-  <h1 id="intro">{name}</h1>
-  <p class="lead">{headline}</p>
-  <p><a href="/experience/">Explore experience</a></p>
-  <CvDownload />
+  <section id="intro">
+    <h1>{name}</h1>
+    <p class="lead">{headline}</p>
+    <p><a href="/experience/">Explore experience</a></p>
+    <CvDownload />
+  </section>
   <AboutSummary />
   <PhysicsPlaceholder id="interactive" label="Home animation" />
 </SiteLayout>

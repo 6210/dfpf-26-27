@@ -81,7 +81,7 @@ test('the generated not-found page is not presented as canonical content', async
 
 test('every responsibility accent on the experience page has a colour defined', async () => {
   const html = await readFile('dist/experience/index.html', 'utf8');
-  const accents = [...html.matchAll(/<li data-accent="([a-z]+)"/g)].map((match) => match[1]);
+  const accents = [...html.matchAll(/<li[^>]*data-accent="([a-z]+)"/g)].map((match) => match[1]);
   const cssFiles = (await readdir('dist/_astro')).filter((file) => file.endsWith('.css'));
   const css = [html, ...(await Promise.all(cssFiles.map((file) => readFile(`dist/_astro/${file}`, 'utf8'))))].join('\n');
 
@@ -170,4 +170,11 @@ test('recommendations show on the experience page, with placeholder entries labe
   assert.equal([...section.matchAll(/<blockquote/g)].length, recommendations.length);
   assert.equal([...section.matchAll(/>Placeholder<\/p>/g)].length, recommendations.filter((entry) => entry.placeholder).length);
   assert.match(html, /<a[^>]*href="#recommendations"/);
+});
+
+test('page content is grouped into sections, starting with the one that holds the h1', async () => {
+  for (const file of ['dist/index.html', 'dist/about/index.html', 'dist/experience/index.html', 'dist/skills/index.html', 'dist/downloads/index.html', 'dist/404.html']) {
+    const html = await readFile(file, 'utf8');
+    assert.match(html, /<main[^>]*>\s*<section[^>]*>\s*<h1/, file);
+  }
 });

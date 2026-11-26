@@ -286,6 +286,30 @@ in `:root` in `SiteLayout.astro`:
   name and buttons line up with the content edges.
 - `--measure: 70ch`: paragraphs and list items in `main` stop at a readable line
   length, while headings, grids and animations use the full width.
+- `--section-space: clamp(4rem, 12svh, 9rem)`: space between sections, split
+  as padding above and below each one.
+- `--row-gap: clamp(2rem, 3vw, 3rem)` and `--column-gap: clamp(2rem, 4vw,
+  4.5rem)`: gaps in card and platform grids.
+- `--aside-space`: 0 on phones and tablets, 150 px (`9.375rem`) from 1024 px.
+  `main` reserves it on the right for a future side element.
+
+Every direct child of `main` is a section (a test checks that each page starts
+with `<main><section><h1>`). Each one is at least `80svh` tall, with its
+content centred vertically. Paragraphs and list items use a 1.6 line height,
+and headings use 1.2.
+
+#### Scroll reveal
+
+Content slides up and fades in as it scrolls into view. This is a CSS
+scroll-driven animation (`animation-timeline: view()`), with no JavaScript.
+Sections themselves never move, so in-page links and the scroll spy land in
+exactly the right place; only their children animate. Inside a section, items
+with the `.reveal` class animate one by one (role headers, responsibility
+cards, recommendations, platforms). Browsers without scroll-driven animations
+(currently Firefox), and visitors who prefer reduced motion, see the content
+without animation. The rule uses longhand `animation-*` properties, because
+the CSS minifier would otherwise fold `view()` into an `animation` shorthand
+that browsers reject.
 
 The physics stage is `clamp(16rem, 50svh, 40rem)` tall. The Experience
 responsibilities use a grid with `minmax(min(100%, 24rem), 1fr)` columns: one
@@ -295,7 +319,7 @@ column on phones, two from about 1024 px, three from about 1440 px.
 | --- | --- | --- |
 | below 48rem (768 px) | Phones | Two-row header, smaller h1 and `.lead` |
 | 48rem (768 px) | Tablets | One-row header with the centred scroll spy |
-| 64rem (1024 px) | Large tablets, small laptops | Theme toggle moves from the menu to the header |
+| 64rem (1024 px) | Large tablets, small laptops | Theme toggle moves from the menu to the header; 150 px reserved on the right of `main` |
 | fluid up to 100rem (1600 px) | 1366–1920 px laptops and monitors | Gutter and content width grow |
 | above 100rem | 2560 px and ultrawide (3440 px) | Content stays 1600 px wide and centred |
 

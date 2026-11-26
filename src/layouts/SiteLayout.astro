@@ -141,6 +141,12 @@ const pageFade: TransitionDirectionalAnimations = {
     --gutter: clamp(1.5rem, 4vw, 5rem);
     --page-inset: max(var(--gutter), (100% - var(--page-max)) / 2);
     --measure: 70ch;
+    /* Space between page sections, and between rows and columns in card grids. */
+    --section-space: clamp(4rem, 12svh, 9rem);
+    --row-gap: clamp(2rem, 3vw, 3rem);
+    --column-gap: clamp(2rem, 4vw, 4.5rem);
+    /* Room kept free on the right of the content from 1024px, for a future side element. */
+    --aside-space: 0px;
     --color-background: light-dark(#ffffff, #121212);
     --color-text: light-dark(#1a1a1a, #ececec);
     --color-link: light-dark(#0b57d0, #8ab4f8);
@@ -195,7 +201,59 @@ const pageFade: TransitionDirectionalAnimations = {
 
   main p,
   main li {
+    line-height: 1.6;
     max-inline-size: var(--measure);
+  }
+
+  @media (min-width: 64rem) {
+    :root {
+      --aside-space: 9.375rem;
+    }
+
+    main {
+      padding-inline-end: var(--aside-space);
+    }
+  }
+
+  /*
+   * Every direct child of main is a page section: at least 80% of the screen tall, its content centred
+   * vertically, with --section-space between sections. Pages wrap loose headings and text in a section.
+   */
+  main > :not(script, style, template) {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-block: 0;
+    min-block-size: 80svh;
+    padding-block: calc(var(--section-space) / 2);
+  }
+
+  /*
+   * Scroll reveal: each part of a section slides up and fades in as it scrolls into view, driven by the
+   * scroll position (CSS scroll-driven animations, no JavaScript). Parts that contain .reveal elements
+   * (cards, role headings) stay still and those elements move instead. Sections themselves never move, so in-page links land exactly. Browsers without support, reduced
+   * motion and print show everything in place.
+   */
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      translate: 0 3rem;
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media screen and (prefers-reduced-motion: no-preference) {
+      main > * > :not(:has(.reveal)),
+      .reveal {
+        /* Longhands only: the minifier would otherwise fold view() into an "animation" shorthand that browsers reject. */
+        animation-fill-mode: both;
+        animation-name: reveal;
+        animation-range: entry 0% entry 60%;
+        animation-timeline: view();
+        animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+    }
   }
 
   a {
@@ -207,6 +265,7 @@ const pageFade: TransitionDirectionalAnimations = {
   h3 {
     font-family: var(--font-heading);
     font-weight: 700;
+    line-height: 1.2;
   }
 
   /*
