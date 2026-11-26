@@ -57,6 +57,10 @@ test('the header shows the name, a menu, and on-page links to sections that exis
     for (const id of targets) {
       assert.match(html, new RegExp(`id="${id}"`), `${file} has #${id}`);
     }
+
+    // The large-screen rail outside the header links to the same sections, in the same order.
+    const rail = html.match(/<nav[^>]*data-rail[^>]*>(.*?)<\/nav>/s)?.[1] ?? '';
+    assert.deepEqual([...rail.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]), targets, `${file} rail`);
   }
 });
 

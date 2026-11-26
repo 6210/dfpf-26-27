@@ -8,7 +8,8 @@ The diagrams render on GitHub and in Markdown viewers with Mermaid support.
 
 Every page shares the header (scroll spy and full-screen menu) and the footer,
 so any page can reach any other. The scroll spy links jump between sections on
-the current page.
+the current page; on large screens with a mouse or trackpad they sit in a rail
+fixed at the centre right instead of the header.
 
 ```mermaid
 flowchart LR

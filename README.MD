@@ -319,7 +319,7 @@ column on phones, two from about 1024 px, three from about 1440 px.
 | --- | --- | --- |
 | below 48rem (768 px) | Phones | Two-row header, smaller h1 and `.lead` |
 | 48rem (768 px) | Tablets | One-row header with the centred scroll spy |
-| 64rem (1024 px) | Large tablets, small laptops | Theme toggle moves from the menu to the header; 150 px reserved on the right of `main` |
+| 64rem (1024 px) | Large tablets, small laptops | Theme toggle moves from the menu to the header; 150 px reserved on the right of `main`; with a mouse or trackpad, the on-page links move to the section rail on the right |
 | fluid up to 100rem (1600 px) | 1366–1920 px laptops and monitors | Gutter and content width grow |
 | above 100rem | 2560 px and ultrawide (3440 px) | Content stays 1600 px wide and centred |
 
@@ -360,7 +360,24 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
   muted), and a single gradient underline slides across to it. Pages
   without `sections`, such as 404, leave it out. Below 48rem (768 px) it moves
   to a second row and scrolls sideways if needed, keeping the current link in
-  view.
+  view. On large screens with a mouse or trackpad it is replaced by the
+  section rail (below).
+- **Section rail** (from 64rem / 1024 px, only when the main input can hover
+  and point precisely: `(hover: hover) and (pointer: fine)`, so iPads and
+  phones keep the header links): the same links in a column fixed at the
+  centre right of the screen. Each one is a dot on a short line that runs to
+  the screen edge. For the current section the line stretches out (with the
+  accent gradient) and its label slides in to the left of the dot; leaving
+  sections retract the same way. Hovering or focusing any dot shows its label,
+  and every dot is a link with the same smooth scroll as the header links.
+  The rail is a separate `<nav data-rail>` after the `<header>`, because the
+  header hides by sliding up with a transform, which would carry a fixed child
+  with it. Only one of the two navs is ever displayed, so screen readers meet
+  one "On this page" list; both run the same scroll spy script, and the rail
+  is made inert while the full-screen menu is open. The active line is 3rem
+  long so the longest label ("Recommendations") still clears the content at
+  1024 px; keep labels about that length or shorter. The design is a draft
+  based on a sketch.
 - **Theme toggle** (from 64rem / 1024 px wide, i.e. larger than an iPad), then a **menu button** (hamburger, placeholder styling)
   that opens the page navigation full screen. A light veil and a 12 px blur
   keep the page behind recognisable in both themes (the light theme gets a

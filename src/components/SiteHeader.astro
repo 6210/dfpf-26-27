@@ -61,6 +61,21 @@ const isHome = Astro.url.pathname === '/';
   <span class="progress" aria-hidden="true" data-progress></span>
 </header>
 
+{
+  /* Large screens with a mouse or trackpad: the on-page links move to a rail fixed on the right. It sits outside
+     the header because the header slides away with a transform, which would carry a fixed child with it. */
+  sections.length > 0 && (
+    <nav class="rail" aria-label="On this page" data-spy data-rail>
+      {sections.map(({ id, label }) => (
+        <a href={`#${id}`}>
+          <span class="rail-label">{label}</span>
+          <span class="rail-mark" aria-hidden="true" />
+        </a>
+      ))}
+    </nav>
+  )
+}
+
 <style>
   .site-header {
     align-items: center;
@@ -140,6 +155,94 @@ const isHome = Astro.url.pathname === '/';
 
   .spy-indicator[data-ready] {
     opacity: 1;
+  }
+
+  /* Only one of the two on-page navs is ever shown, so screen readers meet just one. */
+  .rail {
+    display: none;
+  }
+
+  @media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
+    .spy {
+      display: none;
+    }
+
+    .rail {
+      align-items: flex-end;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      inset-block-start: 50%;
+      inset-inline-end: 0;
+      position: fixed;
+      translate: 0 -50%;
+      z-index: 9;
+    }
+  }
+
+  .rail a {
+    align-items: center;
+    color: color-mix(in srgb, var(--color-text) 70%, var(--color-background));
+    display: flex;
+    min-block-size: 1.75rem;
+    padding-inline-start: 0.5rem;
+    position: relative;
+    text-decoration: none;
+  }
+
+  /* Hidden labels stay in the accessibility tree, so every link keeps its name. */
+  .rail-label {
+    font-size: 0.9375rem;
+    inset-inline-end: calc(100% + 0.25rem);
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    translate: 1.5rem 0;
+    white-space: nowrap;
+  }
+
+  /* A dot on a line running to the edge of the screen; the line grows for the current section. */
+  .rail-mark {
+    background: currentColor;
+    block-size: 1px;
+    inline-size: 1.25rem;
+    position: relative;
+  }
+
+  .rail-mark::before {
+    background: currentColor;
+    block-size: 0.4375rem;
+    border-radius: 50%;
+    content: '';
+    inset: 50% auto auto 0;
+    inline-size: 0.4375rem;
+    position: absolute;
+    translate: -50% -50%;
+  }
+
+  .rail a:is(:hover, :focus-visible, [aria-current='location']) {
+    color: var(--color-text);
+  }
+
+  .rail a:is(:hover, :focus-visible, [aria-current='location']) .rail-label {
+    opacity: 1;
+    pointer-events: auto;
+    translate: 0 0;
+  }
+
+  /* Sized so the longest label still clears the content at 1024 px. */
+  .rail [aria-current='location'] .rail-mark {
+    inline-size: 3rem;
+  }
+
+  /* The current section's line carries the accent gradient, like the header indicator. */
+  .rail [aria-current='location'] .rail-mark,
+  .rail [aria-current='location'] .rail-mark::before {
+    background: var(--gradient-accents);
+  }
+
+  .rail [aria-current='location'] .rail-mark::before {
+    background: var(--color-text);
   }
 
   .progress {
@@ -342,6 +445,25 @@ const isHome = Astro.url.pathname === '/';
       transition: color 0.3s ease;
     }
 
+    /* The line stretches out first and the label glides in behind it; leaving sections retract the same way. */
+    .rail a {
+      transition: color 0.4s ease;
+    }
+
+    .rail-mark {
+      transition: inline-size 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .rail-label {
+      transition:
+        opacity 0.45s ease,
+        translate 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .rail [aria-current='location'] .rail-label {
+      transition-delay: 0.12s;
+    }
+
     .site-menu :global(nav a::after) {
       transition: scale 0.45s cubic-bezier(0.65, 0, 0.35, 1);
     }
@@ -446,6 +568,8 @@ const isHome = Astro.url.pathname === '/';
   }
 
   @media (forced-colors: active) {
+    .rail-mark,
+    .rail-mark::before,
     .spy-indicator,
     .progress,
     .site-menu :global(nav a::after) {
@@ -478,8 +602,7 @@ const isHome = Astro.url.pathname === '/';
     if (header) {
       cleanups.push(autoHide(header), readingProgress(header), fullScreenMenu(header));
     }
-    const spy = document.querySelector<HTMLElement>('[data-spy]');
-    if (spy) {
+    for (const spy of document.querySelectorAll<HTMLElement>('[data-spy]')) {
       cleanups.push(scrollSpy(spy));
     }
   });
@@ -591,7 +714,7 @@ const isHome = Astro.url.pathname === '/';
     if (!menu) {
       return () => {};
     }
-    const behind = () => [...header.children, document.querySelector('main'), document.querySelector('footer')].filter((element): element is HTMLElement => element instanceof HTMLElement && element !== menu);
+    const behind = () => [...header.children, document.querySelector('[data-rail]'), document.querySelector('main'), document.querySelector('footer')].filter((element): element is HTMLElement => element instanceof HTMLElement && element !== menu);
 
     const onBeforeToggle = (event: Event) => {
       // Released before closing, so the browser can return focus to the menu button.
