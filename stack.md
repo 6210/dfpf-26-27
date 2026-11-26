@@ -63,7 +63,7 @@ it when it is dropped. Exact package versions live in
   document), copied as SVG paths into `src/lib/area-icons.ts` rather than
   installed, and shown beside areas on Experience and platforms on Skills.
 - **[Lexend Deca](https://fontsource.org/fonts/lexend-deca) via Fontsource**:
-  the bold heading font (h1 and the name in the header), installed from npm and
+  the bold heading font (h1 and other headings), installed from npm and
   served from this site, not a font CDN.
 
 - **Theme toggle icon adapted from [toggles.dev](https://toggles.dev/toggles/simple)**

@@ -50,7 +50,8 @@ test('the header shows the name, a menu, and on-page links to sections that exis
     const spy = header.match(/<nav[^>]*aria-label="On this page"[^>]*>(.*?)<\/nav>/s)?.[1] ?? '';
     const targets = [...spy.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]);
 
-    assert.match(header, /class="site-name"[^>]*>Dennis Ferreira</, file);
+    // The logo is decorative; the name stays as text inside the home link.
+    assert.match(header, /class="site-name"[^>]*><svg[^>]*aria-hidden="true".*?<\/svg><span[^>]*>Dennis Ferreira<\/span>/s, file);
     assert.match(header, /<button[^>]*popovertarget="site-menu"/, file);
     assert.match(header, /<div id="site-menu"[^>]*popover/, file);
     assert.ok(targets.length > 1, `${file} lists its sections`);
@@ -61,6 +62,18 @@ test('the header shows the name, a menu, and on-page links to sections that exis
     // The large-screen rail outside the header links to the same sections, in the same order.
     const rail = html.match(/<nav[^>]*data-rail[^>]*>(.*?)<\/nav>/s)?.[1] ?? '';
     assert.deepEqual([...rail.matchAll(/href="#([^"]+)"/g)].map((match) => match[1]), targets, `${file} rail`);
+  }
+});
+
+test('every page links the favicons and manifest, and the files exist', async () => {
+  const head = (await readFile('dist/index.html', 'utf8')).split('</head>')[0];
+  for (const href of ['/favicon.ico', '/favicon.svg', '/apple-touch-icon.png', '/site.webmanifest']) {
+    assert.match(head, new RegExp(`href="${href}"`));
+    await readFile(`dist${href}`);
+  }
+  const manifest = JSON.parse(await readFile('dist/site.webmanifest', 'utf8'));
+  for (const { src } of manifest.icons) {
+    await readFile(`dist${src}`);
   }
 });
 

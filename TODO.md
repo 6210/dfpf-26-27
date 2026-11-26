@@ -57,8 +57,8 @@ The site is still in progress; checked items are done.
   `main` from 1024 px (`--aside-space`).
 - [ ] Check the scroll reveal and 80svh sections on a real phone, and decide
   whether short sections (for example Downloads) should stay that tall.
-- [ ] Add a self-hosted favicon; browsers currently request `/favicon.ico` and
-  receive a 404.
+- [x] Add a self-hosted favicon and app icons from the DF logo (see README
+  "Header").
 
 ## Physics icons (Matter.js)
 
@@ -107,7 +107,7 @@ The site is still in progress; checked items are done.
 - [ ] Decide on the grid's final density and strength (18px apart, faint
   away from the cursor and brighter near it).
 - [x] Remove the header background on large screens with a mouse, and keep the
-  theme toggle and menu button fixed there while the name hides on scroll.
+  theme toggle and menu button fixed there while the logo hides on scroll.
 - [ ] Decide how the header should behave on iPads and phones.
 
 - [x] Add draft accent colours for the Core Responsibilities sections, readable

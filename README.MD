@@ -372,9 +372,21 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
 
 `src/components/SiteHeader.astro` holds, from left to right:
 
-- **Name**: "Dennis Ferreira" (the `name` field in `src/content/profile.json`)
-  in the heading font at a small size, in the accent colour. It
-  links home, except on the home page.
+- **Logo**: the DF monogram (`src/components/LogoMark.astro`, 36px), drawn
+  inline in the text colour so it switches with the site's theme (near-black
+  in light mode, near-white in dark). The SVG is decorative (`aria-hidden`);
+  the name "Dennis Ferreira" (the `name` field in `src/content/profile.json`)
+  stays beside it as visually hidden text, so the link is named for screen
+  readers and the name stays crawlable text for search engines. It links home,
+  except on the home page.
+- **Favicons and app icons** (in `public/`): `favicon.svg` is the same mark and
+  follows the visitor's system theme; `favicon.ico` (32px),
+  `apple-touch-icon.png` (180px) and the `site.webmanifest` icons (192px,
+  512px, and a 512px maskable version with extra padding) show the dark mark
+  on white, because raster icons cannot change with the theme. After editing
+  `favicon.svg`, run `node scripts/make-icons.mjs` to regenerate them (it uses
+  `sharp`, which Astro already installs). Keep `LogoMark.astro` in step with
+  `favicon.svg`.
 - **On this page** (centred): a scroll spy listing the page's sections. Each
   page passes `sections` (an `id` and short `label` each) to `SiteLayout`; the
   ids must exist on the page, which a page test checks. Labels never name an
@@ -427,7 +439,7 @@ The header is sticky: it slides out of view while scrolling down and returns on
 any scroll up. On large screens with a mouse or trackpad (the same breakpoint as
 the section rail) it has no background, so the page and dot grid show behind
 it; the theme toggle and menu button stay fixed in the top-right corner, and
-only the name slides away on scroll down. Clicks on the empty
+only the logo slides away on scroll down. Clicks on the empty
 part of the header reach the page below. iPads and phones keep the solid bar
 that slides away as a whole. It stays visible while it has keyboard focus or the menu is open,
 and slides without animation for visitors who prefer reduced motion. Without
@@ -573,7 +585,7 @@ current nav item is not a link on each page, the theme button label switches
 between **Dark mode** and **Light mode**, and the layout fits at 360 px. Page
 transition errors appeared only in a hidden test tab, where browsers cancel
 view transitions; a visible Chrome session showed none. A missing favicon
-returns 404 (pre-existing; see TODO).
+returned 404 at the time (since added).
 
 Footer update (2026-11-24): build, page tests, and Lighthouse passed for all
 pages. Browser checks covered footer navigation and current-page state after
@@ -595,6 +607,8 @@ per-area colours and a multicolour gradient. The tokens are in
   are coral text in dark mode; in light mode they use the normal text colour
   with a coral underline, because coral text on white is too faint. The site
   name in the header always uses the text colour (near-white in dark mode).
+  Selected text has a coral background with near-black text (about 6.8:1)
+  in both themes.
 
 | Theme | Use | Background | Contrast | WCAG AA (4.5:1 text, 3:1 UI) |
 |---|---|---|---|---|

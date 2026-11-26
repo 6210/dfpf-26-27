@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <title>Dennis Ferreira</title>
+  <style>
+    .df-mark { fill: #181818; }
+    @media (prefers-color-scheme: dark) {
+      .df-mark { fill: #f2f1ed; }
+    }
+  </style>
+  <path class="df-mark" fill-rule="evenodd" d="M47 10V23L34 36V42H19L7 54V90H35L47 78V10ZM21 55H34V71L29 76H21ZM67 10 53 24V42H47V55H53V90L66 77V55H81L94 42H66V29L72 23H80L93 10Z"/>
+</svg>

@@ -1,5 +1,6 @@
 ---
 import { getProfile } from '../lib/content';
+import LogoMark from './LogoMark.astro';
 import SiteNav from './SiteNav.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
@@ -19,10 +20,17 @@ const isHome = Astro.url.pathname === '/';
 
 <header class="site-header" data-site-header transition:name="site-header" transition:animate="none">
   {
+    /* The monogram is decorative; the name stays as real text for search engines and screen readers. */
     isHome ? (
-      <span class="site-name">{name}</span>
+      <span class="site-name">
+        <LogoMark />
+        <span class="visually-hidden">{name}</span>
+      </span>
     ) : (
-      <a class="site-name" href="/">{name}</a>
+      <a class="site-name" href="/">
+        <LogoMark />
+        <span class="visually-hidden">{name}</span>
+      </a>
     )
   }
 
@@ -106,7 +114,7 @@ const isHome = Astro.url.pathname === '/';
 
   /*
    * Large screens with a mouse or trackpad: no header bar. The page and dot grid show behind it, the theme toggle
-   * and menu button stay fixed in place, and on scroll down only the name slides away. The
+   * and menu button stay fixed in place, and on scroll down only the logo slides away. The
    * header itself lets clicks through to the page; only its contents take them.
    */
   @media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
@@ -132,15 +140,16 @@ const isHome = Astro.url.pathname === '/';
 
   .site-name {
     color: var(--color-text);
-    font-family: var(--font-heading);
-    font-size: 1.25rem;
-    font-weight: 700;
+    display: block;
     grid-area: name;
     justify-self: start;
-    letter-spacing: calc(-2em / 70);
-    line-height: 1.2;
     text-decoration: none;
-    white-space: nowrap;
+  }
+
+  .site-name :global(.logo-mark) {
+    block-size: 2.25rem;
+    display: block;
+    inline-size: 2.25rem;
   }
 
   .spy {

@@ -59,6 +59,10 @@ const pageFade: TransitionDirectionalAnimations = {
     <meta name="description" content={description} />
     <meta name="robots" content="noindex" />
     {canonical && <link rel="canonical" href={canonicalUrl} />}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <script is:inline>
       (() => {
         const key = 'theme';
@@ -160,6 +164,12 @@ const pageFade: TransitionDirectionalAnimations = {
     --color-link: light-dark(var(--color-text), var(--color-accent));
     /* Keeps in-page link targets clear of the sticky header. */
     scroll-padding-top: 6rem;
+  }
+
+  /* Selected text uses the accent; near-black text on coral is about 6.8:1 in both themes. */
+  ::selection {
+    background: var(--color-accent);
+    color: #121212;
   }
 
   :root[data-theme='light'] {
