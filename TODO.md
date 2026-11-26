@@ -107,8 +107,10 @@ The site is still in progress; checked items are done.
 - [x] Replace the per-area colours and gradient with one accent based on
   Pantone 13-0647 TCX Illuminating, with a darker shade of the same hue in
   light mode for contrast (see README "Accent colour").
-- [ ] Check the accent on real screens in both themes, and decide whether
-  light mode should also use the Pantone yellow as a fill behind dark text.
+- [x] Replace the yellow with Pantone 16-1546 TCX coral (`#ee7869`) in both
+  themes; light-mode link text uses the text colour with a coral underline.
+- [ ] Check the coral on real screens in both themes; coral lines and icons on
+  white are 2.8:1, so decide whether any need a darker edge or a fill.
 - [x] Test icons per area (Phosphor "fill") on Experience and Skills, with a
   badge that morphs between them (flubber) on scroll, hover, and page change.
 - [ ] Choose the final icons for each area and decide whether to keep the

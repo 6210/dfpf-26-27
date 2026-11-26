@@ -90,9 +90,9 @@ test('every responsibility area has an accent key, and the site uses one accent 
   const css = [html, ...(await Promise.all(cssFiles.map((file) => readFile(`dist/_astro/${file}`, 'utf8'))))].join('\n');
 
   assert.equal(new Set(accents).size, 6);
-  // Pantone 13-0647 TCX in dark mode, and a darker shade of the same hue in light mode for contrast.
-  assert.match(css, /--color-accent:\s*light-dark\(#84740b,\s*var\(--color-accent-pantone\)\)/i);
-  assert.match(css, /--color-accent-pantone:\s*#f5df4d/i);
+  // Pantone 16-1546 TCX in both themes; light-mode link text keeps the text colour for contrast.
+  assert.match(css, /--color-accent:\s*#ee7869/i);
+  assert.match(css, /--color-link:\s*light-dark\(var\(--color-text\),\s*var\(--color-accent\)\)/i);
   for (const accent of new Set(accents)) {
     assert.doesNotMatch(css, new RegExp(`--color-accent-${accent}\\b`), `${accent} has no colour of its own`);
   }

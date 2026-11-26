@@ -150,12 +150,12 @@ const pageFade: TransitionDirectionalAnimations = {
     --color-background: light-dark(#ffffff, #121212);
     --color-text: light-dark(#1a1a1a, #ececec);
     /*
-     * The one accent colour: Pantone 13-0647 TCX Illuminating. It is used as is in dark mode (13.9:1 on the
-     * background). On white it is only 1.35:1, so light mode uses a darker shade of the same hue (4.7:1).
+     * The one accent colour, Pantone 16-1546 TCX, in both themes: 6.7:1 on the dark background but only 2.8:1
+     * on white. So it is used as is for lines, dots, icons and underlines, while link text (and the name) in
+     * light mode uses the text colour with a coral underline.
      */
-    --color-accent-pantone: #f5df4d;
-    --color-accent: light-dark(#84740b, var(--color-accent-pantone));
-    --color-link: var(--color-accent);
+    --color-accent: #ee7869;
+    --color-link: light-dark(var(--color-text), var(--color-accent));
     /* Keeps in-page link targets clear of the sticky header. */
     scroll-padding-top: 6rem;
   }
@@ -239,6 +239,9 @@ const pageFade: TransitionDirectionalAnimations = {
 
   a {
     color: var(--color-link);
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 0.1em;
+    text-underline-offset: 0.2em;
   }
 
   h1,

@@ -551,25 +551,27 @@ were deployed in
 
 ### Accent colour
 
-The site uses one accent colour, based on
-[Pantone 13-0647 TCX Illuminating](https://www.pantone.com/color-finder/13-0647-tcx)
-(`#f5df4d`). It replaced six per-area colours and a multicolour gradient, which
-were too distracting. The tokens are in
+The site uses one accent colour in both themes,
+[Pantone 16-1546 TCX](https://www.pantone.com/color-finder/16-1546-tcx)
+(`#ee7869`, coral). It replaced a Pantone yellow, which in turn replaced six
+per-area colours and a multicolour gradient. The tokens are in
 [src/layouts/SiteLayout.astro](src/layouts/SiteLayout.astro):
 
-- `--color-accent-pantone: #f5df4d`, the Pantone colour itself.
-- `--color-accent: light-dark(#84740b, #f5df4d)`, the colour used for text,
-  links, lines and icons.
-- `--color-link` points at `--color-accent`.
+- `--color-accent: #ee7869`, used for lines, dots, icons, underlines and the
+  physics test shapes, in both themes.
+- `--color-link: light-dark(var(--color-text), var(--color-accent))`. Links
+  and the site name are coral text in dark mode; in light mode they use the
+  normal text colour with a coral underline, because coral text on white is
+  too faint.
 
-| Theme | Accent | Background | Contrast | WCAG AA (4.5:1 text, 3:1 UI) |
+| Theme | Use | Background | Contrast | WCAG AA (4.5:1 text, 3:1 UI) |
 |---|---|---|---|---|
-| Dark | `#f5df4d` (Pantone) | `#121212` | 13.9:1 | Passes |
-| Light | `#f5df4d` (Pantone) | `#ffffff` | 1.35:1 | Fails, so not used for text or lines |
-| Light | `#84740b` (same hue, darker) | `#ffffff` | 4.7:1 | Passes |
+| Dark | Coral text, lines and icons | `#121212` | 6.7:1 | Passes |
+| Light | Coral lines, dots and icons | `#ffffff` | 2.8:1 | Below 3:1, accepted as decoration; meaning never relies on it |
+| Light | Link text (text colour, coral underline) | `#ffffff` | Text colour | Passes |
 
-Dark text (`#1a1a1a`) on the Pantone yellow is 12.9:1, so the yellow can also
-be used as a fill behind dark text in either theme.
+Dark text (`#1a1a1a`) on coral is 6.2:1, so coral can also be used as a fill
+behind dark text in either theme.
 
 Areas of work still carry a `data-accent` key (for example `campaigns`), but it
 now only chooses the area's icon; every area uses the same colour. Areas are
