@@ -268,24 +268,14 @@ const pageFade: TransitionDirectionalAnimations = {
 
   /* Introductory paragraph under a heading. Design values: 22px size, 34px line height, weight 100; 18px on small screens. */
   .lead {
-    font-size: 1.375rem;
-    font-weight: 100;
+    font-size: 1.5rem;
+    font-weight: 300;
     line-height: calc(34 / 22);
   }
 
-  /* Hairline text washes out on small light screens, so it is a little heavier there. */
   @media (max-width: 48rem) {
     .lead {
-      font-size: 1.125rem;
-    }
-    :root[data-theme='light'] .lead {
-      font-weight: 300;
-    }
-
-    @media (prefers-color-scheme: light) {
-      :root:not([data-theme]) .lead {
-        font-weight: 300;
-      }
+      font-size: 1.1875rem;
     }
   }
 

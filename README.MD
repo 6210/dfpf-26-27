@@ -180,13 +180,14 @@ or misspelled field fails the build.
   shows roles newest first; the Skills page lists every platform with the areas
   that use it, in the order they first appear. List the most relevant areas and
   platforms first. The current role (no `end`) is shown in full; past roles
-  are listed under "Earlier roles", after the recommendations, so the on-page
-  navigation stays short (`src/components/RoleEntry.astro` renders both).
+  follow it in an "Earlier roles" section without a visible heading (each role
+  has its own; the section is labelled for screen readers and the on-page
+  navigation), before the recommendations, so the on-page navigation stays short (`src/components/RoleEntry.astro` renders both).
 - **Recommendations:** [src/content/recommendations.json](src/content/recommendations.json)
   holds quotes with the person's name, title, optional company and
   relationship, shown in that order by the reusable
   `src/components/Recommendations.astro` (props: `id`, `heading`, `limit`).
-  It is on the Experience page between the current and earlier roles, with
+  It is on the Experience page after the earlier roles, with
   its own "Recommendations" link in the on-page navigation; with no entries it
   renders nothing and the link is left out. Entries with `"placeholder": true`
   get a dashed border and a "Placeholder" label; the current three are
@@ -377,8 +378,8 @@ rather than a link, so it cannot be clicked again and is skipped when tabbing.
 - **On this page** (centred): a scroll spy listing the page's sections. Each
   page passes `sections` (an `id` and short `label` each) to `SiteLayout`; the
   ids must exist on the page, which a page test checks. Labels never name an
-  employer: on Experience the links are "Current role", "Recommendations" and
-  "Earlier roles". As the visitor scrolls,
+  employer: on Experience the links are "Current role", "Earlier roles" and
+  "Recommendations". As the visitor scrolls,
   the section whose top has reached the area below the header is marked with
   `aria-current="location"` and full-strength text (other links are slightly
   muted), and a single gradient underline slides across to it. Pages
@@ -806,11 +807,9 @@ words fit without horizontal scrolling. Sizes use `rem`, so they also respect
 the visitor's browser text-size setting.
 
 The paragraph directly after a page's `h1` uses the global `.lead` class
-(`<p class="lead">`): 22px size (18px below 768px), 34px line height (kept in proportion), and weight 100 in the body
-font. Add it to that paragraph on any new page. Weight 100 depends on the system font: macOS and iOS show a hairline
-weight, while systems without one use their lightest available weight. Hairline
-text washes out on small light screens, so in the light theme below 768px the
-lead uses weight 300 instead.
+(`<p class="lead">`): 24px size (19px below 768px), a line height in the
+original 34/22 proportion (about 37px), and weight 300 (light) in the body font
+in both themes. Add it to that paragraph on any new page.
 
 The workflow also uses [checkout](https://github.com/actions/checkout) and
 [setup-node](https://github.com/actions/setup-node) (MIT), plus

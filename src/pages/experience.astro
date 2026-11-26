@@ -18,8 +18,8 @@ const hasRecommendations = (await getRecommendations()).length > 0;
   sections={[
     // Nav labels never name an employer.
     ...currentRoles.map((role) => ({ id: `role-${role.id}`, label: 'Current role' })),
-    ...(hasRecommendations ? [{ id: 'recommendations', label: 'Recommendations' }] : []),
     ...(earlierRoles.length > 0 ? [{ id: 'earlier-roles', label: 'Earlier roles' }] : []),
+    ...(hasRecommendations ? [{ id: 'recommendations', label: 'Recommendations' }] : []),
     { id: 'interactive', label: 'Interactive' },
   ]}
 >
@@ -31,17 +31,17 @@ const hasRecommendations = (await getRecommendations()).length > 0;
     <CvDownload />
   </section>
   {currentRoles.map((role) => <RoleEntry role={role} />)}
-  <Recommendations />
   {
     earlierRoles.length > 0 && (
-      <section class="earlier-roles" id="earlier-roles" aria-labelledby="earlier-roles-heading">
-        <h2 id="earlier-roles-heading">Earlier roles</h2>
+      // No visible heading: each role has its own, and the label names the region for the on-page navigation.
+      <section class="earlier-roles" id="earlier-roles" aria-label="Earlier roles">
         {earlierRoles.map((role) => (
-          <RoleEntry role={role} level={3} />
+          <RoleEntry role={role} />
         ))}
       </section>
     )
   }
+  <Recommendations />
   <PhysicsPlaceholder id="interactive" label="Experience animation" />
 </SiteLayout>
 

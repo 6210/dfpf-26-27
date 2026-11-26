@@ -103,7 +103,10 @@ test('experience and skills pages are built from the role content, including pla
   const skills = (await readFile('dist/skills/index.html', 'utf8')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 
   assert.match(experience, /Lead Technical Website Developer Marketing department, Powerfleet · Nov 2017 – Present/);
-  assert.match(experience, /Earlier roles Freelance Web Developer Self-employed · Mar 2013 – 2019/);
+  assert.match(experience, /Freelance Web Developer Self-employed · Mar 2013 – 2019/);
+  // Earlier roles have no heading of their own and come before the recommendations.
+  assert.doesNotMatch(experience, /<h2[^>]*>\s*Earlier roles/);
+  assert.ok(experience.indexOf('Urban Lava Advertising') < experience.indexOf('Recommendations Placeholder'));
   assert.match(experience, /Front-end Developer I3 Zone Development · Nov 2013 – Nov 2017/);
   assert.match(experience, /Platforms: Salesforce Marketing Cloud Account Engagement \(Pardot\), Salesforce CRM, Google reCAPTCHA/);
   assert.match(skills, /Salesforce Marketing Cloud Account Engagement \(Pardot\) Campaign Experiences and Lead Generation; Marketing Automation and CRM Data Capture/);
