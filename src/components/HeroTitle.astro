@@ -1,0 +1,100 @@
+---
+import { heroGraph } from '../lib/hero-graph';
+
+const titles = heroGraph.shapes.map((shape) => shape.label);
+const words = titles.map((title) => title.split(' '));
+const changingWords = words[0].slice(1);
+const wordLengths = changingWords.map((_, index) =>
+  Math.max(...words.map((title) => title[index + 1].length)),
+);
+
+function reel(letter: string): string[] {
+  const start = letter === letter.toUpperCase() ? 65 : 97;
+  return Array.from({ length: 5 }, (_, index) =>
+    String.fromCharCode(start + (letter.charCodeAt(0) - start + index - 2 + 26) % 26),
+  );
+}
+---
+
+<span class="hero-title" data-hero-title>
+  <span class="title-accessible" data-hero-title-accessible>{titles.join(' and ')}</span>
+  <span aria-hidden="true" data-hero-title-visual>
+    {words[0][0]}{' '}
+    {changingWords.map((_, wordIndex) => (
+      <>
+        <span class="title-word">
+          {words.map((title, shape) => (
+            <span class="title-layer">
+              {[...title[wordIndex + 1]].map((letter, index) => (
+                <span class="title-letter">
+                  <span class="letter-measure">{letter}</span>
+                  <span class="letter-window">
+                    <span class="title-reel" data-title-reel data-shape={shape}
+                      data-order={wordLengths.slice(0, wordIndex).reduce((sum, length) => sum + length, 0) + index}
+                      style={`--reel:2;opacity:${shape === 0 ? 1 : 0}`}>
+                      {reel(letter).map((glyph) => <span>{glyph}</span>)}
+                    </span>
+                  </span>
+                </span>
+              ))}
+            </span>
+          ))}
+        </span>
+        {wordIndex < changingWords.length - 1 && ' '}
+      </>
+    ))}
+  </span>
+</span>
+
+<style>
+  .title-accessible {
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  .title-word {
+    display: inline-grid;
+    vertical-align: bottom;
+    white-space: nowrap;
+  }
+
+  .title-layer {
+    grid-area: 1 / 1;
+    justify-self: start;
+  }
+
+  .title-letter {
+    display: inline-block;
+    height: 1lh;
+    position: relative;
+    vertical-align: bottom;
+  }
+
+  .letter-measure {
+    visibility: hidden;
+  }
+
+  .letter-window {
+    inset: -0.1lh 0;
+    overflow: hidden;
+    position: absolute;
+  }
+
+  .title-reel {
+    inset: 0 0 auto;
+    position: absolute;
+    translate: 0 calc(var(--reel) * -1.2lh);
+  }
+
+  .title-reel > span {
+    display: block;
+    box-sizing: border-box;
+    height: 1.2lh;
+    overflow: hidden;
+    padding-block: 0.1lh;
+  }
+</style>

@@ -330,13 +330,15 @@ Every direct child of `main` is a section (a test checks that each page starts
 with `<main><section><h1>`, allowing one wrapper around the hero text).
 
 Each page opens with a hero from `src/components/PageHero.astro`: the h1,
-lead and links on the left, and the page's physics placeholder on the right
+lead and links on the left, and the page's animation on the right
 from 1024 px (text about 60% of the width, both centred vertically). Below
-1024 px the placeholder sits under the text. Downloads and the 404 page use the
+1024 px the animation sits under the text. The homepage supplies `HeroGraph`
+through the named `animation` slot; other animated heroes retain their physics
+placeholder. Downloads and the 404 page use the
 same hero without a placeholder. An optional `eyebrow` adds a smaller line
 above the title inside the h1. Every page except the 404 uses the profile
-name, so headings read, for example, "Dennis Ferreira Technical Marketing
-Developer" or "Dennis Ferreira Experience" for search engines and screen
+name, so headings read, for example, "Dennis Ferreira Experience" or
+"Dennis Ferreira Skills" for search engines and screen
 readers (a test checks each page). The eyebrow uses the body font at weight 300 (only the
 bold heading font is loaded), in capitals via CSS (the HTML keeps normal
 case), 15–18 px with 0.12em letter spacing and 20–32 px below it. It is coral in dark mode and the text
@@ -736,6 +738,11 @@ slight bounce once it moves on. It's in
 [src/components/DotGrid.astro](src/components/DotGrid.astro) and added once in
 the layout, and it stays in place between pages.
 
+- Each hero/intro has a page-colour backdrop masked from 98% coverage at the
+  top to transparent at its bottom. It makes the grid almost invisible behind
+  the intro and restores its normal styling by the next section. The backdrop
+  is behind the hero content and neutral scatter dots, follows the theme fade,
+  and works without JavaScript or motion; the grid itself is unchanged.
 - Dots are 2px across and 18px apart. Away from the cursor, and everywhere on
   first load, they are faint: 30% of the full dot colour, so they read as
   texture and do not distract.
@@ -792,9 +799,208 @@ Checks (2026-11-25): build, page tests, and Lighthouse passed. In Chrome at
 1440 px the badge morphed on scroll, hover, and Experience → Skills
 navigation; at 360 and 768 px there was no horizontal scrolling.
 
+### Homepage node graph prototype
+
+The homepage alone uses `src/components/HeroGraph.astro`, with original paired
+strokes in `src/lib/hero-graph.ts`. Each stroke is sampled into individual dots;
+the same 27 accent SVG circles move between a growth arrow and code
+brackets/slash. Shape-specific connections keep the arrow continuous without
+introducing cross-links in the code icon; their visibility interpolates during
+the morph. There is no browser frame, chart axis, or bar.
+A dense, irregular cluster of 192 neutral SVG dots sits close to
+the icons, with 136 outliers across the intro. The original 64 remain
+distributed across the hero; another 72 fill the lighter areas above,
+below, and to the right of the main icon. These include 24 larger
+6–7.5 px base-size dots, alongside the existing small and medium sizes;
+outer dots scale by 1.8 on desktop.
+All participate in the same collision layout, including accent separation.
+Most clustered dots are
+sampled near either icon; the remainder loosen the boundary without a spherical
+distribution. Independent depth varies size and brightness.
+Gentle drift, parallax, and cursor response share the graph's frame clock;
+the stars sit behind the content and do not intercept input. Neutral dots repel
+from the mouse and keep clear of the moving accent nodes and one another.
+One collision layout separates every accent, local neutral, and outer neutral
+circle in CSS-pixel coordinates, with a 3 px surface gap. Larger accent anchors
+take priority; all dots retain their size and identity. The static SVG is also
+collision-separated. Intro-wide outliers become visible only after the first
+layout so there is no overlapping first frame; without JavaScript the complete
+icon and dense local constellation remain visible.
+Near the mouse,
+faint temporary lines connect neutral dots rather than spawning new dots.
+A fixed pool caps these at 32 lines, with at most two connections per dot.
+Both endpoints must be within 140 CSS px of the cursor and less than 80 CSS px
+apart. Connections fade with distance and disappear on leave, pause, reduced
+motion, or when the intro or tab is hidden. A `ResizeObserver` keeps the
+intro-wide overlay aligned with both the local SVG dots and outer stars.
+Accent-node sizes peak at the marketing arrowhead and the development icon's
+central slash midpoint and both bracket corners, tapering adjacent dots smaller.
+The left bracket's upper arm and right bracket's lower arm each extend towards
+the centre with an additional connected endpoint, not rings or cross-links.
+Both full extended arms have matching lengths and evenly spaced dots on a
+straight line. The code nodes share one depth plane, preserving straightness
+under perspective; accent idle drift translates the whole icon rather than
+bending its strokes. Mouse attraction and collision separation remain active.
+These same extra nodes take distinct positions along the arrow's existing
+strokes rather than stacking on other dots. The rising shaft also leaves
+room for the separate bend and arrowhead nodes.
+The bottom-left arrow start is not emphasized. Existing dots are redistributed
+over full connected paths, with one centre-to-centre spacing throughout each
+target, rather than inserting closer dots at the start or arrowhead ends.
+This keeps the approved organic large/small pattern independent of spacing;
+it does not impose a new size ramp. Both targets share a flat depth plane
+so resting spacing is not distorted by curved depth. The arrowhead retains
+its extended arms. The final rising shaft grows progressively
+larger towards the fixed arrowhead tip. The overall layout position is
+unchanged. Node radii morph alongside coordinates, with
+restrained perspective.
+Accent connections and context-nav marks share `--node-line-width` (1 CSS px);
+SVG `non-scaling-stroke` keeps the icon's lines equally thin at every size.
+No static icon library, physics engine, or additional dependency is used.
+On desktop (1024 px and above), the graph is 1.8 times its original size,
+centred over its existing column using the surrounding whitespace. Smaller
+screens retain a contained, full-column visual. Control text stays at its
+normal readable size.
+
+Each shape holds for four seconds before a 1.6-second eased morph.
+Small idle offsets keep the graph alive; nearby accent nodes ease towards the
+mouse with bounded attraction and settle back without losing the outline.
+The icon's dots and lines use the site's accent colour; background dots and
+temporary links remain neutral. **Pause animation** freezes movement
+and **Change shape** gives
+keyboard and touch users a way to explore the shapes. With reduced motion,
+shapes change instantly only on request, and mouse/idle motion is disabled.
+Without JavaScript the initial arrow, static constellation, and heading are
+present in the HTML.
+
+The large homepage heading uses `HeroTitle.astro` in `PageHero`'s named `title`
+slot, leaving other page headings unchanged. The arrow pairs with **Technical
+Marketing Implementer** and code brackets with **Technical Website Developer**,
+defined alongside their shapes in `hero-graph.ts`. "Technical" stays still;
+the changing letters roll through short alphabet reels from left to right
+during each morph, in the existing heading font, size, weight, and spacing.
+Overlaid word layers reserve the longer word's width so the text below does
+not jump. A stable screen-reader heading includes both roles; the visual reels
+are hidden from assistive technology and do not announce every cycle.
+
+The graph's existing frame clock also advances the heading and stars, so pausing
+freezes all three even mid-transition. **Change shape** starts a morph (or
+completes one already underway); when paused or using reduced motion, it swaps
+the icon and heading instantly.
+The small role label below the graphic has been removed; the buttons remain.
+
+The shared clock stops when the whole intro is off screen or the tab is hidden,
+resumes without jumping ahead, and is cleaned up during Astro navigation. Mouse
+tracking covers the intro stars even outside the SVG, while accent-node
+displacement remains restricted to the SVG. Keep this experiment on the
+homepage until the visual direction is refined.
+
+First-version checks (2026-11-27, before the 3D visual refinement): build and all
+16 tests passed. Browser checks covered
+the timed loop, node identity, mouse displacement, pause/resume, keyboard shape
+changes, reduced motion, off-screen pause, Astro navigation, and widths of 360,
+768, and 1440 px without horizontal overflow. A single Lighthouse mobile audit
+of the production homepage scored 100 performance and 100 accessibility, with
+13,702 bytes of transferred JavaScript (below 102,400 bytes). This is not the
+full multi-page, three-run pre-deployment quality gate.
+
+3D-refinement checks (2026-11-27): build and all 17 tests passed, with no editor
+diagnostics in the changed component or geometry helper. Browser checks confirmed
+the reused accent nodes, independent neutral cloud, animated morph, keyboard
+pause, still reduced-motion mode, and no overflow at 360, 768, and 1440 px.
+A single production-homepage Lighthouse mobile audit scored 100 performance and
+100 accessibility, transferring 16,127 bytes of JavaScript. The full pre-deploy
+quality gate has not been rerun; this revision remains local.
+
+Node/line integration checks (2026-11-27): build and all 17 tests passed.
+Browser checks confirmed 1 CSS px for both icon and context-nav lines at widths
+from 360 to 2560 px, no horizontal overflow, and scatter dots outside the icon
+stage with no pointer interception. The intro fade ends at the next section,
+where the grid retains its original mask. Light/dark themes, reduced motion,
+and Home/Experience navigation were checked. Lighthouse has not been rerun for
+this visual adjustment.
+
+Rolling-heading checks (2026-11-27): build and all 18 tests passed. Browser
+checks verified the four-second holds, left-to-right stagger, complete loop,
+mid-transition pause, keyboard/reduced-motion changes, and Home/Experience
+navigation. Both role states kept the same heading height and lead paragraph
+document position at 360, 768, 1024, 1440, and 1920 px, without overflow.
+A single production-homepage Lighthouse mobile audit scored 100 performance and
+100 accessibility, with zero layout shift and 16,454 bytes of JavaScript. This
+does not replace the full multi-page pre-deployment gate; changes remain local.
+
+Constellation refinement checks (2026-11-27): build and all 19 tests passed,
+with no editor diagnostics in the changed components, graph helper, or tests.
+Both icons retain their exact source coordinates and original layout position.
+Browser checks covered star repulsion outside the SVG and settling back,
+keyboard pause and shape changes, synchronized radius/heading morphing,
+reduced motion, whole-intro visibility pausing, a simulated hidden-tab event,
+and Home/Experience navigation. Both themes and widths from 360 to 2560 px
+were checked without horizontal overflow or shape-induced layout shifts.
+A single production-homepage Lighthouse mobile audit scored 100 performance
+and 100 accessibility, with zero layout shift and 16,783 bytes of JavaScript.
+The full multi-page, three-run deployment gate has not been rerun; this revision
+remains uncommitted and undeployed.
+
+Corrected iconography checks (2026-11-27): build and all 20 tests passed, with
+no editor diagnostics. Visual checks covered both revised size profiles and
+the dense nearby cluster. In the production preview, the central accent node
+moved 18.4 px towards the cursor, all 24 sampled nearby neutral dots moved
+closer, and the accent node settled back within 1 px. Keyboard controls,
+mid-morph pause, reduced motion, off-screen pause/resume, coincident arrowhead
+junctions, and Home/Experience navigation passed. Widths from 360 to 2560 px
+had no overflow or role-induced layout shifts. A single production-homepage
+Lighthouse mobile audit scored 100 performance and 100 accessibility, with
+zero layout shift and 17,057 bytes of JavaScript. This is not the full
+multi-page deployment gate; changes remain local and uncommitted.
+
+Code-arm extension checks (2026-11-27): build and all 21 tests passed with no
+editor diagnostics. The same extra nodes unfolded into the code arms and merged
+back into the arrow without replacement; mid-morph pause and keyboard changes
+passed. Widths from 360 to 2560 px had no overflow or role-induced layout shifts.
+The denser background paused off screen. A single production-homepage Lighthouse
+mobile audit scored 100 performance and 100 accessibility, with zero layout
+shift and 17,161 bytes of JavaScript. The full multi-page deployment gate has
+not been rerun; changes remain local and uncommitted.
+
+Shy-neutral interaction checks (2026-11-27): build and all 24 tests passed,
+with no editor diagnostics. Browser checks confirmed neutral repulsion,
+preserved accent attraction, outer-star links, and aligned endpoints through
+the morph without neutral/accent overlap. Leave, keyboard pause, reduced
+motion, off-screen/hidden-tab pausing, and Home/Experience navigation passed.
+Widths from 360 to 2560 px had no overflow or role-induced layout shifts.
+A single production-homepage Lighthouse mobile audit scored 100 performance
+and 100 accessibility, with zero layout shift and 18,003 bytes of JavaScript.
+This does not replace the full multi-page deployment gate; nothing was
+committed or deployed.
+
+All-node separation checks (2026-11-27): build and all 26 tests passed, with
+no editor diagnostics. Browser measurements checked all 283 dots through both
+morph directions with a moving pointer: the smallest surface gap was 2.99 CSS
+px, allowing for browser rounding of the 3 px target. Both shapes stayed
+separated and unclipped at widths from 320 to 2560 px. Pause, reduced motion,
+static HTML with scripts blocked, and Home/Experience navigation passed.
+Without scripts, the 219 local SVG dots remain visible and separated; the 64
+intro-wide stars wait for the shared layout. A single production-homepage
+Lighthouse mobile audit scored 100 performance and 100 accessibility, with
+zero layout shift and 18,410 bytes of JavaScript. The full multi-page deployment
+gate has not been rerun; these changes remain local and uncommitted.
+
+Release checks (2026-11-27): `npm run check` passed all 28 tests.
+The full `npm run quality` gate passed all 18 mobile audits (three runs
+on each of six pages), all scoring 100 performance and 100 accessibility.
+Homepage script transfer was 18,925 bytes; the largest page was 42,623 bytes,
+below the 102,400-byte budget. Production-preview checks covered both shapes
+at 360, 768, and 1480 px, keyboard shape changes, pause, reduced motion,
+no-JavaScript fallback, and Home/Experience navigation. All 355 hero dots
+remained separate, with no horizontal overflow or normal-runtime errors.
+Cloudflare Access remains enabled. The owner approved private deployment
+with CI/Cloudflare status verification and deferred authenticated live-page
+visual verification; real-device touch checks remain a pre-launch task.
+
 ### Physics placeholders (Matter.js)
 
-Each content page (home, about, experience, skills) shows a placeholder beside
+About, Experience, and Skills show a placeholder beside
 its hero text (it is not a separate section or on-page link), built
 with [Matter.js](https://brm.io/matter-js/) in
 `src/components/PhysicsPlaceholder.astro`. It will later be replaced with

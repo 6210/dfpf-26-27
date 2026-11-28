@@ -81,6 +81,59 @@ it when it is dropped. Exact package versions live in
   use for page-to-page animation.
 - **SVG `clipPath` and the CSS `d` property**: morph the theme toggle icon
   between an outlined circle and an outlined crescent.
+- **SVG lines and circles, `DOMPoint` and `getScreenCTM()`**: the homepage-only
+  `HeroGraph.astro` draws procedurally sampled nodes and their connections.
+  `hero-graph.ts` defines paired chart/code strokes; coordinate interpolation
+  reuses the same nodes between shapes without an icon or animation library.
+  Lightweight perspective projection adds depth to the icon and 192 nearby
+  neutral dots. These form a dense, irregular cluster sampled around both
+  shapes, not a spherical boundary. Accent nodes taper away from the arrowhead
+  and the code icon's slash midpoint and bracket corners. The arrow's extended
+  arms reuse the same dots, while its rising shaft grows
+  progressively towards the tip; radii interpolate
+  alongside coordinates. Full path chains distribute the existing nodes with
+  one centre spacing per target, independent of their established radii, rather
+  than inserting halfway dots. Both icons use a single depth plane so the code's
+  equal-length, evenly sampled extended arms remain straight under perspective.
+  Accent idle drift moves the icon together instead of bending individual
+  strokes. Two extra code-arm endpoints take distinct positions
+  along the arrow strokes. Shape-specific edge visibility keeps both outlines
+  connected as intended without stacking junctions or introducing code cross-links.
+  Bounded offset helpers attract accent nodes towards the cursor without
+  overshooting, while repelling neutral dots. A shared, ordered circle layout
+  separates all accent and neutral nodes, including intro-wide stars, by their
+  rendered radii plus 3 CSS px. Bounded directional escape handles dense groups
+  without shrinking or hiding colliding dots. The server separates the static
+  SVG too; outer stars are revealed only after their first responsive layout.
+  SVG coordinate conversion keeps mouse displacement and parallax accurate at
+  any size; no WebGL or 3D library is needed.
+- **Pooled SVG overlay and `ResizeObserver`**: a fixed pool of 32 faint lines
+  in `PageHero.astro` temporarily connects nearby neutral dots under the mouse,
+  with at most two connections per dot. `HeroGraph` converts local SVG dots and
+  intro-wide stars to shared CSS-pixel coordinates. The observer refreshes star
+  sizes and alignment on resize and disconnects during Astro navigation.
+  Links stay hidden without JavaScript, with reduced motion, or while paused.
+- **CSS `translate` and deterministic star positions**: `PageHero.astro`
+  renders 136 outliers across the homepage intro: the original 64 hero-wide
+  dots plus 72 filling the upper, lower, and right-hand gaps around the icon.
+  A third 6–7.5 px base size appears throughout these areas, complementing
+  the smaller outliers and dense SVG cluster. Outer dots scale by 1.8 on
+  desktop, and all share the collision layout.
+  Depth changes size, brightness, drift, and repulsion
+  response. `HeroGraph` eases both sets using its existing frame clock;
+  the decorative layer remains pointer-transparent and works without JavaScript.
+- **SVG `vector-effect: non-scaling-stroke`**: keeps hero icon connections at
+  the same one-CSS-pixel thickness as the context navigation, through the shared
+  `--node-line-width` token, regardless of the graph's responsive size.
+- **CSS grid overlays, `lh` units, and clipped letter reels**: `HeroTitle.astro`
+  reserves the larger width of each changing word and sizes alphabet reels to
+  the inherited heading line height. `HeroGraph` advances the letters from
+  left to right with its existing frame clock, keeping the heading and node
+  morph synchronized without another animation library or timer.
+- **CSS `isolation` and gradient `mask-image`**: keep each `PageHero` backdrop
+  behind its content, gently obscuring the fixed dot grid near the top and
+  revealing its normal styling at the next section. This needs no scroll
+  script and also works without JavaScript or animation.
 - **CSS `backdrop-filter`**: blurs the page behind the open menu.
 - **CSS `clamp()`, `max()` and `svh` units**: the fluid layout. The page
   gutter, page width and physics stage height grow smoothly with the screen
@@ -111,10 +164,17 @@ it when it is dropped. Exact package versions live in
 - **Passive `scroll` listener and `getBoundingClientRect`**: the scroll spy
   that highlights the current section in the header, and the header that hides
   on scroll down and returns on scroll up.
-- **`requestAnimationFrame`**: the eased smooth scroll for in-page links.
+- **`requestAnimationFrame`**: the eased smooth scroll for in-page links, the
+  interactive dot background, and the homepage graph's timed morph, subtle
+  drift, intro constellation, and synchronized rolling role heading. These stop
+  together when paused, off screen, in a hidden tab, or when reduced motion
+  is preferred.
 - **`IntersectionObserver`**: loads Matter.js only when a shape placeholder
-  scrolls near the screen, and pauses the physics while it is off screen.
+  scrolls near the screen, pauses the physics while it is off screen, and
+  pauses the homepage graph, stars, and heading when the whole intro is off screen.
 - **`matchMedia`**: reads the reduced-motion preference in scripts.
+- **Page Visibility API (`visibilitychange`)**: stops the homepage graph in
+  background tabs without advancing its animation clock.
 - **`inert`**: keeps focus inside the open menu.
 
 ## Quality and testing

@@ -75,6 +75,86 @@ before switching.
   another site.
 - Keep interactions purposeful. Limit each page to one resource-intensive visual
   effect, such as a physics scene, 3D effect, shader, or particle system.
+- Prototype the node-and-line hero animation on the homepage only. Generate the
+  icon from individual accent-colour dots and connecting lines, reuse those
+  same nodes for marketing-chart and web-development shapes, and loop with
+  four seconds on each shape before morphing. Keep idle movement subtle and
+  let nearby dots respond gently to the mouse. Provide a pause control, a
+  still reduced-motion version, and a complete icon without JavaScript.
+  Pause when off screen or in a hidden tab. This uses coordinate interpolation,
+  not a physics simulation or static icon library.
+  Keep the accent icon simple:
+  code brackets and a slash without a browser frame, and a growth arrow without
+  chart axes or bars. Preserve the icon positions and use restrained depth and
+  mouse parallax. Use fewer accent nodes, with the largest marketing node at
+  the arrowhead. Match both development bracket corners to the central slash
+  midpoint's large node size, tapering adjacent dots smaller. Extend the left
+  bracket's upper arm and the right bracket's lower arm towards the centre
+  with one extra connected node each; do not add cross-links or literal rings.
+  Keep these full extended arms straight, equal in length, and evenly spaced
+  from corner to endpoint. Use one depth plane for the code icon and move the
+  accent icon together during idle drift so perspective and idle motion do
+  not introduce kinks. Retain the individual mouse response and collision gap.
+  Reuse these nodes through the morph, giving them distinct positions along
+  the arrow's existing lines rather than merging or stacking them. Connect
+  the arrow's distinct junctions without adding cross-links to the code shape.
+  Retain the extended arrowhead arms, redistributing existing dots rather
+  than adding extra dots halfway between others. Keep the
+  arrowhead tip fixed and grow the final rising shaft's dots progressively
+  larger towards it. Keep the paired-node configuration
+  ready for further refinement of both shapes. Do not enlarge the arrow's
+  bottom-left starting node.
+  Interpolate node sizes as well as coordinates during the morph.
+  Use even centre-to-centre spacing across all connected strokes within each
+  target, including the arrow's start, bends, rising shaft, and arrowhead arms.
+  Treat spacing independently of radius: preserve the established organic
+  large/small node pattern rather than imposing a uniform size ramp.
+  Keep both accent targets on one depth plane so projection does not create
+  artificial bunching. Preserve the recognizable outlines and their anchors.
+  On desktop, enlarge the visual to approximately 1.8 times the original
+  prototype size; keep it within the available width on smaller screens.
+  Match accent connections to the context navigation's one-CSS-pixel lines,
+  keeping their screen thickness constant when the SVG scales. Extend the
+  neutral background across the homepage intro, including above and beside the
+  icon, as an irregular star constellation rather than a circular cloud.
+  Concentrate most neutral dots close to the accented shapes, with a smaller,
+  sparse set of outliers across the intro rather than an evenly spread field.
+  Increase the nearby density and include a slightly larger outlier variant
+  distributed broadly across the hero, not just around the icon.
+  Fill the lighter areas above, below, and to the right of the main icon
+  with additional irregularly scattered neutral dots. Include a third,
+  larger outer-dot size in all three areas without adding accent nodes.
+  Include every new dot in the same 3 CSS px collision clearance as the
+  existing neutral and accent dots, including during mouse interaction.
+  Keep these dots behind the content, with depth-dependent sizes and brightness.
+  Accent nodes should gently attract towards the mouse without losing the
+  outline. Neutral dots should repel from the mouse and keep clear of nearby
+  accent nodes, settling back when the mouse leaves. While the mouse is nearby,
+  show faint temporary connections between nearby neutral dots, not extra dots.
+  Every hero dot must remain distinct: no accent/accent, neutral/neutral, or
+  accent/neutral touching or overlap, including across the local and intro-wide
+  layers. Resolve their visible radii together before painting, maintaining
+  a gap through morphs, mouse movement, resizing, pause, and reduced motion.
+  Keep the initial static SVG non-overlapping too. Do not solve collisions by
+  shrinking or hiding individual dots. Reveal the intro-wide stars only after
+  their first collision layout; without JavaScript retain the static local
+  constellation and complete icon.
+  Limit these to 32 short lines and two connections per dot; hide them on leave,
+  pause, reduced motion, or when the intro or tab is hidden.
+  Use the graph's existing clock and pause control; keep the constellation still
+  without JavaScript or with reduced motion, and do not intercept content interactions.
+  Pair the arrow with "Technical Marketing Implementer" and the code shape
+  with "Technical Website Developer" in the large homepage heading. Keep the
+  existing typography, roll changing letters from left to right with a
+  counter-like effect during the morph, and retain the buttons below the
+  graphic without a duplicate small role label. Use the same clock for heading
+  and graph so pause, visibility changes, manual changes, and reduced motion
+  remain synchronized. Reserve space to avoid layout shifts and provide a
+  stable accessible heading rather than repeated screen-reader announcements.
+- Make the background grid almost invisible at the start of each hero/intro,
+  fading back to its existing appearance by the following section. Preserve
+  the grid's normal styling and interactions in subsequent sections, including
+  a static fade without JavaScript and with reduced motion.
 - Use Matter.js for physics-based animated icons that respond to scrolling and
   clicking. Load it only when needed, pause it when off screen, give click
   actions a keyboard equivalent, and keep the scene decorative so no content

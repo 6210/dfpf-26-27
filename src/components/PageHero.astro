@@ -1,5 +1,6 @@
 ---
 import PhysicsPlaceholder from './PhysicsPlaceholder.astro';
+import { heroGraph, neutralConnectionLimit } from '../lib/hero-graph';
 
 interface Props {
   title: string;
@@ -8,9 +9,10 @@ interface Props {
   id?: string;
   /** Label for the animation shown beside the text; no animation when omitted. */
   animation?: string;
+  scatter?: boolean;
 }
 
-const { title, eyebrow, id, animation } = Astro.props;
+const { title, eyebrow, id, animation, scatter = false } = Astro.props;
 ---
 
 <section class="hero" id={id}>
@@ -18,11 +20,25 @@ const { title, eyebrow, id, animation } = Astro.props;
     <h1>
       {eyebrow && <span class="eyebrow">{eyebrow}</span>}
       {eyebrow && ' '}
-      {title}
+      <slot name="title">{title}</slot>
     </h1>
     <slot />
   </div>
-  {animation && <PhysicsPlaceholder label={animation} />}
+  <slot name="animation">
+    {animation && <PhysicsPlaceholder label={animation} />}
+  </slot>
+  {scatter && (
+    <div class="hero-scatter" data-hero-scatter aria-hidden="true">
+      <svg data-neutral-connections aria-hidden="true" focusable="false">
+        {Array.from({ length: neutralConnectionLimit }, () => (
+          <line x1="0" y1="0" x2="0" y2="0" opacity="0" />
+        ))}
+      </svg>
+      {heroGraph.stars.map(({ x, y, size, opacity }) => (
+        <span style={`left:${x}%;top:${y}%;--scatter-size:${size}px;opacity:${opacity}`} />
+      ))}
+    </div>
+  )}
 </section>
 
 <style>
@@ -35,9 +51,67 @@ const { title, eyebrow, id, animation } = Astro.props;
     display: grid;
     gap: var(--row-gap) var(--column-gap);
     grid-template-columns: minmax(0, 1fr);
+    isolation: isolate;
     justify-content: stretch;
+    position: relative;
     --physics-height: auto;
     --physics-ratio: 4 / 3;
+  }
+
+  .hero::before,
+  .hero-scatter {
+    inset-inline: calc(-1 * var(--page-inset)) calc(-1 * (var(--page-inset) + var(--aside-space)));
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .hero::before {
+    background-color: var(--color-background);
+    content: '';
+    inset-block: -6rem 0;
+    mask-image: linear-gradient(to bottom, rgb(0 0 0 / 98%), rgb(0 0 0 / 94%) 65%, transparent);
+    z-index: -2;
+  }
+
+  .hero-scatter {
+    animation: none;
+    color: var(--color-text);
+    inset-block: -6rem 0;
+    z-index: -1;
+  }
+
+  .hero-scatter span {
+    background: currentColor;
+    border-radius: 50%;
+    height: var(--scatter-size);
+    position: absolute;
+    translate: -50% -50%;
+    visibility: hidden;
+    width: var(--scatter-size);
+  }
+
+  .hero-scatter[data-ready] span {
+    visibility: visible;
+  }
+
+  .hero-scatter svg {
+    fill: none;
+    height: 100%;
+    inset: 0;
+    position: absolute;
+    stroke: currentColor;
+    stroke-width: var(--node-line-width);
+    width: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero::before {
+      transition: background-color var(--theme-fade) ease;
+    }
+
+    .hero-scatter {
+      transition: color var(--theme-fade) ease;
+    }
   }
 
   /*
@@ -61,7 +135,12 @@ const { title, eyebrow, id, animation } = Astro.props;
   }
 
   @media (min-width: 64rem) {
-    .hero:has(> [data-physics]) {
+    .hero-scatter span {
+      height: calc(var(--scatter-size) * 1.8);
+      width: calc(var(--scatter-size) * 1.8);
+    }
+
+    .hero:has(> [data-physics], > [data-hero-graph]) {
       align-items: center;
       grid-template-columns: minmax(0, 1fr) minmax(0, 0.6fr);
     }

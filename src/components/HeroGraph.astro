@@ -1,0 +1,447 @@
+---
+import { heroGraph, projectGraphPoint, separateGraphNodes } from '../lib/hero-graph';
+
+const initial = heroGraph.shapes[0];
+const projectCircle = (point: { x: number; y: number; z: number; radius: number }) => {
+  const projected = projectGraphPoint(point);
+  return { ...projected, radius: point.radius * projected.scale };
+};
+const layout = separateGraphNodes(initial.points.map(projectCircle), heroGraph.ambient.map(projectCircle));
+const projected = layout.slice(0, initial.points.length);
+const ambient = layout.slice(initial.points.length);
+---
+
+<figure class="hero-graph" data-hero-graph>
+  <svg viewBox="0 0 400 320" aria-hidden="true" focusable="false">
+    <g class="ambient" data-graph-ambient>
+      {ambient.map((point, index) => <circle cx={point.x} cy={point.y} r={point.radius}
+        opacity={heroGraph.ambient[index].opacity} />)}
+    </g>
+    <g class="connections">
+      {heroGraph.edges.map(([from, to]) => (
+        <line vector-effect="non-scaling-stroke" x1={projected[from].x} y1={projected[from].y}
+          x2={projected[to].x} y2={projected[to].y}
+          opacity={initial.edges.some(([a, b]) => a === from && b === to) ? 1 : 0} />
+      ))}
+    </g>
+    <g class="nodes" data-graph-nodes>
+      {projected.map(({ x, y, radius }) =>
+        <circle cx={x} cy={y} r={radius} />
+      )}
+    </g>
+  </svg>
+  <figcaption>
+    <div class="graph-controls">
+      <button type="button" data-graph-next hidden>Change shape</button>
+      <button type="button" data-graph-pause hidden>Pause animation</button>
+    </div>
+  </figcaption>
+</figure>
+
+<style>
+  .hero-graph {
+    margin: 0;
+    min-width: 0;
+  }
+
+  svg {
+    aspect-ratio: 4 / 3;
+    color: var(--color-accent);
+    display: block;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .connections {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: var(--node-line-width);
+  }
+
+  .nodes {
+    fill: currentColor;
+  }
+
+  .ambient {
+    color: var(--color-text);
+    fill: currentColor;
+  }
+
+  figcaption {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .graph-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    justify-content: center;
+    min-height: 2.75rem;
+  }
+
+  button {
+    font-size: 0.75rem;
+    min-height: 2.75rem;
+  }
+
+  @media (min-width: 64rem) {
+    .hero-graph {
+      margin-inline: -40%;
+      width: 180%;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    svg, .ambient {
+      transition: color var(--theme-fade) ease;
+    }
+  }
+</style>
+
+<script>
+  import {
+    heroGraph, magneticOffset, nearbyNeutralConnections,
+    projectGraphPoint, repulsionOffset, separateGraphNodes, type GraphPoint,
+  } from '../lib/hero-graph';
+
+  const hold = 4000;
+  const morph = 1600;
+  const cycle = hold + morph;
+  const cleanups: Array<() => void> = [];
+
+  document.addEventListener('astro:page-load', () => {
+    for (const figure of document.querySelectorAll<HTMLElement>('[data-hero-graph]')) {
+      cleanups.push(prepare(figure));
+    }
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    for (const cleanup of cleanups.splice(0)) cleanup();
+  });
+
+  function prepare(figure: HTMLElement): () => void {
+    const svg = figure.querySelector('svg');
+    const hero = figure.closest<HTMLElement>('.hero');
+    const title = hero?.querySelector<HTMLElement>('[data-hero-title]');
+    const starField = hero?.querySelector<HTMLElement>('[data-hero-scatter]');
+    const pause = figure.querySelector<HTMLButtonElement>('[data-graph-pause]');
+    const next = figure.querySelector<HTMLButtonElement>('[data-graph-next]');
+    if (!svg || !hero || !title || !starField || !pause || !next) {
+      throw new Error('Hero graph is missing its SVG, intro, heading, star field, or controls.');
+    }
+
+    const circles = [...svg.querySelectorAll<SVGCircleElement>('[data-graph-nodes] circle')];
+    const ambientCircles = [...svg.querySelectorAll<SVGCircleElement>('[data-graph-ambient] circle')];
+    const ambientPositions = heroGraph.ambient.map((point) => ({ ...point }));
+    const stars = [...starField.querySelectorAll<HTMLElement>('span')].map((element, index) => ({
+      element,
+      ...heroGraph.stars[index],
+      offsetX: 0,
+      offsetY: 0,
+      radius: element.getBoundingClientRect().width / 2,
+    }));
+    const neutralLines = [...starField.querySelectorAll<SVGLineElement>('[data-neutral-connections] line')];
+    if (!neutralLines.length) {
+      throw new Error('Hero graph is missing its neutral connection layer.');
+    }
+    const lines = [...svg.querySelectorAll('line')];
+    const edgeVisibility = heroGraph.shapes.map((shape) => heroGraph.edges.map(([from, to]) =>
+      Number(shape.edges.some(([a, b]) => a === from && b === to))));
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const positions = heroGraph.shapes[0].points.map((point) => ({ ...point }));
+    const reels = [...title.querySelectorAll<HTMLElement>('[data-title-reel]')].map((element) => ({
+      element,
+      shape: Number(element.dataset.shape),
+      order: Number(element.dataset.order),
+    }));
+    if (!reels.length) {
+      throw new Error('Hero heading is missing its letter reels.');
+    }
+    const lastLetter = Math.max(...reels.map((reel) => reel.order));
+    let titleIndex = -1;
+    let titleProgress = -1;
+    let pointer: GraphPoint | undefined;
+    let starPointer: GraphPoint | undefined;
+    let elapsed = 0;
+    let sceneTime = 0;
+    let previous = 0;
+    let frame = 0;
+    let visible = false;
+    let paused = false;
+    let tiltX = 0;
+    let tiltY = 0;
+
+    const clearNeutralLines = () => {
+      for (const line of neutralLines) line.setAttribute('opacity', '0');
+    };
+
+    const paint = () => {
+      const bounds = starField.getBoundingClientRect();
+      const matrix = svg.getScreenCTM();
+      if (!matrix) throw new Error('Hero graph has no SVG screen transform.');
+      const projectCircle = (point: typeof positions[number]) => {
+        const projected = projectGraphPoint(point, tiltX, tiltY);
+        return { ...projected, radius: point.radius * projected.scale };
+      };
+      const projected = positions.map(projectCircle);
+      const scale = Math.hypot(matrix.a, matrix.b);
+      const toField = (point: GraphPoint & { radius: number }) => ({
+        x: matrix.a * point.x + matrix.c * point.y + matrix.e - bounds.left,
+        y: matrix.b * point.x + matrix.d * point.y + matrix.f - bounds.top,
+        radius: point.radius * scale,
+      });
+      const layout = separateGraphNodes(projected.map(toField), [
+        ...ambientPositions.map((point) => toField(projectCircle(point))),
+        ...stars.map((star) => ({
+          x: bounds.width * star.x / 100 + star.offsetX,
+          y: bounds.height * star.y / 100 + star.offsetY,
+          radius: star.radius,
+        })),
+      ]);
+      const inverse = matrix.inverse();
+      const inSvg = layout.slice(0, circles.length + ambientCircles.length).map((point) => ({
+        x: inverse.a * (point.x + bounds.left) + inverse.c * (point.y + bounds.top) + inverse.e,
+        y: inverse.b * (point.x + bounds.left) + inverse.d * (point.y + bounds.top) + inverse.f,
+        radius: point.radius / scale,
+      }));
+      const neutralPoints = layout.slice(circles.length);
+      circles.forEach((circle, index) => {
+        circle.setAttribute('cx', String(inSvg[index].x));
+        circle.setAttribute('cy', String(inSvg[index].y));
+        circle.setAttribute('r', String(inSvg[index].radius));
+      });
+      ambientCircles.forEach((circle, index) => {
+        const point = inSvg[circles.length + index];
+        circle.setAttribute('cx', String(point.x));
+        circle.setAttribute('cy', String(point.y));
+        circle.setAttribute('r', String(point.radius));
+      });
+      const shape = Math.floor(elapsed / cycle) % heroGraph.shapes.length;
+      const progress = Math.max(0, (elapsed % cycle - hold) / morph);
+      const blend = progress * progress * (3 - 2 * progress);
+      lines.forEach((line, index) => {
+        const [from, to] = heroGraph.edges[index];
+        line.setAttribute('x1', String(inSvg[from].x));
+        line.setAttribute('y1', String(inSvg[from].y));
+        line.setAttribute('x2', String(inSvg[to].x));
+        line.setAttribute('y2', String(inSvg[to].y));
+        line.setAttribute('opacity', String(
+          edgeVisibility[shape][index] * (1 - blend) +
+          edgeVisibility[(shape + 1) % heroGraph.shapes.length][index] * blend,
+        ));
+      });
+      stars.forEach((star, index) => {
+        const baseX = bounds.width * star.x / 100;
+        const baseY = bounds.height * star.y / 100;
+        const point = neutralPoints[ambientCircles.length + index];
+        star.element.style.translate = `calc(-50% + ${point.x - baseX}px) calc(-50% + ${point.y - baseY}px)`;
+      });
+      starField.dataset.ready = '';
+      const cursor = starPointer && !motion.matches && !paused
+        ? { x: starPointer.x - bounds.left, y: starPointer.y - bounds.top } : undefined;
+      const connections = nearbyNeutralConnections(neutralPoints, cursor);
+      neutralLines.forEach((line, index) => {
+        const connection = connections[index];
+        line.setAttribute('opacity', String(connection?.opacity ?? 0));
+        if (!connection) return;
+        const from = neutralPoints[connection.from];
+        const to = neutralPoints[connection.to];
+        line.setAttribute('x1', String(from.x));
+        line.setAttribute('y1', String(from.y));
+        line.setAttribute('x2', String(to.x));
+        line.setAttribute('y2', String(to.y));
+      });
+    };
+
+    const shapeIndex = () => Math.floor(elapsed / cycle) % heroGraph.shapes.length;
+    const paintTitle = (index: number, progress: number) => {
+      if (titleIndex === index && titleProgress === progress) return;
+      titleIndex = index;
+      titleProgress = progress;
+      for (const { element, shape, order } of reels) {
+        const local = Math.min(1, Math.max(0, (progress - order / lastLetter * 0.45) / 0.55));
+        const eased = local * local * (3 - 2 * local);
+        const current = shape === index;
+        element.style.setProperty('--reel', String(current ? 2 + eased * 2 : eased * 2));
+        element.style.opacity = String(current ? 1 - eased : eased);
+      }
+    };
+
+    const snapToShape = (index: number) => {
+      elapsed = index * cycle;
+      heroGraph.shapes[index].points.forEach((point, node) => {
+        positions[node] = { ...point };
+      });
+      paintTitle(index, 0);
+      paint();
+    };
+
+    const draw = (now: number) => {
+      const delta = previous ? Math.min(now - previous, 50) : 0;
+      previous = now;
+      elapsed += delta;
+      sceneTime += delta;
+      const starBounds = starField.getBoundingClientRect();
+      const index = shapeIndex();
+      const from = heroGraph.shapes[index].points;
+      const to = heroGraph.shapes[(index + 1) % heroGraph.shapes.length].points;
+      const progress = Math.max(0, (elapsed % cycle - hold) / morph);
+      const eased = progress * progress * (3 - 2 * progress);
+      const settle = 1 - Math.exp(-delta / 65);
+      const targetTiltX = Math.sin(sceneTime / 8000) * 0.045 - (pointer ? (pointer.y - 160) / 160 * 0.08 : 0);
+      const targetTiltY = Math.sin(sceneTime / 10000) * 0.06 + (pointer ? (pointer.x - 200) / 200 * 0.1 : 0);
+      tiltX += (targetTiltX - tiltX) * settle;
+      tiltY += (targetTiltY - tiltY) * settle;
+
+      positions.forEach((point, node) => {
+        let x = from[node].x + (to[node].x - from[node].x) * eased;
+        let y = from[node].y + (to[node].y - from[node].y) * eased;
+        x += Math.sin(sceneTime / 1100) * 1.4;
+        y += Math.cos(sceneTime / 1400) * 1.4;
+        if (pointer) {
+          const pull = magneticOffset({ x, y }, pointer, 90, 18);
+          x += pull.x;
+          y += pull.y;
+        }
+        point.x += (x - point.x) * settle;
+        point.y += (y - point.y) * settle;
+        point.z += (from[node].z + (to[node].z - from[node].z) * eased - point.z) * settle;
+        point.radius += (from[node].radius + (to[node].radius - from[node].radius) * eased - point.radius) * settle;
+      });
+      ambientPositions.forEach((point, index) => {
+        const source = heroGraph.ambient[index];
+        let x = source.x + Math.sin(sceneTime / 8000 + index * 2.3) * (0.4 + source.depth * 1.6);
+        let y = source.y + Math.cos(sceneTime / 10000 + index * 1.7) * (0.4 + source.depth);
+        if (pointer) {
+          const push = repulsionOffset({ x, y }, pointer, 80, 10 + source.depth * 18);
+          x += push.x;
+          y += push.y;
+        }
+        point.x += (x - point.x) * settle;
+        point.y += (y - point.y) * settle;
+      });
+      stars.forEach((star, index) => {
+        let x = Math.sin(sceneTime / 8000 + index * 2.3) * (0.4 + star.depth * 1.6);
+        let y = Math.cos(sceneTime / 10000 + index * 1.7) * (0.4 + star.depth);
+        if (starPointer) {
+          const mouseX = starPointer.x - starBounds.left;
+          const mouseY = starPointer.y - starBounds.top;
+          const push = repulsionOffset(
+            { x: starBounds.width * star.x / 100, y: starBounds.height * star.y / 100 },
+            { x: mouseX, y: mouseY }, 140, 10 + star.depth * 18,
+          );
+          x += push.x;
+          y += push.y;
+          x += (mouseX / starBounds.width - 0.5) * (star.depth - 0.4) * 12;
+          y += (mouseY / starBounds.height - 0.5) * (star.depth - 0.4) * 8;
+        }
+        star.offsetX += (x - star.offsetX) * settle;
+        star.offsetY += (y - star.offsetY) * settle;
+      });
+      paintTitle(index, progress);
+      paint();
+      frame = requestAnimationFrame(draw);
+    };
+
+    const sync = () => {
+      cancelAnimationFrame(frame);
+      previous = 0;
+      pointer = undefined;
+      starPointer = undefined;
+      clearNeutralLines();
+      pause.hidden = motion.matches;
+      if (!motion.matches && !paused && visible && !document.hidden) {
+        frame = requestAnimationFrame(draw);
+      }
+    };
+
+    const onMotion = () => {
+      // Reduced motion gets a complete, still icon, never a frozen mid-morph.
+      if (motion.matches) {
+        tiltX = 0;
+        tiltY = 0;
+        heroGraph.ambient.forEach((point, index) => {
+          ambientPositions[index] = { ...point };
+        });
+        for (const star of stars) {
+          star.offsetX = 0;
+          star.offsetY = 0;
+        }
+        snapToShape(shapeIndex());
+      }
+      sync();
+    };
+
+    const onPause = () => {
+      paused = !paused;
+      pause.textContent = paused ? 'Resume animation' : 'Pause animation';
+      sync();
+    };
+
+    const onNext = () => {
+      if (motion.matches || paused || elapsed % cycle >= hold) {
+        snapToShape((shapeIndex() + 1) % heroGraph.shapes.length);
+      } else {
+        elapsed = shapeIndex() * cycle + hold;
+      }
+    };
+
+    const onPointer = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse' || motion.matches || paused || !visible || document.hidden) return;
+      const bounds = starField.getBoundingClientRect();
+      starPointer = event.clientX >= bounds.left && event.clientX <= bounds.right &&
+        event.clientY >= bounds.top && event.clientY <= bounds.bottom
+        ? { x: event.clientX, y: event.clientY }
+        : undefined;
+      const matrix = svg.getScreenCTM();
+      if (!matrix) return;
+      const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
+      pointer = point.x >= 0 && point.x <= 400 && point.y >= 0 && point.y <= 320
+        ? { x: point.x, y: point.y }
+        : undefined;
+    };
+    const onLeave = () => {
+      pointer = undefined;
+      starPointer = undefined;
+      clearNeutralLines();
+    };
+    const observer = new IntersectionObserver((entries) => {
+      visible = entries.some((entry) => entry.isIntersecting);
+      sync();
+    });
+    const resizeObserver = new ResizeObserver(() => {
+      pointer = undefined;
+      starPointer = undefined;
+      for (const star of stars) star.radius = star.element.getBoundingClientRect().width / 2;
+      paint();
+    });
+
+    next.hidden = false;
+    pause.addEventListener('click', onPause);
+    next.addEventListener('click', onNext);
+    document.addEventListener('pointermove', onPointer, { passive: true });
+    document.documentElement.addEventListener('pointerleave', onLeave);
+    motion.addEventListener('change', onMotion);
+    document.addEventListener('visibilitychange', sync);
+    observer.observe(hero);
+    resizeObserver.observe(starField);
+    onMotion();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      resizeObserver.disconnect();
+      pause.removeEventListener('click', onPause);
+      next.removeEventListener('click', onNext);
+      document.removeEventListener('pointermove', onPointer);
+      document.documentElement.removeEventListener('pointerleave', onLeave);
+      motion.removeEventListener('change', onMotion);
+      document.removeEventListener('visibilitychange', sync);
+    };
+  }
+</script>

@@ -57,8 +57,10 @@ flowchart TD
         GetInTouch["GetInTouch.astro<br/>email and phone"]
         CvDownload["CvDownload.astro"]
         AboutSummary["AboutSummary.astro<br/>home About section,<br/>photo placeholder"]
-        PageHero["PageHero.astro<br/>h1, lead, animation beside it"]
+        PageHero["PageHero.astro<br/>h1, lead, animation,<br/>intro grid fade, optional stars and neutral-line pool"]
         Physics["PhysicsPlaceholder.astro<br/>(Matter.js, lazy-loaded)"]
+        HeroGraph["HeroGraph.astro<br/>arrow/code morph, shared all-node collision layout,<br/>heading, repulsion and temporary-link controller"]
+        HeroTitle["HeroTitle.astro<br/>rolling role heading,<br/>stable accessible text"]
         Timeline["Timeline.astro<br/>one page section: the whole timeline"]
         RoleEntry["RoleEntry.astro<br/>one timeline chapter: a role and its areas"]
         Recommendations["Recommendations.astro<br/>quotes, placeholders labelled"]
@@ -70,6 +72,7 @@ flowchart TD
     subgraph Content["Content"]
         lib["src/lib/content.ts<br/>getProfile, getRoles, getPlatforms,<br/>getRecommendations, getCvFiles"]
         icons["src/lib/area-icons.ts<br/>accents and Phosphor icon paths"]
+        graph["src/lib/hero-graph.ts<br/>uniform path spacing, paired node sizes and per-shape edges,<br/>all-node separation, perspective, mouse forces and link selection"]
         profile[("src/content/profile.json")]
         roles[("src/content/roles/*.md")]
         recs[("src/content/recommendations.json")]
@@ -85,6 +88,13 @@ flowchart TD
     index --> AboutSummary
     index & about & experience & skills & downloads & notfound --> PageHero
     PageHero --> Physics
+    index -- "PageHero animation slot" --> HeroGraph
+    index -- "PageHero title slot" --> HeroTitle
+    HeroGraph -- "shared clock, pause and shape controls" --> HeroTitle
+    HeroGraph -- "shared collision layout, reveal ready stars and pooled links" --> PageHero
+    HeroGraph -. "distinct geometry, all-node separation and mouse response" .-> graph
+    HeroTitle -. "paired role titles" .-> graph
+    PageHero -. "homepage-only outer-star targets and line-pool limit" .-> graph
     experience --> Timeline & RoleEntry & Recommendations
     Timeline -- "slot" --> RoleEntry
     skills --> AreaIcon
@@ -101,4 +111,5 @@ flowchart TD
     lib -. "checked at build" .-> cvfiles
 ```
 
-Solid arrows mean "renders"; dotted arrows mean "reads content from".
+Solid arrows show rendering or a labelled behavior connection; dotted arrows
+mean "reads content from".

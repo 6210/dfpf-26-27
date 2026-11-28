@@ -238,7 +238,7 @@ const isHome = Astro.url.pathname === '/';
   /* A dot on a line running to the edge of the screen; the line grows for the current section. */
   .rail-mark {
     background: currentColor;
-    block-size: 1px;
+    block-size: var(--node-line-width);
     inline-size: 1.25rem;
     position: relative;
   }
